@@ -28,13 +28,21 @@
     "@prisma/composer-prisma-cloud": "0.28.0",
     "@prisma/orm-postgres": "8.0.0-rc.16",
     "alchemy": "2.0.0-beta.78",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^18.0.8",
+    "ejs": "^7.0.2",
     "express": "^5.3.0",
-    "temporal-polyfill": "^1.0.5"
+    "http-status": "^2.1.0",
+    "nodemailer": "^10.1.7",
+    "redis": "^6.3.0",
+    "temporal-polyfill": "^1.0.5",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@prisma/dev": "0.25.2",
+    "@types/bcrypt": "^6.0.0",
+    "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.4",
     "prisma": "8.0.0-rc.21",

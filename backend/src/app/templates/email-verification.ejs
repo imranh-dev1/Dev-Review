@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Your DevReview Email</title>
+</head>
+
+<body style="margin:0;padding:0;background-color:#f3f5f9;font-family:Arial,Helvetica,sans-serif;color:#172033;">
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+        style="background-color:#f3f5f9;padding:40px 12px;">
+        <tr>
+            <td align="center">
+
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+                    style="max-width:520px;background-color:#ffffff;border-radius:16px;overflow:hidden;">
+
+                    <!-- Header -->
+                    <tr>
+                        <td align="center"
+                            style="padding:32px 24px 28px;background-color:#ffffff;border-bottom:1px solid #edf0f5;">
+                            <div style="font-size:28px;font-weight:800;letter-spacing:-1px;color:#2563eb;">
+                                DevReview<span style="color:#111827;">.</span>
+                            </div>
+                            <p style="margin:8px 0 0;font-size:13px;color:#64748b;">
+                                Build projects. Share ideas. Grow together.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding:36px 32px 32px;">
+
+                            <p
+                                style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#2563eb;">
+                                EMAIL VERIFICATION
+                            </p>
+
+                            <h1 style="margin:0 0 16px;font-size:26px;line-height:1.3;font-weight:700;color:#111827;">
+                                Verify your email address
+                            </h1>
+
+                            <p style="margin:0 0 12px;font-size:15px;line-height:1.8;color:#475569;">
+                                Hi <%= name %>,
+                            </p>
+
+                            <p style="margin:0 0 26px;font-size:15px;line-height:1.8;color:#475569;">
+                                Welcome to DevReview! To complete your registration, enter the verification code below.
+                            </p>
+
+                            <!-- OTP Box -->
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+                                style="background-color:#f8faff;border:1px solid #dbeafe;border-radius:12px;">
+                                <tr>
+                                    <td align="center" style="padding:24px 16px;">
+
+                                        <p
+                                            style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:1px;color:#64748b;">
+                                            YOUR VERIFICATION CODE
+                                        </p>
+
+                                        <p
+                                            style="margin:0;font-size:36px;line-height:1.4;font-weight:800;letter-spacing:10px;color:#2563eb;font-family:Arial,Helvetica,sans-serif;">
+                                            <%= otp %>
+                                        </p>
+
+                                        <p style="margin:14px 0 0;font-size:13px;color:#64748b;">
+                                            Enter this code on the verification page.
+                                        </p>
+
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Expiration -->
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+                                style="margin-top:22px;">
+                                <tr>
+                                    <td width="28" valign="top" style="font-size:18px;color:#d97706;">
+                                        &#9200;
+                                    </td>
+                                    <td style="font-size:13px;line-height:1.7;color:#64748b;">
+                                        <strong style="color:#334155;">Code expiration</strong><br />
+                                        This code expires in
+                                        <strong style="color:#111827;">
+                                            <%= expirationMinutes %> minutes
+                                        </strong>.
+                                        Please verify your email before it expires.
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div style="height:1px;background-color:#edf0f5;margin:28px 0;"></div>
+
+                            <p style="margin:0 0 12px;font-size:13px;line-height:1.8;color:#64748b;">
+                                If you didn't request this code, you can safely ignore this email. Never share your
+                                verification code with anyone.
+                            </p>
+
+                            <p style="margin:24px 0 0;font-size:14px;line-height:1.8;color:#475569;">
+                                Best regards,<br />
+                                <strong style="color:#111827;">The DevReview Team</strong>
+                            </p>
+
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center"
+                            style="padding:22px 24px;background-color:#f8fafc;border-top:1px solid #edf0f5;">
+                            <p style="margin:0 0 6px;font-size:12px;color:#94a3b8;">
+                                &copy; <%= year %> DevReview. All rights reserved.
+                            </p>
+                            <p style="margin:0;font-size:12px;color:#94a3b8;">
+                                Helping developers learn, build, and improve.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>
