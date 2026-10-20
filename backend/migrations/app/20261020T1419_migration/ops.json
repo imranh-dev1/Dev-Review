@@ -1,0 +1,1618 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.notifications",
+    "label": "Create table \"notifications\"",
+    "summary": "Creates table \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"notifications\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"notifications\"",
+        "sql": "CREATE TABLE \"public\".\"notifications\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"is_read\" bool DEFAULT false NOT NULL,\n  \"message\" text NOT NULL,\n  \"read_at\" timestamptz,\n  \"recipient_id\" uuid NOT NULL,\n  \"submission_id\" uuid,\n  \"title\" character varying(150) NOT NULL,\n  \"type\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"notifications_type_check_c7ac7b0c\" CHECK (\"type\" IN ('SUBMISSION_RECEIVED', 'REVIEW_STARTED', 'REVIEW_COMPLETED', 'CHANGES_REQUESTED', 'SUBMISSION_APPROVED', 'SUBMISSION_REJECTED', 'REVIEW_ASSIGNED', 'SYSTEM'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"notifications\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.project_submissions",
+    "label": "Create table \"project_submissions\"",
+    "summary": "Creates table \"project_submissions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "project_submissions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"project_submissions\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"project_submissions\"",
+        "sql": "CREATE TABLE \"public\".\"project_submissions\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deleted_at\" timestamptz,\n  \"description\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"live_demo_url\" character varying(2048),\n  \"owner_id\" uuid NOT NULL,\n  \"repository_url\" character varying(2048) NOT NULL,\n  \"screenshots\" text[] DEFAULT '{}' NOT NULL,\n  \"status\" text DEFAULT 'DRAFT' NOT NULL,\n  \"submitted_at\" timestamptz,\n  \"summary\" character varying(300) NOT NULL,\n  \"technologies\" text[] DEFAULT '{}' NOT NULL,\n  \"title\" character varying(150) NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"project_submissions_screenshots_elem_not_null_5a300cad\" CHECK (array_position(\"screenshots\", NULL) IS NULL),\n  CONSTRAINT \"project_submissions_status_check_6e490a70\" CHECK (\"status\" IN ('DRAFT', 'SUBMITTED', 'IN_REVIEW', 'CHANGES_REQUESTED', 'RESUBMITTED', 'APPROVED', 'REJECTED')),\n  CONSTRAINT \"project_submissions_technologies_elem_not_null_89b37e18\" CHECK (array_position(\"technologies\", NULL) IS NULL)\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"project_submissions\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.review_assignments",
+    "label": "Create table \"review_assignments\"",
+    "summary": "Creates table \"review_assignments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "review_assignments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"review_assignments\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"review_assignments\"",
+        "sql": "CREATE TABLE \"public\".\"review_assignments\" (\n  \"assigned_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"completed_at\" timestamptz,\n  \"id\" uuid NOT NULL,\n  \"reviewer_id\" uuid NOT NULL,\n  \"status\" text DEFAULT 'ASSIGNED' NOT NULL,\n  \"submission_id\" uuid NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"review_assignments_status_check_bfa78172\" CHECK (\"status\" IN ('ASSIGNED', 'ACCEPTED', 'COMPLETED', 'CANCELLED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"review_assignments\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.reviews",
+    "label": "Create table \"reviews\"",
+    "summary": "Creates table \"reviews\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "reviews"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"reviews\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"reviews\"",
+        "sql": "CREATE TABLE \"public\".\"reviews\" (\n  \"accessibility\" int4 NOT NULL,\n  \"code_quality\" int4 NOT NULL,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"decision\" text NOT NULL,\n  \"documentation\" int4 NOT NULL,\n  \"feedback\" text NOT NULL,\n  \"functionality\" int4 NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"overall_score\" numeric(3,2) NOT NULL,\n  \"responsiveness\" int4 NOT NULL,\n  \"reviewer_id\" uuid NOT NULL,\n  \"revision_number\" int4 DEFAULT 1 NOT NULL,\n  \"submission_id\" uuid NOT NULL,\n  \"ui_ux\" int4 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"reviews_decision_check_449fc192\" CHECK (\"decision\" IN ('APPROVED', 'REJECTED', 'CHANGES_REQUESTED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"reviews\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.submission_status_history",
+    "label": "Create table \"submission_status_history\"",
+    "summary": "Creates table \"submission_status_history\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "submission_status_history"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"submission_status_history\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"submission_status_history\"",
+        "sql": "CREATE TABLE \"public\".\"submission_status_history\" (\n  \"changed_by_id\" uuid,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"from_status\" text,\n  \"id\" uuid NOT NULL,\n  \"note\" text,\n  \"submission_id\" uuid NOT NULL,\n  \"to_status\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"submission_status_history_from_status_check_3d464584\" CHECK (\"from_status\" IN ('DRAFT', 'SUBMITTED', 'IN_REVIEW', 'CHANGES_REQUESTED', 'RESUBMITTED', 'APPROVED', 'REJECTED')),\n  CONSTRAINT \"submission_status_history_to_status_check_3b6ee6b5\" CHECK (\"to_status\" IN ('DRAFT', 'SUBMITTED', 'IN_REVIEW', 'CHANGES_REQUESTED', 'RESUBMITTED', 'APPROVED', 'REJECTED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"submission_status_history\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.users",
+    "label": "Create table \"users\"",
+    "summary": "Creates table \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"users\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"users\"",
+        "sql": "CREATE TABLE \"public\".\"users\" (\n  \"avatar\" text,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"email\" character varying(255) NOT NULL,\n  \"email_verified_at\" timestamptz,\n  \"id\" uuid NOT NULL,\n  \"name\" character varying(100) NOT NULL,\n  \"password_hash\" text,\n  \"role\" text DEFAULT 'STUDENT' NOT NULL,\n  \"status\" text DEFAULT 'ACTIVE' NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"users_role_check_7da8de5a\" CHECK (\"role\" IN ('STUDENT', 'REVIEWER', 'ADMIN')),\n  CONSTRAINT \"users_status_check_5dec1c59\" CHECK (\"status\" IN ('ACTIVE', 'SUSPENDED', 'DEACTIVATED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"users\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.project_submissions.project_submissions_owner_id_repository_url_key",
+    "label": "Add unique constraint on \"project_submissions\" (owner_id, repository_url)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "project_submissions_owner_id_repository_url_key",
+        "table": "project_submissions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"project_submissions_owner_id_repository_url_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "project_submissions_owner_id_repository_url_key",
+          "public",
+          "\"public\".\"project_submissions\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"project_submissions_owner_id_repository_url_key\"",
+        "sql": "ALTER TABLE \"public\".\"project_submissions\" ADD CONSTRAINT \"project_submissions_owner_id_repository_url_key\" UNIQUE (\"owner_id\", \"repository_url\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"project_submissions_owner_id_repository_url_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "project_submissions_owner_id_repository_url_key",
+          "public",
+          "\"public\".\"project_submissions\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.review_assignments.review_assignments_submission_id_reviewer_id_key",
+    "label": "Add unique constraint on \"review_assignments\" (submission_id, reviewer_id)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "review_assignments_submission_id_reviewer_id_key",
+        "table": "review_assignments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"review_assignments_submission_id_reviewer_id_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "review_assignments_submission_id_reviewer_id_key",
+          "public",
+          "\"public\".\"review_assignments\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"review_assignments_submission_id_reviewer_id_key\"",
+        "sql": "ALTER TABLE \"public\".\"review_assignments\" ADD CONSTRAINT \"review_assignments_submission_id_reviewer_id_key\" UNIQUE (\"submission_id\", \"reviewer_id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"review_assignments_submission_id_reviewer_id_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "review_assignments_submission_id_reviewer_id_key",
+          "public",
+          "\"public\".\"review_assignments\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.reviews.reviews_submission_id_revision_number_key",
+    "label": "Add unique constraint on \"reviews\" (submission_id, revision_number)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "reviews_submission_id_revision_number_key",
+        "table": "reviews"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"reviews_submission_id_revision_number_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reviews_submission_id_revision_number_key",
+          "public",
+          "\"public\".\"reviews\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"reviews_submission_id_revision_number_key\"",
+        "sql": "ALTER TABLE \"public\".\"reviews\" ADD CONSTRAINT \"reviews_submission_id_revision_number_key\" UNIQUE (\"submission_id\", \"revision_number\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"reviews_submission_id_revision_number_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reviews_submission_id_revision_number_key",
+          "public",
+          "\"public\".\"reviews\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.users.users_email_key",
+    "label": "Add unique constraint on \"users\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "users_email_key",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"users_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "users_email_key",
+          "public",
+          "\"public\".\"users\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"users_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD CONSTRAINT \"users_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"users_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "users_email_key",
+          "public",
+          "\"public\".\"users\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.notifications.notifications_recipient_id_idx_1e4ca6fd",
+    "label": "Create index \"notifications_recipient_id_idx_1e4ca6fd\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "notifications_recipient_id_idx_1e4ca6fd",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notifications_recipient_id_idx_1e4ca6fd\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_recipient_id_idx_1e4ca6fd\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notifications_recipient_id_idx_1e4ca6fd\"",
+        "sql": "CREATE INDEX \"notifications_recipient_id_idx_1e4ca6fd\" ON \"public\".\"notifications\" (\"recipient_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notifications_recipient_id_idx_1e4ca6fd\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_recipient_id_idx_1e4ca6fd\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.notifications.notifications_recipient_id_is_read_created_at_idx_681b2a09",
+    "label": "Create index \"notifications_recipient_id_is_read_created_at_idx_681b2a09\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "notifications_recipient_id_is_read_created_at_idx_681b2a09",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notifications_recipient_id_is_read_created_at_idx_681b2a09\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_recipient_id_is_read_created_at_idx_681b2a09\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notifications_recipient_id_is_read_created_at_idx_681b2a09\"",
+        "sql": "CREATE INDEX \"notifications_recipient_id_is_read_created_at_idx_681b2a09\" ON \"public\".\"notifications\" (\"recipient_id\", \"is_read\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notifications_recipient_id_is_read_created_at_idx_681b2a09\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_recipient_id_is_read_created_at_idx_681b2a09\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.notifications.notifications_submission_id_idx_82020796",
+    "label": "Create index \"notifications_submission_id_idx_82020796\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "notifications_submission_id_idx_82020796",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notifications_submission_id_idx_82020796\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_submission_id_idx_82020796\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notifications_submission_id_idx_82020796\"",
+        "sql": "CREATE INDEX \"notifications_submission_id_idx_82020796\" ON \"public\".\"notifications\" (\"submission_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notifications_submission_id_idx_82020796\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_submission_id_idx_82020796\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.project_submissions.project_submissions_created_at_idx_225d8c0f",
+    "label": "Create index \"project_submissions_created_at_idx_225d8c0f\" on \"project_submissions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "project_submissions_created_at_idx_225d8c0f",
+        "table": "project_submissions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"project_submissions_created_at_idx_225d8c0f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions_created_at_idx_225d8c0f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"project_submissions_created_at_idx_225d8c0f\"",
+        "sql": "CREATE INDEX \"project_submissions_created_at_idx_225d8c0f\" ON \"public\".\"project_submissions\" (\"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"project_submissions_created_at_idx_225d8c0f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions_created_at_idx_225d8c0f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.project_submissions.project_submissions_owner_id_idx_ade9f347",
+    "label": "Create index \"project_submissions_owner_id_idx_ade9f347\" on \"project_submissions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "project_submissions_owner_id_idx_ade9f347",
+        "table": "project_submissions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"project_submissions_owner_id_idx_ade9f347\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions_owner_id_idx_ade9f347\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"project_submissions_owner_id_idx_ade9f347\"",
+        "sql": "CREATE INDEX \"project_submissions_owner_id_idx_ade9f347\" ON \"public\".\"project_submissions\" (\"owner_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"project_submissions_owner_id_idx_ade9f347\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions_owner_id_idx_ade9f347\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.project_submissions.project_submissions_owner_id_status_idx_5132887a",
+    "label": "Create index \"project_submissions_owner_id_status_idx_5132887a\" on \"project_submissions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "project_submissions_owner_id_status_idx_5132887a",
+        "table": "project_submissions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"project_submissions_owner_id_status_idx_5132887a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions_owner_id_status_idx_5132887a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"project_submissions_owner_id_status_idx_5132887a\"",
+        "sql": "CREATE INDEX \"project_submissions_owner_id_status_idx_5132887a\" ON \"public\".\"project_submissions\" (\"owner_id\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"project_submissions_owner_id_status_idx_5132887a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions_owner_id_status_idx_5132887a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.project_submissions.project_submissions_status_created_at_idx_1bbe8adf",
+    "label": "Create index \"project_submissions_status_created_at_idx_1bbe8adf\" on \"project_submissions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "project_submissions_status_created_at_idx_1bbe8adf",
+        "table": "project_submissions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"project_submissions_status_created_at_idx_1bbe8adf\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions_status_created_at_idx_1bbe8adf\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"project_submissions_status_created_at_idx_1bbe8adf\"",
+        "sql": "CREATE INDEX \"project_submissions_status_created_at_idx_1bbe8adf\" ON \"public\".\"project_submissions\" (\"status\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"project_submissions_status_created_at_idx_1bbe8adf\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"project_submissions_status_created_at_idx_1bbe8adf\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.review_assignments.review_assignments_reviewer_id_idx_ab069db0",
+    "label": "Create index \"review_assignments_reviewer_id_idx_ab069db0\" on \"review_assignments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "review_assignments_reviewer_id_idx_ab069db0",
+        "table": "review_assignments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"review_assignments_reviewer_id_idx_ab069db0\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments_reviewer_id_idx_ab069db0\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"review_assignments_reviewer_id_idx_ab069db0\"",
+        "sql": "CREATE INDEX \"review_assignments_reviewer_id_idx_ab069db0\" ON \"public\".\"review_assignments\" (\"reviewer_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"review_assignments_reviewer_id_idx_ab069db0\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments_reviewer_id_idx_ab069db0\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.review_assignments.review_assignments_reviewer_id_status_idx_19b88c74",
+    "label": "Create index \"review_assignments_reviewer_id_status_idx_19b88c74\" on \"review_assignments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "review_assignments_reviewer_id_status_idx_19b88c74",
+        "table": "review_assignments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"review_assignments_reviewer_id_status_idx_19b88c74\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments_reviewer_id_status_idx_19b88c74\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"review_assignments_reviewer_id_status_idx_19b88c74\"",
+        "sql": "CREATE INDEX \"review_assignments_reviewer_id_status_idx_19b88c74\" ON \"public\".\"review_assignments\" (\"reviewer_id\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"review_assignments_reviewer_id_status_idx_19b88c74\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments_reviewer_id_status_idx_19b88c74\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.review_assignments.review_assignments_submission_id_idx_82020796",
+    "label": "Create index \"review_assignments_submission_id_idx_82020796\" on \"review_assignments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "review_assignments_submission_id_idx_82020796",
+        "table": "review_assignments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"review_assignments_submission_id_idx_82020796\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments_submission_id_idx_82020796\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"review_assignments_submission_id_idx_82020796\"",
+        "sql": "CREATE INDEX \"review_assignments_submission_id_idx_82020796\" ON \"public\".\"review_assignments\" (\"submission_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"review_assignments_submission_id_idx_82020796\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments_submission_id_idx_82020796\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.review_assignments.review_assignments_submission_id_status_idx_9a757808",
+    "label": "Create index \"review_assignments_submission_id_status_idx_9a757808\" on \"review_assignments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "review_assignments_submission_id_status_idx_9a757808",
+        "table": "review_assignments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"review_assignments_submission_id_status_idx_9a757808\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments_submission_id_status_idx_9a757808\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"review_assignments_submission_id_status_idx_9a757808\"",
+        "sql": "CREATE INDEX \"review_assignments_submission_id_status_idx_9a757808\" ON \"public\".\"review_assignments\" (\"submission_id\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"review_assignments_submission_id_status_idx_9a757808\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_assignments_submission_id_status_idx_9a757808\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.reviews.reviews_reviewer_id_created_at_idx_69eb3380",
+    "label": "Create index \"reviews_reviewer_id_created_at_idx_69eb3380\" on \"reviews\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "reviews_reviewer_id_created_at_idx_69eb3380",
+        "table": "reviews"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"reviews_reviewer_id_created_at_idx_69eb3380\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews_reviewer_id_created_at_idx_69eb3380\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"reviews_reviewer_id_created_at_idx_69eb3380\"",
+        "sql": "CREATE INDEX \"reviews_reviewer_id_created_at_idx_69eb3380\" ON \"public\".\"reviews\" (\"reviewer_id\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"reviews_reviewer_id_created_at_idx_69eb3380\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews_reviewer_id_created_at_idx_69eb3380\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.reviews.reviews_reviewer_id_idx_ab069db0",
+    "label": "Create index \"reviews_reviewer_id_idx_ab069db0\" on \"reviews\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "reviews_reviewer_id_idx_ab069db0",
+        "table": "reviews"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"reviews_reviewer_id_idx_ab069db0\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews_reviewer_id_idx_ab069db0\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"reviews_reviewer_id_idx_ab069db0\"",
+        "sql": "CREATE INDEX \"reviews_reviewer_id_idx_ab069db0\" ON \"public\".\"reviews\" (\"reviewer_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"reviews_reviewer_id_idx_ab069db0\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews_reviewer_id_idx_ab069db0\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.reviews.reviews_submission_id_created_at_idx_6739f7e6",
+    "label": "Create index \"reviews_submission_id_created_at_idx_6739f7e6\" on \"reviews\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "reviews_submission_id_created_at_idx_6739f7e6",
+        "table": "reviews"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"reviews_submission_id_created_at_idx_6739f7e6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews_submission_id_created_at_idx_6739f7e6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"reviews_submission_id_created_at_idx_6739f7e6\"",
+        "sql": "CREATE INDEX \"reviews_submission_id_created_at_idx_6739f7e6\" ON \"public\".\"reviews\" (\"submission_id\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"reviews_submission_id_created_at_idx_6739f7e6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews_submission_id_created_at_idx_6739f7e6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.reviews.reviews_submission_id_idx_82020796",
+    "label": "Create index \"reviews_submission_id_idx_82020796\" on \"reviews\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "reviews_submission_id_idx_82020796",
+        "table": "reviews"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"reviews_submission_id_idx_82020796\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews_submission_id_idx_82020796\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"reviews_submission_id_idx_82020796\"",
+        "sql": "CREATE INDEX \"reviews_submission_id_idx_82020796\" ON \"public\".\"reviews\" (\"submission_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"reviews_submission_id_idx_82020796\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reviews_submission_id_idx_82020796\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.submission_status_history.submission_status_history_changed_by_id_created_at_idx_b7c17473",
+    "label": "Create index \"submission_status_history_changed_by_id_created_at_idx_b7c17473\" on \"submission_status_history\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "submission_status_history_changed_by_id_created_at_idx_b7c17473",
+        "table": "submission_status_history"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"submission_status_history_changed_by_id_created_at_idx_b7c17473\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history_changed_by_id_created_at_idx_b7c17473\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"submission_status_history_changed_by_id_created_at_idx_b7c17473\"",
+        "sql": "CREATE INDEX \"submission_status_history_changed_by_id_created_at_idx_b7c17473\" ON \"public\".\"submission_status_history\" (\"changed_by_id\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"submission_status_history_changed_by_id_created_at_idx_b7c17473\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history_changed_by_id_created_at_idx_b7c17473\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.submission_status_history.submission_status_history_changed_by_id_idx_dd031b3b",
+    "label": "Create index \"submission_status_history_changed_by_id_idx_dd031b3b\" on \"submission_status_history\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "submission_status_history_changed_by_id_idx_dd031b3b",
+        "table": "submission_status_history"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"submission_status_history_changed_by_id_idx_dd031b3b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history_changed_by_id_idx_dd031b3b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"submission_status_history_changed_by_id_idx_dd031b3b\"",
+        "sql": "CREATE INDEX \"submission_status_history_changed_by_id_idx_dd031b3b\" ON \"public\".\"submission_status_history\" (\"changed_by_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"submission_status_history_changed_by_id_idx_dd031b3b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history_changed_by_id_idx_dd031b3b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.submission_status_history.submission_status_history_submission_id_created_at_idx_6739f7e6",
+    "label": "Create index \"submission_status_history_submission_id_created_at_idx_6739f7e6\" on \"submission_status_history\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "submission_status_history_submission_id_created_at_idx_6739f7e6",
+        "table": "submission_status_history"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"submission_status_history_submission_id_created_at_idx_6739f7e6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history_submission_id_created_at_idx_6739f7e6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"submission_status_history_submission_id_created_at_idx_6739f7e6\"",
+        "sql": "CREATE INDEX \"submission_status_history_submission_id_created_at_idx_6739f7e6\" ON \"public\".\"submission_status_history\" (\"submission_id\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"submission_status_history_submission_id_created_at_idx_6739f7e6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history_submission_id_created_at_idx_6739f7e6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.submission_status_history.submission_status_history_submission_id_idx_82020796",
+    "label": "Create index \"submission_status_history_submission_id_idx_82020796\" on \"submission_status_history\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "submission_status_history_submission_id_idx_82020796",
+        "table": "submission_status_history"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"submission_status_history_submission_id_idx_82020796\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history_submission_id_idx_82020796\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"submission_status_history_submission_id_idx_82020796\"",
+        "sql": "CREATE INDEX \"submission_status_history_submission_id_idx_82020796\" ON \"public\".\"submission_status_history\" (\"submission_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"submission_status_history_submission_id_idx_82020796\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"submission_status_history_submission_id_idx_82020796\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.users.users_created_at_idx_225d8c0f",
+    "label": "Create index \"users_created_at_idx_225d8c0f\" on \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "users_created_at_idx_225d8c0f",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"users_created_at_idx_225d8c0f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users_created_at_idx_225d8c0f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"users_created_at_idx_225d8c0f\"",
+        "sql": "CREATE INDEX \"users_created_at_idx_225d8c0f\" ON \"public\".\"users\" (\"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"users_created_at_idx_225d8c0f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users_created_at_idx_225d8c0f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.users.users_role_status_idx_e87879e1",
+    "label": "Create index \"users_role_status_idx_e87879e1\" on \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "users_role_status_idx_e87879e1",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"users_role_status_idx_e87879e1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users_role_status_idx_e87879e1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"users_role_status_idx_e87879e1\"",
+        "sql": "CREATE INDEX \"users_role_status_idx_e87879e1\" ON \"public\".\"users\" (\"role\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"users_role_status_idx_e87879e1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users_role_status_idx_e87879e1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.notifications.notifications_recipient_id_fkey",
+    "label": "Add foreign key \"notifications_recipient_id_fkey\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "notifications_recipient_id_fkey",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"notifications_recipient_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "notifications_recipient_id_fkey",
+          "public",
+          "\"public\".\"notifications\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"notifications_recipient_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"notifications\"\nADD CONSTRAINT \"notifications_recipient_id_fkey\"\nFOREIGN KEY (\"recipient_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"notifications_recipient_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "notifications_recipient_id_fkey",
+          "public",
+          "\"public\".\"notifications\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.notifications.notifications_submission_id_fkey",
+    "label": "Add foreign key \"notifications_submission_id_fkey\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "notifications_submission_id_fkey",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"notifications_submission_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "notifications_submission_id_fkey",
+          "public",
+          "\"public\".\"notifications\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"notifications_submission_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"notifications\"\nADD CONSTRAINT \"notifications_submission_id_fkey\"\nFOREIGN KEY (\"submission_id\")\nREFERENCES \"public\".\"project_submissions\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"notifications_submission_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "notifications_submission_id_fkey",
+          "public",
+          "\"public\".\"notifications\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.project_submissions.project_submissions_owner_id_fkey",
+    "label": "Add foreign key \"project_submissions_owner_id_fkey\" on \"project_submissions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "project_submissions_owner_id_fkey",
+        "table": "project_submissions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"project_submissions_owner_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "project_submissions_owner_id_fkey",
+          "public",
+          "\"public\".\"project_submissions\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"project_submissions_owner_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"project_submissions\"\nADD CONSTRAINT \"project_submissions_owner_id_fkey\"\nFOREIGN KEY (\"owner_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"project_submissions_owner_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "project_submissions_owner_id_fkey",
+          "public",
+          "\"public\".\"project_submissions\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.review_assignments.review_assignments_submission_id_fkey",
+    "label": "Add foreign key \"review_assignments_submission_id_fkey\" on \"review_assignments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "review_assignments_submission_id_fkey",
+        "table": "review_assignments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"review_assignments_submission_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "review_assignments_submission_id_fkey",
+          "public",
+          "\"public\".\"review_assignments\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"review_assignments_submission_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"review_assignments\"\nADD CONSTRAINT \"review_assignments_submission_id_fkey\"\nFOREIGN KEY (\"submission_id\")\nREFERENCES \"public\".\"project_submissions\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"review_assignments_submission_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "review_assignments_submission_id_fkey",
+          "public",
+          "\"public\".\"review_assignments\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.review_assignments.review_assignments_reviewer_id_fkey",
+    "label": "Add foreign key \"review_assignments_reviewer_id_fkey\" on \"review_assignments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "review_assignments_reviewer_id_fkey",
+        "table": "review_assignments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"review_assignments_reviewer_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "review_assignments_reviewer_id_fkey",
+          "public",
+          "\"public\".\"review_assignments\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"review_assignments_reviewer_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"review_assignments\"\nADD CONSTRAINT \"review_assignments_reviewer_id_fkey\"\nFOREIGN KEY (\"reviewer_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"review_assignments_reviewer_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "review_assignments_reviewer_id_fkey",
+          "public",
+          "\"public\".\"review_assignments\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.reviews.reviews_submission_id_fkey",
+    "label": "Add foreign key \"reviews_submission_id_fkey\" on \"reviews\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "reviews_submission_id_fkey",
+        "table": "reviews"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"reviews_submission_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reviews_submission_id_fkey",
+          "public",
+          "\"public\".\"reviews\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"reviews_submission_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"reviews\"\nADD CONSTRAINT \"reviews_submission_id_fkey\"\nFOREIGN KEY (\"submission_id\")\nREFERENCES \"public\".\"project_submissions\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"reviews_submission_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reviews_submission_id_fkey",
+          "public",
+          "\"public\".\"reviews\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.reviews.reviews_reviewer_id_fkey",
+    "label": "Add foreign key \"reviews_reviewer_id_fkey\" on \"reviews\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "reviews_reviewer_id_fkey",
+        "table": "reviews"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"reviews_reviewer_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reviews_reviewer_id_fkey",
+          "public",
+          "\"public\".\"reviews\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"reviews_reviewer_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"reviews\"\nADD CONSTRAINT \"reviews_reviewer_id_fkey\"\nFOREIGN KEY (\"reviewer_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"reviews_reviewer_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reviews_reviewer_id_fkey",
+          "public",
+          "\"public\".\"reviews\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.submission_status_history.submission_status_history_submission_id_fkey",
+    "label": "Add foreign key \"submission_status_history_submission_id_fkey\" on \"submission_status_history\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "submission_status_history_submission_id_fkey",
+        "table": "submission_status_history"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"submission_status_history_submission_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "submission_status_history_submission_id_fkey",
+          "public",
+          "\"public\".\"submission_status_history\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"submission_status_history_submission_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"submission_status_history\"\nADD CONSTRAINT \"submission_status_history_submission_id_fkey\"\nFOREIGN KEY (\"submission_id\")\nREFERENCES \"public\".\"project_submissions\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"submission_status_history_submission_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "submission_status_history_submission_id_fkey",
+          "public",
+          "\"public\".\"submission_status_history\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.submission_status_history.submission_status_history_changed_by_id_fkey",
+    "label": "Add foreign key \"submission_status_history_changed_by_id_fkey\" on \"submission_status_history\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "submission_status_history_changed_by_id_fkey",
+        "table": "submission_status_history"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"submission_status_history_changed_by_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "submission_status_history_changed_by_id_fkey",
+          "public",
+          "\"public\".\"submission_status_history\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"submission_status_history_changed_by_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"submission_status_history\"\nADD CONSTRAINT \"submission_status_history_changed_by_id_fkey\"\nFOREIGN KEY (\"changed_by_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"submission_status_history_changed_by_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "submission_status_history_changed_by_id_fkey",
+          "public",
+          "\"public\".\"submission_status_history\""
+        ]
+      }
+    ]
+  }
+]
