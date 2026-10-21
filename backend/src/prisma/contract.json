@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "audit_logs": {
+      "model": "AuditLog",
+      "namespace": "public"
+    },
     "notifications": {
       "model": "Notification",
       "namespace": "public"
@@ -255,6 +259,116 @@
           }
         },
         "models": {
+          "AuditLog": {
+            "fields": {
+              "action": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "AuditAction",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "actorId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "kind": "scalar"
+                }
+              },
+              "entityId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "entityType": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "AuditEntityType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "metadata": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "actor": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "actorId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "action": {
+                  "column": "action"
+                },
+                "actorId": {
+                  "column": "actor_id"
+                },
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "entityId": {
+                  "column": "entity_id"
+                },
+                "entityType": {
+                  "column": "entity_type"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "metadata": {
+                  "column": "metadata"
+                }
+              },
+              "namespaceId": "public",
+              "table": "audit_logs"
+            }
+          },
           "Notification": {
             "fields": {
               "createdAt": {
@@ -1187,6 +1301,21 @@
                   "namespace": "public"
                 }
               },
+              "auditLogs": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "actorId"
+                  ]
+                },
+                "to": {
+                  "model": "AuditLog",
+                  "namespace": "public"
+                }
+              },
               "notifications": {
                 "cardinality": "1:N",
                 "on": {
@@ -1294,6 +1423,134 @@
       "public": {
         "entries": {
           "table": {
+            "audit_logs": {
+              "checks": [
+                {
+                  "expression": "\"action\" IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'ASSIGN_REVIEWER', 'START_REVIEW', 'SUBMIT_REVIEW', 'STATUS_CHANGE', 'USER_STATUS_CHANGE', 'ROLE_CHANGE')",
+                  "name": "audit_logs_action_check_fd2d4833",
+                  "prefix": "audit_logs_action_check"
+                },
+                {
+                  "expression": "\"entity_type\" IN ('USER', 'SUBMISSION', 'REVIEW', 'ASSIGNMENT', 'NOTIFICATION', 'SYSTEM')",
+                  "name": "audit_logs_entity_type_check_41a4936d",
+                  "prefix": "audit_logs_entity_type_check"
+                }
+              ],
+              "columns": {
+                "action": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "AuditAction",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "actor_id": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": true
+                },
+                "created_at": {
+                  "codecId": "pg/timestamptz-temporal@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "entity_id": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": true
+                },
+                "entity_type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "AuditEntityType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "dataType": "pg/uuid",
+                  "nullable": false
+                },
+                "metadata": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "actor_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "audit_logs"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "actor_id",
+                    "created_at"
+                  ],
+                  "name": "audit_logs_actor_id_created_at_idx_73c9864c",
+                  "prefix": "audit_logs_actor_id_created_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "actor_id"
+                  ],
+                  "name": "audit_logs_actor_id_idx_69a2164d",
+                  "prefix": "audit_logs_actor_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "created_at"
+                  ],
+                  "name": "audit_logs_created_at_idx_225d8c0f",
+                  "prefix": "audit_logs_created_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "entity_type",
+                    "entity_id"
+                  ],
+                  "name": "audit_logs_entity_type_entity_id_idx_4cde03a1",
+                  "prefix": "audit_logs_entity_type_entity_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "notifications": {
               "checks": [
                 {
@@ -2326,12 +2583,23 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f3238f60f4ab2e778ca5484f4e599ef6dcf350b1d061473c2505bc7126ef4661"
+    "storageHash": "e1c5947094c4a4cdbd999171f928fd57a1eb0d49b4d06da334982fd3e6581857"
   },
   "execution": {
-    "executionHash": "ad8beafcf0b5118edde04821235c4c446b5d4cb5908a5a81db056cb3140bb191",
+    "executionHash": "7cca6f17a89cdbde7c8242ef671d5721b8039bec94deff0f5a68f844dc8bc063",
     "mutations": {
       "defaults": [
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "audit_logs",
+            "field": "id",
+            "namespace": "public"
+          }
+        },
         {
           "onCreate": {
             "id": "uuidv4",

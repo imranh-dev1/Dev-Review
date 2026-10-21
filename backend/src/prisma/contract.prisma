@@ -84,6 +84,7 @@ model User {
   assignments     ReviewAssignment[]        @relation("ReviewerAssignments")
   statusHistory   SubmissionStatusHistory[] @relation("StatusChangedBy")
   notifications   Notification[]
+  auditLogs       AuditLog[]              @relation("AuditActor")
 
   @@index([role, status])
   @@index([createdAt])
@@ -196,4 +197,21 @@ model Notification {
 
   @@index([recipientId, isRead, createdAt])
   @@map("notifications")
+}
+
+model AuditLog {
+  id         Uuid            @id @default(uuid())
+  actorId    Uuid?           @map("actor_id")
+  action     AuditAction
+  entityType AuditEntityType @map("entity_type")
+  entityId   Uuid?           @map("entity_id")
+  metadata   String?
+  createdAt  DateTime        @default(now()) @map("created_at")
+
+  actor      User?           @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId, createdAt])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
