@@ -201,3 +201,6 @@ export interface AuthPayload {
 	user: User;
 	accessToken: string;
 }
+
+
+export * from "./auth.types"

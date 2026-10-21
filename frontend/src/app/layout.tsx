@@ -6,6 +6,7 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 
 import "./globals.css";
+import Providers from "@/providers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -58,14 +59,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 			className={`${geistSans.variable} ${geistMono.variable} ${inter.variable}`}
 		>
 			<body className="min-h-full bg-background font-sans antialiased">
-				<ThemeProvider>
-					<AuthProvider>
-						<TooltipProvider delayDuration={200}>
-							{children}
-							<Toaster position="bottom-right" richColors closeButton />
-						</TooltipProvider>
-					</AuthProvider>
-				</ThemeProvider>
+				<Providers>
+					<ThemeProvider>
+						<AuthProvider>
+							<TooltipProvider delayDuration={200}>
+								{children}
+								<Toaster position="bottom-right" richColors closeButton />
+							</TooltipProvider>
+						</AuthProvider>
+					</ThemeProvider>
+				</Providers>
 			</body>
 		</html>
 	);
