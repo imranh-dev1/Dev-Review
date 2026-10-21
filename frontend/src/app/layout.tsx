@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
 	title: {
-		default: "DevReview | Project Review Platform",
+		default: "Dev Review | Project Review Platform",
 		template: "%s | DevReview",
 	},
 	description:
