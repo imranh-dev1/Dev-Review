@@ -1,6 +1,5 @@
 import {
-	ArrowRight,
-	CheckCircle2,
+	ArrowRight, 
 	Code2,
 	FileText,
 	GitBranch,

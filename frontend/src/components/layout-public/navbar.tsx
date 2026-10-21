@@ -81,7 +81,7 @@ export function Navbar() {
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
 				<nav
 					className={cn(
-						"mt-3 flex h-12 w-full items-center justify-between gap-3 border px-2 transition-all duration-300 sm:px-3",
+						"mt-3 flex h-20 w-full items-center justify-between gap-3 border px-2 transition-all duration-300 sm:px-3",
 						scrolled
 							? "border-border bg-background/80 shadow-sm backdrop-blur-lg"
 							: "border-transparent bg-transparent",
@@ -95,14 +95,11 @@ export function Navbar() {
 						<Image
 							src={Logo}
 							alt="DevReview"
-							width={48}
-							height={48}
-							className="h-8 w-auto object-contain"
+							width={1000}
+							height={18}
+							className="h-18 w-auto object-contain"
 							priority
 						/>
-						<span className="hidden text-sm font-semibold tracking-tight sm:inline-flex">
-							Dev<span className="text-primary">Review</span>
-						</span>
 					</Link>
 
 					<div className="hidden lg:block">
@@ -112,7 +109,7 @@ export function Navbar() {
 									<NavigationMenuItem key={navItem.title}>
 										<NavigationMenuLink
 											href={navItem.href}
-											className="px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+											className="px-4 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
 										>
 											{navItem.title}
 										</NavigationMenuLink>
