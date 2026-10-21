@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
-import "./globals.css";
-import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/providers/auth-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -17,11 +21,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
 	title: {
-		default: "Dev Review | Project Review Platform",
+		default: "DevReview — Structured project review for developers",
 		template: "%s | DevReview",
 	},
 	description:
-		"DevReview helps developers submit projects, receive valuable feedback, review others' work, and grow their development skills through collaborative learning.",
+		"Submit your projects, get structured review from mentors, and track every decision from draft to approval.",
 	applicationName: "DevReview",
 	keywords: [
 		"DevReview",
@@ -30,19 +34,18 @@ export const metadata: Metadata = {
 		"project submission",
 		"code review",
 		"developer feedback",
-		"web development",
-		"collaborative learning",
+		"mentorship platform",
 	],
 	openGraph: {
-		title: "DevReview | Project Review Platform",
+		title: "DevReview — Structured project review for developers",
 		description:
-			"Submit projects, share feedback, and grow as a developer with the DevReview community.",
+			"Submit projects, share feedback, and grow as a developer with a traceable review workflow.",
 		siteName: "DevReview",
 		type: "website",
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "DevReview | Project Review Platform",
+		title: "DevReview — Structured project review for developers",
 		description: "Build projects. Share ideas. Grow together.",
 	},
 };
@@ -51,16 +54,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 	return (
 		<html
 			lang="en"
-			className={cn(
-				"h-full",
-				"antialiased",
-				geistSans.variable,
-				geistMono.variable,
-				"font-sans",
-				inter.variable,
-			)}
+			suppressHydrationWarning
+			className={`${geistSans.variable} ${geistMono.variable} ${inter.variable}`}
 		>
-			<body className="min-h-full flex flex-col">{children}</body>
+			<body className="min-h-full bg-background font-sans antialiased">
+				<ThemeProvider>
+					<AuthProvider>
+						<TooltipProvider delayDuration={200}>
+							{children}
+							<Toaster position="bottom-right" richColors closeButton />
+						</TooltipProvider>
+					</AuthProvider>
+				</ThemeProvider>
+			</body>
 		</html>
 	);
 }
