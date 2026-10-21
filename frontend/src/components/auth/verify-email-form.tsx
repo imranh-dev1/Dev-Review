@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -21,8 +20,8 @@ import {
 	FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api-client";
+import { useVerifyAccount } from "@/hooks";
 
 const schema = z.object({
 	email: z.string().trim().email("Enter a valid email address"),
@@ -34,8 +33,7 @@ type FormValues = z.infer<typeof schema>;
 export function VerifyEmailForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const { verifyEmail } = useAuth();
-	const [isLoading, setIsLoading] = useState(false);
+	const { mutate: verifyEmail, isPending: isLoading } = useVerifyAccount()
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(schema),
@@ -46,25 +44,25 @@ export function VerifyEmailForm() {
 	});
 
 	async function onSubmit(values: FormValues) {
-		setIsLoading(true);
-		try {
-			const user = await verifyEmail({
-				email: values.email.trim().toLowerCase(),
-				otp: values.otp.trim(),
-			});
-			toast.success("Email verified", {
-				description: `You're in, ${user.name}.`,
-			});
-			router.replace("/dashboard");
-		} catch (error) {
-			const message =
-				error instanceof ApiError
-					? error.message
-					: "Verification failed. Check the code and try again.";
-			toast.error("Verification failed", { description: message });
-		} finally {
-			setIsLoading(false);
+		const payload = {
+			email: values.email.trim().toLowerCase(),
+			otp: values.otp.trim(),
 		}
+		verifyEmail(payload, {
+			onSuccess: () => {
+				toast.success("Email verified", {
+					description: `You're in, ${payload.email}.`,
+				});
+				router.replace("/dashboard");
+			},
+			onError: (error) => {
+				const message =
+					error instanceof ApiError
+						? error.message
+						: "Verification failed. Check the code and try again.";
+				toast.error("Verification failed", { description: message });
+			}
+		})
 	}
 
 	return (

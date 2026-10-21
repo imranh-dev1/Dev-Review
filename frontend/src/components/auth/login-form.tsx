@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,8 +22,8 @@ import {
 	FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api-client";
+import { useLogin } from "@/hooks";
 
 const schema = z.object({
 	email: z.string().trim().email("Enter a valid email address"),
@@ -33,8 +34,9 @@ type FormValues = z.infer<typeof schema>;
 
 export function LoginForm() {
 	const router = useRouter();
-	const { login } = useAuth();
-	const [isLoading, setIsLoading] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
+
+	const { mutate: login, isPending: isLoading } = useLogin()
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(schema),
@@ -45,22 +47,29 @@ export function LoginForm() {
 	});
 
 	async function onSubmit(values: FormValues) {
-		setIsLoading(true);
-		try {
-			const user = await login(values);
-			toast.success("Signed in", {
-				description: `Welcome back, ${user.name}.`,
-			});
-			router.replace("/dashboard");
-		} catch (error) {
-			const message =
-				error instanceof ApiError
-					? error.message
-					: "Unable to sign in. Check your credentials and try again.";
-			toast.error("Sign in failed", { description: message });
-		} finally {
-			setIsLoading(false);
+		const payload = {
+			email: values.email.trim().toLowerCase(),
+			password: values.password,
 		}
+		login(payload, {
+			onSuccess: () => {
+				toast.success("Signed in", {
+					description: `Welcome back, ${payload.email}.`,
+				});
+
+				router.replace("/dashboard");
+			},
+			onError: (error) => {
+				const message =
+					error instanceof ApiError
+						? error.message
+						: "Unable to sign in. Check your credentials and try again.";
+
+				toast.error("Sign in failed", {
+					description: message,
+				});
+			}
+		})
 	}
 
 	return (
@@ -68,18 +77,24 @@ export function LoginForm() {
 			<CardHeader className="sr-only">
 				<h2>Sign in form</h2>
 			</CardHeader>
+
 			<CardContent className="pt-5">
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<FieldGroup>
+						{/* Email */}
 						<Field>
 							<FieldLabel htmlFor="email">Email</FieldLabel>
+
 							<Input
 								id="email"
 								type="email"
 								autoComplete="email"
 								placeholder="name@domain.com"
+								disabled={isLoading}
+								aria-invalid={!!form.formState.errors.email}
 								{...form.register("email")}
 							/>
+
 							<FieldError
 								errors={
 									form.formState.errors.email
@@ -89,20 +104,50 @@ export function LoginForm() {
 							/>
 						</Field>
 
+						{/* Password */}
 						<Field>
 							<div className="flex items-center justify-between">
 								<FieldLabel htmlFor="password">Password</FieldLabel>
+
 								<span className="text-xs text-muted-foreground">
 									Need help?
 								</span>
 							</div>
-							<Input
-								id="password"
-								type="password"
-								autoComplete="current-password"
-								placeholder="Enter your password"
-								{...form.register("password")}
-							/>
+
+							<div className="relative">
+								<Input
+									id="password"
+									type={showPassword ? "text" : "password"}
+									autoComplete="current-password"
+									placeholder="Enter your password"
+									className="pr-11"
+									disabled={isLoading}
+									aria-invalid={!!form.formState.errors.password}
+									{...form.register("password")}
+								/>
+
+								<Button
+									type="button"
+									variant="ghost"
+									size="icon"
+									className="absolute right-0 top-0 h-full w-10 text-muted-foreground hover:bg-transparent"
+									onClick={() =>
+										setShowPassword((previous) => !previous)
+									}
+									disabled={isLoading}
+									aria-label={
+										showPassword ? "Hide password" : "Show password"
+									}
+									aria-pressed={showPassword}
+								>
+									{showPassword ? (
+										<EyeOff className="size-4" />
+									) : (
+										<Eye className="size-4" />
+									)}
+								</Button>
+							</div>
+
 							<FieldError
 								errors={
 									form.formState.errors.password
@@ -112,12 +157,25 @@ export function LoginForm() {
 							/>
 						</Field>
 
-						<Button type="submit" className="w-full" disabled={isLoading}>
-							{isLoading ? "Signing in…" : "Sign in"}
+						{/* Submit */}
+						<Button
+							type="submit"
+							className="w-full"
+							disabled={isLoading}
+						>
+							{isLoading ? (
+								<>
+									<Loader2 className="mr-2 size-4 animate-spin" />
+									Signing in...
+								</>
+							) : (
+								"Sign in"
+							)}
 						</Button>
 					</FieldGroup>
 				</form>
 			</CardContent>
+
 			<CardFooter className="border-t border-border pt-3 text-center text-xs text-muted-foreground">
 				Secure, role-based access for students, reviewers, and admins.
 			</CardFooter>

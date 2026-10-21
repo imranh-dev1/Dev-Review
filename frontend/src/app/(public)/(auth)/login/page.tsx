@@ -11,18 +11,9 @@ export const metadata = {
 export default function LoginPage() {
 	return (
 		<div className="relative flex min-h-[calc(100svh-10rem)] flex-col items-center justify-center px-4 py-12 sm:px-6">
-			<div
-				aria-hidden
-				className="pointer-events-none absolute inset-0 -z-10 bg-grid bg-grid-fade opacity-60"
-			/>
 
 			<div className="w-full max-w-sm">
 				<div className="mb-6 flex flex-col items-center gap-2 text-center">
-					<Link href="/" className="mb-2 flex items-center gap-2">
-						<span className="text-sm font-semibold tracking-tight">
-							Dev<span className="text-primary">Review</span>
-						</span>
-					</Link>
 					<h1 className="text-xl font-semibold tracking-tight">
 						Sign in to your account
 					</h1>

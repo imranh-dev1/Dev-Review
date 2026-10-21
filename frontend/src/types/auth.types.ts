@@ -6,3 +6,8 @@ export interface IUserRegisterPayload {
     password: string;
     role?: UserRole;
 }
+
+export interface IVerifyEmailPayload {
+    email: string;
+    otp: string;
+}

@@ -1,20 +1,20 @@
 import apiClint from "@/lib/apiClint";
-import { IUserRegisterPayload } from "@/types";
+import { IUserRegisterPayload, IVerifyEmailPayload } from "@/types";
 
 export function userRegister(payload: IUserRegisterPayload) {
     return apiClint("/auth/register", { method: "POST", body: payload });
 }
 
-// export function userVerifyAccount(payload: IVerifyAccountPayload) {
-//     return apiClint("/auth/register-email-verify", {
-//         method: "POST",
-//         body: payload,
-//     });
-// }
+export function userVerifyAccount(payload: IVerifyEmailPayload) {
+    return apiClint("/auth/verify-email", {
+        method: "POST",
+        body: payload,
+    });
+}
 
-// export function userLogin(payload: { email: string; password: string }) {
-//     return apiClint("/auth/login", { method: "POST", body: payload });
-// }
+export function userLogin(payload: { email: string; password: string }) {
+    return apiClint("/auth/login", { method: "POST", body: payload });
+}
 
 // export function googleAuthLogin(payload: { idToken: string }) {
 //     return apiClint("/auth/google", { method: "POST", body: payload });
