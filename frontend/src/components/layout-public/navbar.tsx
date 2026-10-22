@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import Logo from "../../../public/logo.png";
 import { useGetMe } from "@/hooks";
+import { NavUserDropdown } from "./nav-user-dropdown";
 
 export type NavigationSection = {
 	title: string;
@@ -72,6 +73,9 @@ export function Navbar() {
 
 	const user = data?.data;
 
+	console.log(user?.name);
+	
+
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 12);
 		onScroll();
@@ -98,7 +102,7 @@ export function Navbar() {
 						<Image
 							src={Logo}
 							alt="DevReview"
-							width={1000}
+							width={100}
 							height={18}
 							className="h-18 w-auto object-contain"
 							priority
@@ -123,14 +127,23 @@ export function Navbar() {
 					</div>
 
 					<div className="flex items-center gap-1.5">
-						<Link href="/login" className="hidden sm:flex border">
-							<Button variant="ghost" size="sm" className="gap-1.5">
-								<LogIn className="size-3.5" />
-								Sign in
-							</Button>
-						</Link>
 						
-						<CtaButton className="hidden lg:flex" />
+						{isLoading ? ( 
+							<div className="size-9 animate-pulse rounded-full bg-muted" />
+							) : user ? ( 
+							<NavUserDropdown user={user} />
+							) : ( 
+								<>
+									<Link href="/login" className="hidden sm:flex border">
+									<Button variant="ghost" size="sm" className="gap-1.5">
+										<LogIn className="size-3.5" />
+										Sign in
+									</Button>
+									</Link>
+
+									<CtaButton className="hidden lg:flex" />
+								</>
+							)}
 
 						<div className="lg:hidden">
 							<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
