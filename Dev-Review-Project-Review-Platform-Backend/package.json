@@ -21,7 +21,11 @@
     "migration:plan": "prisma migration plan",
     "migration:show": "prisma migration show",
     "migration:status": "prisma migration status",
-    "start": "node dist/server.mjs"
+    "start": "node dist/server.mjs",
+    "format:check": "npx @biomejs/biome format ./src",
+    "format:fix": "npx @biomejs/biome format --write ./src",
+    "linter:check": "npx @biomejs/biome lint",
+    "linter:fix": "npx @biomejs/biome lint --write ./src"
   },
   "dependencies": {
     "@prisma/composer": "0.28.0",
