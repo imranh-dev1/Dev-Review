@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to DevReview</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #000000; font-family: Arial, Helvetica, sans-serif; color: #ffffff;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #000000; padding: 40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 560px; background-color: #0a0a0a; border: 1px solid #1f2937; border-radius: 12px; overflow: hidden;">
+
+          <!-- Header -->
+          <tr>
+            <td align="center" style="padding: 32px 24px 24px;">
+              <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #00FEFB;">
+                DevReview
+              </h1>
+              <p style="margin: 8px 0 0; font-size: 13px; color: #9ca3af;">
+                Project Review Platform
+              </p>
+            </td>
+          </tr>
+
+          <!-- Main content -->
+          <tr>
+            <td style="padding: 16px 32px 32px;">
+              <h2 style="margin: 0 0 16px; font-size: 24px; line-height: 1.4; color: #ffffff;">
+                Welcome aboard, <%= name %>!
+              </h2>
+
+              <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.8; color: #d1d5db;">
+                Your email has been verified, and your DevReview account is ready to use.
+                We're excited to have you join our community.
+              </p>
+
+              <p style="margin: 0 0 12px; font-size: 14px; color: #9ca3af;">
+                Your registered email address:
+              </p>
+
+              <div style="padding: 14px 16px; background-color: #111827; border: 1px solid #00FEFB; border-radius: 8px; overflow-wrap: anywhere;">
+                <p style="margin: 0; font-size: 14px; color: #00FEFB;">
+                  <%= email %>
+                </p>
+              </div>
+
+              <p style="margin: 24px 0 12px; font-size: 15px; line-height: 1.8; color: #d1d5db;">
+                With DevReview, you can submit projects, receive meaningful feedback,
+                track your progress, and improve your development skills.
+              </p>
+
+              <p style="margin: 24px 0 0; font-size: 15px; line-height: 1.8; color: #d1d5db;">
+                We're looking forward to seeing what you build!
+              </p>
+
+              <p style="margin: 24px 0 0; font-size: 15px; line-height: 1.8; color: #ffffff;">
+                Best regards,<br />
+                <strong style="color: #00FEFB;">The DevReview Team</strong>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding: 20px 24px; border-top: 1px solid #1f2937;">
+              <p style="margin: 0 0 8px; font-size: 12px; line-height: 1.6; color: #6b7280;">
+                This email confirms the successful verification of your account.
+              </p>
+              <p style="margin: 0; font-size: 12px; color: #6b7280;">
+                &copy; <%= year %> DevReview. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

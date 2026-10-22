@@ -5,19 +5,22 @@ import { AppError } from "../utils/AppError";
 import httpStatus from "http-status";
 
 export const validateRequest = (zodSchema: z.ZodObject) => {
-    return catchAsync((req: Request, res: Response, next: NextFunction) => {
-        const payload = req.body ?? {}
+	return catchAsync((req: Request, res: Response, next: NextFunction) => {
+		const payload = req.body ?? {};
 
-        const result = zodSchema.safeParse(payload);
+		const result = zodSchema.safeParse(payload);
 
-        if (!result.success) {
-            console.log(result.error)
-            console.log(result.error.message)
-            throw new AppError(httpStatus.BAD_REQUEST, result.error.issues[0].message)
-        }
+		if (!result.success) {
+			console.log(result.error);
+			console.log(result.error.message);
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				result.error.issues[0].message,
+			);
+		}
 
-        req.body = result.data;
+		req.body = result.data;
 
-        next();
-    });
+		next();
+	});
 };

@@ -78,7 +78,7 @@ export function RegisterForm() {
 
 				onError: (error) => {
 					const message =
-						error instanceof ApiError
+						error instanceof Error
 							? error.message
 							: "Unable to create account. Try again.";
 

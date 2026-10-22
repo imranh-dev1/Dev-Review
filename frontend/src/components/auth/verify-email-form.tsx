@@ -53,16 +53,21 @@ export function VerifyEmailForm() {
 				toast.success("Email verified", {
 					description: `You're in, ${payload.email}.`,
 				});
+
 				router.replace("/dashboard");
 			},
+
 			onError: (error) => {
 				const message =
-					error instanceof ApiError
+					error instanceof Error
 						? error.message
-						: "Verification failed. Check the code and try again.";
-				toast.error("Verification failed", { description: message });
-			}
-		})
+						: "Verification failed. Please try again.";
+
+				toast.error("Verification failed", {
+					description: message,
+				});
+			},
+		});
 	}
 
 	return (

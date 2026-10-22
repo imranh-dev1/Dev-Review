@@ -70,13 +70,13 @@ enum AuditEntityType {
 
 model User {
   id              Uuid                      @id @default(uuid())
-  name            VarChar(100)
+  name            String
   email           String                    @unique
   passwordHash    String?                   @map("password_hash")
   avatar          String?
   role            UserRole                  @default(STUDENT)
   status          UserStatus                @default(ACTIVE)
-  emailVerifiedAt DateTime?                 @map("email_verified_at")
+  emailVerifiedAt DateTime?                 @default(now()) @map("email_verified_at")
   createdAt       DateTime                  @default(now()) @map("created_at")
   updatedAt       temporal.updatedAt()      @map("updated_at")
   submissions     ProjectSubmission[]       @relation("SubmissionOwner")

@@ -40,7 +40,6 @@ app.get("/api/v1/health", (req: Request, res: Response) => {
 
 app.use("/api/v1/auth", AuthRoutes);
 
-
 app.use(globalErrorHandler);
 app.use(notFound);
 
