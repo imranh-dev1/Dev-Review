@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import httpStatus from "http-status";
 import { notFound } from "./app/middleware/notFound";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
+import { AuthRoutes } from "./app/modules/auth/auth.route";
 
 const app: Application = express();
 
@@ -36,6 +37,9 @@ app.get("/api/v1/health", (req: Request, res: Response) => {
 		message: "DevReview API is running",
 	});
 });
+
+app.use("/api/v1/auth", AuthRoutes);
+
 
 app.use(globalErrorHandler);
 app.use(notFound);

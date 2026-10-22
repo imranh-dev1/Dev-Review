@@ -71,7 +71,7 @@ enum AuditEntityType {
 model User {
   id              Uuid                      @id @default(uuid())
   name            VarChar(100)
-  email           VarChar(255)              @unique
+  email           String                    @unique
   passwordHash    String?                   @map("password_hash")
   avatar          String?
   role            UserRole                  @default(STUDENT)
