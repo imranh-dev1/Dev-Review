@@ -1,21 +1,199 @@
 // use prisma-8
-
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+enum UserRole {
+  STUDENT
+  REVIEWER
+  ADMIN
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  IN_REVIEW
+  CHANGES_REQUESTED
+  RESUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum ReviewDecision {
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
+}
+
+enum AssignmentStatus {
+  ASSIGNED
+  ACCEPTED
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  SUBMISSION_RECEIVED
+  REVIEW_STARTED
+  REVIEW_COMPLETED
+  CHANGES_REQUESTED
+  SUBMISSION_APPROVED
+  SUBMISSION_REJECTED
+  REVIEW_ASSIGNED
+  SYSTEM
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  ASSIGN_REVIEWER
+  START_REVIEW
+  SUBMIT_REVIEW
+  STATUS_CHANGE
+  USER_STATUS_CHANGE
+  ROLE_CHANGE
+}
+
+enum AuditEntityType {
+  USER
+  SUBMISSION
+  REVIEW
+  ASSIGNMENT
+  NOTIFICATION
+  SYSTEM
+}
+
+model User {
+  id              Uuid                      @id @default(uuid())
+  name            VarChar(100)
+  email           VarChar(255)              @unique
+  passwordHash    String?                   @map("password_hash")
+  avatar          String?
+  role            UserRole                  @default(STUDENT)
+  status          UserStatus                @default(ACTIVE)
+  emailVerifiedAt DateTime?                 @map("email_verified_at")
+  createdAt       DateTime                  @default(now()) @map("created_at")
+  updatedAt       temporal.updatedAt()      @map("updated_at")
+  submissions     ProjectSubmission[]       @relation("SubmissionOwner")
+  reviews         Review[]                  @relation("ReviewAuthor")
+  assignments     ReviewAssignment[]        @relation("ReviewerAssignments")
+  statusHistory   SubmissionStatusHistory[] @relation("StatusChangedBy")
+  notifications   Notification[]
+
+  @@index([role, status])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model ProjectSubmission {
+  id            Uuid                      @id @default(uuid())
+  title         VarChar(150)
+  summary       VarChar(300)
+  description   String
+  repositoryUrl VarChar(2048)             @map("repository_url")
+  liveDemoUrl   VarChar(2048)?            @map("live_demo_url")
+  technologies  String[]                  @default([])
+  screenshots   String[]                  @default([])
+  status        SubmissionStatus          @default(DRAFT)
+
+  ownerId       Uuid                      @map("owner_id")
+  owner         User                      @relation("SubmissionOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  submittedAt   DateTime?                 @map("submitted_at")
+  createdAt     DateTime                  @default(now()) @map("created_at")
+  updatedAt     temporal.updatedAt()      @map("updated_at")
+  deletedAt     DateTime?                 @map("deleted_at")
+
+  reviews       Review[]
+  assignments   ReviewAssignment[]
+  statusHistory SubmissionStatusHistory[]
+  notifications Notification[]
+
+  @@unique([ownerId, repositoryUrl])
+  @@index([ownerId, status])
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@map("project_submissions")
+}
+
+model Review {
+  id             Uuid              @id @default(uuid())
+  submissionId   Uuid              @map("submission_id")
+  reviewerId     Uuid              @map("reviewer_id")
+  decision       ReviewDecision
+  feedback       String
+
+  codeQuality    Int               @map("code_quality")
+  functionality  Int
+  uiUx           Int               @map("ui_ux")
+  responsiveness Int
+  accessibility  Int
+  documentation  Int
+  overallScore   Numeric(3, 2)     @map("overall_score")
+  revisionNumber Int               @default(1) @map("revision_number")
+  createdAt      DateTime          @default(now()) @map("created_at")
+
+  submission     ProjectSubmission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  reviewer       User              @relation("ReviewAuthor", fields: [reviewerId], references: [id], onDelete: Restrict)
+
+  @@unique([submissionId, revisionNumber])
+  @@index([reviewerId, createdAt])
+  @@index([submissionId, createdAt])
+  @@map("reviews")
+}
+
+model ReviewAssignment {
+  id           Uuid              @id @default(uuid())
+  submissionId Uuid              @map("submission_id")
+  reviewerId   Uuid              @map("reviewer_id")
+  status       AssignmentStatus  @default(ASSIGNED)
+  assignedAt   DateTime          @default(now()) @map("assigned_at")
+  completedAt  DateTime?         @map("completed_at")
+
+  submission   ProjectSubmission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  reviewer     User              @relation("ReviewerAssignments", fields: [reviewerId], references: [id], onDelete: Restrict)
+
+  @@unique([submissionId, reviewerId])
+  @@index([reviewerId, status])
+  @@index([submissionId, status])
+  @@map("review_assignments")
+}
+
+model SubmissionStatusHistory {
+  id           Uuid              @id @default(uuid())
+  submissionId Uuid              @map("submission_id")
+  fromStatus   SubmissionStatus? @map("from_status")
+  toStatus     SubmissionStatus  @map("to_status")
+  changedById  Uuid?             @map("changed_by_id")
+  note         String?
+  createdAt    DateTime          @default(now()) @map("created_at")
+
+  submission   ProjectSubmission @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  changedBy    User?             @relation("StatusChangedBy", fields: [changedById], references: [id], onDelete: SetNull)
+
+  @@index([submissionId, createdAt])
+  @@index([changedById, createdAt])
+  @@map("submission_status_history")
+}
+
+model Notification {
+  id           Uuid               @id @default(uuid())
+  recipientId  Uuid               @map("recipient_id")
+  submissionId Uuid?              @map("submission_id")
+  type         NotificationType
+  title        VarChar(150)
+  message      String
+  isRead       Boolean            @default(false) @map("is_read")
+  readAt       DateTime?          @map("read_at")
+  createdAt    DateTime           @default(now()) @map("created_at")
+
+  recipient    User               @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  submission   ProjectSubmission? @relation(fields: [submissionId], references: [id], onDelete: SetNull)
+
+  @@index([recipientId, isRead, createdAt])
+  @@map("notifications")
 }
