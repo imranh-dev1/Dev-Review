@@ -7,6 +7,7 @@ import { redisClient } from "../../lib/redis";
 import { AppError } from "../../utils/AppError";
 import sendEmail from "../../utils/sendEmail";
 import type {
+	ILoginPayload,
 	IResendOtpPayload,
 	IUserRegisterPayload,
 	IVerifyEmailPayload,
@@ -201,8 +202,60 @@ const resendOtp = async (payload: IResendOtpPayload) => {
 	};
 };
 
+const loginUser = async (payload: ILoginPayload) => {
+	const email = payload.email.trim().toLowerCase();
+
+	const user = await db.orm.public.User.where({
+		email: email
+	}).first();
+
+	if (!user || !user.passwordHash) {
+		throw new AppError(httpStatus.UNAUTHORIZED, "Invalid email or password");
+	}
+
+	const passwordMatches = await bcrypt.compare(payload.password, user.passwordHash);
+
+	if (!passwordMatches) {
+		throw new AppError(httpStatus.UNAUTHORIZED, "Invalid email or password");
+	}
+
+	if (!user.emailVerifiedAt) {
+		throw new AppError(httpStatus.FORBIDDEN, "Please verify your email before logging in");
+	}
+
+	if (user.status !== UserStatus.ACTIVE) {
+		throw new AppError(httpStatus.FORBIDDEN, "Account is not active. Contact administrator.");
+	}
+
+
+	const jwtPayload = {
+		userId: user.id,
+		name: user.name,
+		email: user.email,
+		role: user.role,
+	};
+
+	const accessToken = jwtUtils.createToken(
+		jwtPayload,
+		config.jwt_access_secret,
+		config.jwt_access_expires_in as SignOptions,
+	);
+
+	const refreshToken = jwtUtils.createToken(
+		jwtPayload,
+		config.jwt_refresh_secret,
+		config.jwt_refresh_expires_in as SignOptions,
+	);
+
+	return {
+		accessToken,
+		refreshToken,
+	};
+};
+
 export const AuthServices = {
 	registerUser,
 	verifyEmail,
-	resendOtp
+	resendOtp,
+	loginUser
 };

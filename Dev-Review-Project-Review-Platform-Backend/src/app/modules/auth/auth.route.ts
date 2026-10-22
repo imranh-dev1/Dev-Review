@@ -23,4 +23,10 @@ router.post(
 	AuthControllers.resendOtp,
 );
 
+router.post(
+	"/login",
+	validateRequest(userValidation.loginSchema),
+	AuthControllers.loginUser,
+);
+
 export const AuthRoutes = router;

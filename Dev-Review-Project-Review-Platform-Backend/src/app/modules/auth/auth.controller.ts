@@ -44,10 +44,26 @@ const resendOtp = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const loginUser = catchAsync(async (req: Request, res: Response) => {
+	const result = await AuthServices.loginUser(req.body);
+
+	setAuthCookies(res, result.accessToken, result.refreshToken);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Logged in successfully.",
+		data: {
+			accessToken: result.accessToken,
+			refreshToken: result.refreshToken,
+		},
+	});
+});
 
 
 export const AuthControllers = {
 	registerUser,
 	verifyEmail,
-	resendOtp
+	resendOtp,
+	loginUser
 };
