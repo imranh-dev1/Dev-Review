@@ -21,8 +21,7 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { ApiError } from "@/lib/api-client";
+import { Input } from "@/components/ui/input"; 
 import { useLogin } from "@/hooks";
 
 const schema = z.object({
@@ -61,7 +60,7 @@ export function LoginForm() {
 			},
 			onError: (error) => {
 				const message =
-					error instanceof ApiError
+					error instanceof Error
 						? error.message
 						: "Unable to sign in. Check your credentials and try again.";
 

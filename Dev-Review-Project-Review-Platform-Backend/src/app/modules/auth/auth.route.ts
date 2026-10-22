@@ -17,4 +17,10 @@ router.post(
 	AuthControllers.verifyEmail,
 );
 
+router.post(
+	"/resend-otp",
+	validateRequest(userValidation.resendOtpSchema),
+	AuthControllers.resendOtp,
+);
+
 export const AuthRoutes = router;

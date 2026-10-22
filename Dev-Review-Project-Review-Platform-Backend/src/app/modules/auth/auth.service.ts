@@ -7,6 +7,7 @@ import { redisClient } from "../../lib/redis";
 import { AppError } from "../../utils/AppError";
 import sendEmail from "../../utils/sendEmail";
 import type {
+	IResendOtpPayload,
 	IUserRegisterPayload,
 	IVerifyEmailPayload,
 } from "./auth.interface";
@@ -44,6 +45,7 @@ const registerUser = async (payload: IUserRegisterPayload) => {
 	const otpValue = crypto.randomInt(100000, 1000000).toString();
 
 	const expirationSeconds = 5 * 60;
+	const registerDataExpirationSeconds = 10 * 60;
 
 	await redisClient.set(otpKey, otpValue, {
 		expiration: { type: "EX", value: expirationSeconds },
@@ -58,7 +60,7 @@ const registerUser = async (payload: IUserRegisterPayload) => {
 	};
 
 	await redisClient.set(registrationKey, JSON.stringify(redisUserDataPayload), {
-		expiration: { type: "EX", value: expirationSeconds },
+		expiration: { type: "EX", value: registerDataExpirationSeconds },
 	});
 
 	await sendEmail({
@@ -157,7 +159,50 @@ const verifyEmail = async (payload: IVerifyEmailPayload) => {
 	};
 };
 
+const resendOtp = async (payload: IResendOtpPayload) => {
+	const email = payload.email.trim().toLowerCase();
+
+	const registrationKey = `registration-data:${email}`;
+	const rawData = await redisClient.get(registrationKey);
+
+	if (!rawData) {
+		throw new AppError(
+			httpStatus.NOT_FOUND,
+			"No pending registration found for this email",
+		);
+	}
+
+	const { name } = JSON.parse(rawData) as { name: string };
+
+	const otpKey = `registration-otp:${email}`;
+	const otpValue = crypto.randomInt(100000, 1000000).toString();
+
+	const expirationSeconds = 5 * 60;
+
+	await redisClient.set(otpKey, otpValue, {
+		expiration: { type: "EX", value: expirationSeconds },
+	});
+	await redisClient.expire(registrationKey, expirationSeconds);
+
+	await sendEmail({
+		to: email,
+		subject: "Your New DevReview Verification Code",
+		template: "email-verification",
+		data: {
+			name,
+			otp: otpValue,
+			expirationMinutes: Math.ceil(expirationSeconds / 60),
+		},
+	});
+
+	return {
+		success: true,
+		message: "Verification OTP resent to email successfully.",
+	};
+};
+
 export const AuthServices = {
 	registerUser,
 	verifyEmail,
+	resendOtp
 };

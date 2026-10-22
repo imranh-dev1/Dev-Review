@@ -33,7 +33,21 @@ const verifyEmail = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const resendOtp = catchAsync(async (req: Request, res: Response) => {
+	const result = await AuthServices.resendOtp(req.body);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: result.message,
+		data: null,
+	});
+});
+
+
+
 export const AuthControllers = {
 	registerUser,
 	verifyEmail,
+	resendOtp
 };

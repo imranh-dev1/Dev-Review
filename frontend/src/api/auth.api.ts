@@ -1,5 +1,5 @@
 import apiClint from "@/lib/apiClint";
-import { IUserRegisterPayload, IVerifyEmailPayload } from "@/types";
+import { IResendOtpPayload, IUserRegisterPayload, IVerifyEmailPayload } from "@/types";
 
 export function userRegister(payload: IUserRegisterPayload) {
     return apiClint("/auth/register", { method: "POST", body: payload });
@@ -10,6 +10,10 @@ export function userVerifyAccount(payload: IVerifyEmailPayload) {
         method: "POST",
         body: payload,
     });
+}
+
+export function resendOTP(payload: IResendOtpPayload) {
+    return apiClint("/auth/resend-otp", { method: "POST", body: payload });
 }
 
 export function userLogin(payload: { email: string; password: string }) {

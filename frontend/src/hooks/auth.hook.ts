@@ -1,4 +1,4 @@
-import { getMe, userLogin, userRegister, userVerifyAccount } from "@/api/auth.api";
+import { getMe, resendOTP, userLogin, userRegister, userVerifyAccount } from "@/api/auth.api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useRegister() {
@@ -10,6 +10,12 @@ export function useRegister() {
 export function useVerifyAccount() {
     return useMutation({
         mutationFn: userVerifyAccount,
+    });
+}
+
+export function useResendOTP() {
+    return useMutation({
+        mutationFn: resendOTP,
     });
 }
 
