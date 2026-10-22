@@ -207,27 +207,35 @@ const loginUser = async (payload: ILoginPayload) => {
 	const email = payload.email.trim().toLowerCase();
 
 	const user = await db.orm.public.User.where({
-		email: email
+		email: email,
 	}).first();
 
 	if (!user || !user.passwordHash) {
 		throw new AppError(httpStatus.UNAUTHORIZED, "Invalid email or password");
 	}
 
-	const passwordMatches = await bcrypt.compare(payload.password, user.passwordHash);
+	const passwordMatches = await bcrypt.compare(
+		payload.password,
+		user.passwordHash,
+	);
 
 	if (!passwordMatches) {
 		throw new AppError(httpStatus.UNAUTHORIZED, "Invalid email or password");
 	}
 
 	if (!user.emailVerifiedAt) {
-		throw new AppError(httpStatus.FORBIDDEN, "Please verify your email before logging in");
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"Please verify your email before logging in",
+		);
 	}
 
 	if (user.status !== UserStatus.ACTIVE) {
-		throw new AppError(httpStatus.FORBIDDEN, "Account is not active. Contact administrator.");
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"Account is not active. Contact administrator.",
+		);
 	}
-
 
 	const jwtPayload = {
 		userId: user.id,
@@ -255,7 +263,6 @@ const loginUser = async (payload: ILoginPayload) => {
 };
 
 const refreshToken = async (token: string) => {
-
 	const verifiedRefreshToken = jwtUtils.verifyToken(
 		token,
 		config.jwt_refresh_secret,
@@ -273,8 +280,8 @@ const refreshToken = async (token: string) => {
 	const data = verifiedRefreshToken.data as JwtPayload;
 
 	const user = await db.orm.public.User.where({
-		id: data.userId
-	}).first()
+		id: data.userId,
+	}).first();
 
 	if (!user || user.status !== UserStatus.ACTIVE) {
 		throw new AppError(401, "User is inactive or not found");
@@ -306,7 +313,6 @@ const refreshToken = async (token: string) => {
 };
 
 const getMe = async (user: IRequestUser) => {
-
 	const isUserExists = await db.orm.public.User.first({
 		id: user.userId,
 	});
@@ -319,7 +325,6 @@ const getMe = async (user: IRequestUser) => {
 
 	return currentUser;
 };
-
 
 export const AuthServices = {
 	registerUser,

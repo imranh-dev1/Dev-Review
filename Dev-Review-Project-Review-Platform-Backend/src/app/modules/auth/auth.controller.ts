@@ -63,14 +63,12 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
-
 	if (!req.cookies.refreshToken) {
 		throw new AppError(httpStatus.UNAUTHORIZED, "Refresh token is missing");
 	}
 	const result = await AuthServices.refreshToken(req.cookies.refreshToken);
 
 	const { accessToken, refreshToken: newRefreshToken } = result;
-
 
 	setAuthCookies(res, accessToken, newRefreshToken);
 
@@ -89,7 +87,10 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
 	const user = req.user as unknown as IRequestUser;
 
 	if (!user) {
-		throw new AppError(httpStatus.BAD_REQUEST, "User information is missing in the request");
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"User information is missing in the request",
+		);
 	}
 
 	const result = await AuthServices.getMe(user);
@@ -103,7 +104,6 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
 });
 
 const logout = catchAsync(async (req: Request, res: Response) => {
-
 	clearAuthCookies(res);
 
 	sendResponse(res, {
@@ -114,7 +114,6 @@ const logout = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
-
 export const AuthControllers = {
 	registerUser,
 	verifyEmail,
@@ -122,5 +121,5 @@ export const AuthControllers = {
 	loginUser,
 	refreshToken,
 	getMe,
-	logout
+	logout,
 };

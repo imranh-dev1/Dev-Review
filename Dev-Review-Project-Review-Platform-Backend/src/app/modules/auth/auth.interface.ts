@@ -28,7 +28,6 @@ export interface IRequestUser {
 	role: UserRole;
 }
 
-
 export interface IUpdateProfilePayload {
 	name?: string;
 	avatar?: string;
