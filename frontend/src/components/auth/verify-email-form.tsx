@@ -41,7 +41,7 @@ export function VerifyEmailForm() {
  
   useEffect(() => {
     if (countdown <= 0) return;
-    const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    const timer = setTimeout(() => setCountdown(countdown - 1), 2000);
     return () => clearTimeout(timer);
   }, [countdown]);
 
