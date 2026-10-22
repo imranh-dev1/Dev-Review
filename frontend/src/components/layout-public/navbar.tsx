@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "cn";
-import { ArrowUpRight, LogIn, Menu, Sparkles } from "lucide-react";
+import { ArrowUpRight, LogIn, Menu, Sparkles, SquareCenterlineDashedVerticalIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -50,16 +50,15 @@ const CtaButton = ({ className }: { className?: string }) => (
 		asChild
 		size="sm"
 		className={cn(
-			"group relative h-8 w-fit overflow-hidden ps-3 pe-10 transition-all duration-300 hover:pe-3",
+			"group relative h-8 w-fit overflow-hidden ps-4 pe-10 transition-all duration-300 hover:pe-6",
 			className,
 		)}
 	>
 		<Link href="/signup">
-			<span className="relative z-10 flex items-center gap-1.5">
-				<Sparkles className="size-3.5" />
+			<span className="relative z-10 flex items-center gap-1.5"> 
 				Get started
 			</span>
-			<span className="absolute right-1 flex h-6 w-6 items-center justify-center transition-transform duration-300 group-hover:rotate-45">
+			<span className="absolute right-2 flex h-6 w-6 items-center justify-center transition-transform duration-300 group-hover:rotate-45">
 				<ArrowUpRight className="size-3.5" />
 			</span>
 		</Link>
@@ -71,8 +70,7 @@ export function Navbar() {
 	const [isOpen, setIsOpen] = useState(false);
 	const { data, isLoading } = useGetMe();
 
-	console.log(data);
-
+	const user = data?.data;
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 12);
@@ -125,12 +123,13 @@ export function Navbar() {
 					</div>
 
 					<div className="flex items-center gap-1.5">
-						<Link href="/login" className="hidden sm:flex">
+						<Link href="/login" className="hidden sm:flex border">
 							<Button variant="ghost" size="sm" className="gap-1.5">
 								<LogIn className="size-3.5" />
 								Sign in
 							</Button>
 						</Link>
+						
 						<CtaButton className="hidden lg:flex" />
 
 						<div className="lg:hidden">

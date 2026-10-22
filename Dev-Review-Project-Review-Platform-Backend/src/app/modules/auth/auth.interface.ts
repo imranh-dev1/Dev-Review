@@ -21,6 +21,14 @@ export interface ILoginPayload {
 	password: string;
 }
 
+export interface IRequestUser {
+	userId: string;
+	email: string;
+	name: string;
+	role: UserRole;
+}
+
+
 export interface IUpdateProfilePayload {
 	name?: string;
 	avatar?: string;

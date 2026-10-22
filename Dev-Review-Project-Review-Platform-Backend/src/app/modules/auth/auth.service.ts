@@ -8,13 +8,14 @@ import { AppError } from "../../utils/AppError";
 import sendEmail from "../../utils/sendEmail";
 import type {
 	ILoginPayload,
+	IRequestUser,
 	IResendOtpPayload,
 	IUserRegisterPayload,
 	IVerifyEmailPayload,
 } from "./auth.interface";
 import { UserRole, UserStatus } from "../../types/models";
 import { jwtUtils } from "../../utils/jwt";
-import type { SignOptions } from "jsonwebtoken";
+import type { JwtPayload, SignOptions } from "jsonwebtoken";
 
 const registerUser = async (payload: IUserRegisterPayload) => {
 	const { name, email: rawEmail, password } = payload;
@@ -253,9 +254,78 @@ const loginUser = async (payload: ILoginPayload) => {
 	};
 };
 
+const refreshToken = async (token: string) => {
+
+	const verifiedRefreshToken = jwtUtils.verifyToken(
+		token,
+		config.jwt_refresh_secret,
+	);
+
+	if (!verifiedRefreshToken.success || !verifiedRefreshToken.data) {
+		throw new AppError(
+			httpStatus.UNAUTHORIZED,
+			config.node_env === "development"
+				? verifiedRefreshToken.error
+				: "Invalid refresh token",
+		);
+	}
+
+	const data = verifiedRefreshToken.data as JwtPayload;
+
+	const user = await db.orm.public.User.where({
+		id: data.userId
+	}).first()
+
+	if (!user || user.status !== UserStatus.ACTIVE) {
+		throw new AppError(401, "User is inactive or not found");
+	}
+
+	const jwtPayload = {
+		userId: user.id,
+		name: user.name,
+		email: user.email,
+		role: user.role,
+	};
+
+	const accessToken = jwtUtils.createToken(
+		jwtPayload,
+		config.jwt_access_secret,
+		config.jwt_access_expires_in as SignOptions,
+	);
+
+	const refreshToken = jwtUtils.createToken(
+		jwtPayload,
+		config.jwt_refresh_secret,
+		config.jwt_refresh_expires_in as SignOptions,
+	);
+
+	return {
+		accessToken,
+		refreshToken,
+	};
+};
+
+const getMe = async (user: IRequestUser) => {
+
+	const isUserExists = await db.orm.public.User.first({
+		id: user.userId,
+	});
+
+	if (!isUserExists) {
+		throw new AppError(httpStatus.FORBIDDEN, "User not found...");
+	}
+
+	const { passwordHash, ...currentUser } = isUserExists;
+
+	return currentUser;
+};
+
+
 export const AuthServices = {
 	registerUser,
 	verifyEmail,
 	resendOtp,
-	loginUser
+	loginUser,
+	refreshToken,
+	getMe
 };

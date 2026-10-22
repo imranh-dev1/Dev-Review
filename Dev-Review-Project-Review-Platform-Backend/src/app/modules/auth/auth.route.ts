@@ -2,6 +2,8 @@ import { Router } from "express";
 import { validateRequest } from "../../middleware/validateRequest";
 import { userValidation } from "./auth.validation";
 import { AuthControllers } from "./auth.controller";
+import { auth } from "../../middleware/checkAuth";
+import { UserRole } from "../../types/models";
 
 const router = Router();
 
@@ -28,5 +30,10 @@ router.post(
 	validateRequest(userValidation.loginSchema),
 	AuthControllers.loginUser,
 );
+
+router.post("/refresh-token", AuthControllers.refreshToken);
+
+router.get("/me", auth(UserRole.ADMIN, UserRole.REVIEWER, UserRole.STUDENT), AuthControllers.getMe);
+
 
 export const AuthRoutes = router;

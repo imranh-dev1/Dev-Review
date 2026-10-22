@@ -4,6 +4,8 @@ import { sendResponse } from "../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
 import httpStatus from "http-status";
 import { setAuthCookies } from "../../utils/setAuthCookies";
+import { AppError } from "../../utils/AppError";
+import type { IRequestUser } from "./auth.interface";
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
 	const result = await AuthServices.registerUser(req.body);
@@ -60,10 +62,52 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
+
+	if (!req.cookies.refreshToken) {
+		throw new AppError(httpStatus.UNAUTHORIZED, "Refresh token is missing");
+	}
+	const result = await AuthServices.refreshToken(req.cookies.refreshToken);
+
+	const { accessToken, refreshToken: newRefreshToken } = result;
+
+
+	setAuthCookies(res, accessToken, newRefreshToken);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "New tokens generated successfully",
+		data: {
+			accessToken,
+			refreshToken: newRefreshToken,
+		},
+	});
+});
+
+const getMe = catchAsync(async (req: Request, res: Response) => {
+	const user = req.user as unknown as IRequestUser;
+
+	if (!user) {
+		throw new AppError(httpStatus.BAD_REQUEST, "User information is missing in the request");
+	}
+
+	const result = await AuthServices.getMe(user);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "User profile fetched successfully",
+		data: result,
+	});
+});
+
 
 export const AuthControllers = {
 	registerUser,
 	verifyEmail,
 	resendOtp,
-	loginUser
+	loginUser,
+	refreshToken,
+	getMe
 };

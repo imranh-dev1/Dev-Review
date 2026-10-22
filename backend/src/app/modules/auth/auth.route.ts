@@ -43,6 +43,7 @@ router.post(
 );
 
 router.post("/refresh", AuthControllers.refreshTokens);
+
 router.post("/logout", AuthControllers.logout);
 
 router.get("/me", authenticate, AuthControllers.getMe);
