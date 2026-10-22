@@ -29,27 +29,6 @@ export type NotificationType =
 	| "REVIEW_ASSIGNED"
 	| "SYSTEM";
 
-export type AuditAction =
-	| "CREATE"
-	| "UPDATE"
-	| "DELETE"
-	| "LOGIN"
-	| "LOGOUT"
-	| "ASSIGN_REVIEWER"
-	| "START_REVIEW"
-	| "SUBMIT_REVIEW"
-	| "STATUS_CHANGE"
-	| "USER_STATUS_CHANGE"
-	| "ROLE_CHANGE";
-
-export type AuditEntityType =
-	| "USER"
-	| "SUBMISSION"
-	| "REVIEW"
-	| "ASSIGNMENT"
-	| "NOTIFICATION"
-	| "SYSTEM";
-
 export interface PaginationMeta {
 	page: number;
 	limit: number;
@@ -57,7 +36,7 @@ export interface PaginationMeta {
 	totalPages: number;
 }
 
-export interface User {
+export interface IUser {
 	id: string;
 	name: string;
 	email: string;
@@ -151,17 +130,6 @@ export interface AppNotification {
 	createdAt: string;
 }
 
-export interface AuditLog {
-	id: string;
-	actorId: string | null;
-	action: AuditAction;
-	entityType: AuditEntityType;
-	entityId: string | null;
-	metadata: string | null;
-	createdAt: string;
-	actor?: PublicUser | null;
-}
-
 export interface PlatformAnalytics {
 	users: {
 		total: number;
@@ -193,14 +161,13 @@ export interface ReviewerAnalytics {
 	};
 }
 
-export interface UserWithCounts extends User {
+export interface UserWithCounts extends IUser {
 	counts: { submissions: number; reviews: number };
 }
 
 export interface AuthPayload {
-	user: User;
+	user: IUser;
 	accessToken: string;
 }
 
-
-export * from "./auth.types"
+export * from "./auth.types";

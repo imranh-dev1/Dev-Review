@@ -35,5 +35,6 @@ router.post("/refresh-token", AuthControllers.refreshToken);
 
 router.get("/me", auth(UserRole.ADMIN, UserRole.REVIEWER, UserRole.STUDENT), AuthControllers.getMe);
 
+router.post("/logout", auth(UserRole.ADMIN, UserRole.REVIEWER, UserRole.STUDENT), AuthControllers.logout);
 
 export const AuthRoutes = router;

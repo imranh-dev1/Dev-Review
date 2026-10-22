@@ -22,18 +22,13 @@ import {
 	FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { ApiError } from "@/lib/api-client";
 import { useRegister } from "@/hooks";
+import { ApiError } from "@/lib/api-client";
 
 const schema = z.object({
 	name: z.string().trim().min(2, "Name must be at least 2 characters"),
-	email: z
-		.string()
-		.trim()
-		.email("Enter a valid email address"),
-	password: z
-		.string()
-		.min(8, "Password must be at least 8 characters"),
+	email: z.string().trim().email("Enter a valid email address"),
+	password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -42,10 +37,7 @@ export function RegisterForm() {
 	const router = useRouter();
 	const [showPassword, setShowPassword] = useState(false);
 
-	const {
-		mutate: userRegister,
-		isPending,
-	} = useRegister();
+	const { mutate: userRegister, isPending } = useRegister();
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(schema),
@@ -114,9 +106,7 @@ export function RegisterForm() {
 
 							<FieldError
 								errors={
-									form.formState.errors.name
-										? [form.formState.errors.name]
-										: []
+									form.formState.errors.name ? [form.formState.errors.name] : []
 								}
 							/>
 						</Field>
@@ -165,13 +155,9 @@ export function RegisterForm() {
 									variant="ghost"
 									size="icon"
 									className="absolute right-0 top-0 h-full w-10 text-muted-foreground hover:bg-transparent"
-									onClick={() =>
-										setShowPassword((previous) => !previous)
-									}
+									onClick={() => setShowPassword((previous) => !previous)}
 									disabled={isPending}
-									aria-label={
-										showPassword ? "Hide password" : "Show password"
-									}
+									aria-label={showPassword ? "Hide password" : "Show password"}
 									aria-pressed={showPassword}
 								>
 									{showPassword ? (

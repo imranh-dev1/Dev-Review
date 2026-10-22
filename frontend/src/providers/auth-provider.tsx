@@ -1,6 +1,14 @@
 "use client";
 
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+	createContext,
+	type ReactNode,
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 
 import { api, setAccessToken } from "@/lib/api-client";
 import type { AuthPayload, User } from "@/types";
@@ -70,10 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const verifyEmail = useCallback(
 		async (input: { email: string; otp: string }) => {
-			const result = await api.post<AuthPayload>(
-				"/auth/verify-email",
-				input,
-			);
+			const result = await api.post<AuthPayload>("/auth/verify-email", input);
 			return applySession(result.data);
 		},
 		[applySession],

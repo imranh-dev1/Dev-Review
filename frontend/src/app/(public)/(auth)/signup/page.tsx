@@ -1,8 +1,7 @@
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-
 import { RegisterForm } from "@/components/auth/register-form";
-import Image from "next/image"
 
 export const metadata = {
 	title: "Create account",

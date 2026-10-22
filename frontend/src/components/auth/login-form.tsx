@@ -21,7 +21,7 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input"; 
+import { Input } from "@/components/ui/input";
 import { useLogin } from "@/hooks";
 
 const schema = z.object({
@@ -35,13 +35,13 @@ export function LoginForm() {
 	const router = useRouter();
 	const [showPassword, setShowPassword] = useState(false);
 
-	const { mutate: login, isPending: isLoading } = useLogin()
+	const { mutate: login, isPending: isLoading } = useLogin();
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			email: "",
-			password: "",
+			email: "imranme.global@gmail.com",
+			password: "Pa$$w0rd!",
 		},
 	});
 
@@ -49,7 +49,7 @@ export function LoginForm() {
 		const payload = {
 			email: values.email.trim().toLowerCase(),
 			password: values.password,
-		}
+		};
 		login(payload, {
 			onSuccess: () => {
 				toast.success("Signed in", {
@@ -67,8 +67,8 @@ export function LoginForm() {
 				toast.error("Sign in failed", {
 					description: message,
 				});
-			}
-		})
+			},
+		});
 	}
 
 	return (
@@ -130,13 +130,9 @@ export function LoginForm() {
 									variant="ghost"
 									size="icon"
 									className="absolute right-0 top-0 h-full w-10 text-muted-foreground hover:bg-transparent"
-									onClick={() =>
-										setShowPassword((previous) => !previous)
-									}
+									onClick={() => setShowPassword((previous) => !previous)}
 									disabled={isLoading}
-									aria-label={
-										showPassword ? "Hide password" : "Show password"
-									}
+									aria-label={showPassword ? "Hide password" : "Show password"}
 									aria-pressed={showPassword}
 								>
 									{showPassword ? (
@@ -157,11 +153,7 @@ export function LoginForm() {
 						</Field>
 
 						{/* Submit */}
-						<Button
-							type="submit"
-							className="w-full"
-							disabled={isLoading}
-						>
+						<Button type="submit" className="w-full" disabled={isLoading}>
 							{isLoading ? (
 								<>
 									<Loader2 className="mr-2 size-4 animate-spin" />

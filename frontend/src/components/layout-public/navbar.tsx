@@ -1,7 +1,13 @@
 "use client";
 
 import { cn } from "cn";
-import { ArrowUpRight, LogIn, Menu, Sparkles, SquareCenterlineDashedVerticalIcon } from "lucide-react";
+import {
+	ArrowUpRight,
+	LogIn,
+	Menu,
+	Sparkles,
+	SquareCenterlineDashedVerticalIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -18,8 +24,8 @@ import {
 	NavigationMenuLink,
 	NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import Logo from "../../../public/logo.png";
 import { useGetMe } from "@/hooks";
+import Logo from "../../../public/logo.png";
 import { NavUserDropdown } from "./nav-user-dropdown";
 
 export type NavigationSection = {
@@ -56,7 +62,7 @@ const CtaButton = ({ className }: { className?: string }) => (
 		)}
 	>
 		<Link href="/signup">
-			<span className="relative z-10 flex items-center gap-1.5"> 
+			<span className="relative z-10 flex items-center gap-1.5">
 				Get started
 			</span>
 			<span className="absolute right-2 flex h-6 w-6 items-center justify-center transition-transform duration-300 group-hover:rotate-45">
@@ -74,7 +80,6 @@ export function Navbar() {
 	const user = data?.data;
 
 	console.log(user?.name);
-	
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 12);
@@ -127,23 +132,22 @@ export function Navbar() {
 					</div>
 
 					<div className="flex items-center gap-1.5">
-						
-						{isLoading ? ( 
+						{isLoading ? (
 							<div className="size-9 animate-pulse rounded-full bg-muted" />
-							) : user ? ( 
+						) : user ? (
 							<NavUserDropdown user={user} />
-							) : ( 
-								<>
-									<Link href="/login" className="hidden sm:flex border">
+						) : (
+							<>
+								<Link href="/login" className="hidden sm:flex border">
 									<Button variant="ghost" size="sm" className="gap-1.5">
 										<LogIn className="size-3.5" />
 										Sign in
 									</Button>
-									</Link>
+								</Link>
 
-									<CtaButton className="hidden lg:flex" />
-								</>
-							)}
+								<CtaButton className="hidden lg:flex" />
+							</>
+						)}
 
 						<div className="lg:hidden">
 							<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>

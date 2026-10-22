@@ -327,5 +327,5 @@ export const AuthServices = {
 	resendOtp,
 	loginUser,
 	refreshToken,
-	getMe
+	getMe,
 };

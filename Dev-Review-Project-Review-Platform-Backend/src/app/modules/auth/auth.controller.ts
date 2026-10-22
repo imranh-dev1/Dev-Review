@@ -3,7 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
 import httpStatus from "http-status";
-import { setAuthCookies } from "../../utils/setAuthCookies";
+import { clearAuthCookies, setAuthCookies } from "../../utils/setAuthCookies";
 import { AppError } from "../../utils/AppError";
 import type { IRequestUser } from "./auth.interface";
 
@@ -102,6 +102,18 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const logout = catchAsync(async (req: Request, res: Response) => {
+
+	clearAuthCookies(res);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Logged out successfully.",
+		data: null,
+	});
+});
+
 
 export const AuthControllers = {
 	registerUser,
@@ -109,5 +121,6 @@ export const AuthControllers = {
 	resendOtp,
 	loginUser,
 	refreshToken,
-	getMe
+	getMe,
+	logout
 };

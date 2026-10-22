@@ -1,20 +1,20 @@
 "use client";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export default function GoogleAuthProvider({
-    children,
+	children,
 }: {
-    children: ReactNode;
+	children: ReactNode;
 }) {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLINT_ID!;
+	const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLINT_ID!;
 
-    if (!clientId) {
-        return <>{children}</>;
-    }
+	if (!clientId) {
+		return <>{children}</>;
+	}
 
-    return (
-        <GoogleOAuthProvider clientId={clientId}>{children}</GoogleOAuthProvider>
-    );
+	return (
+		<GoogleOAuthProvider clientId={clientId}>{children}</GoogleOAuthProvider>
+	);
 }

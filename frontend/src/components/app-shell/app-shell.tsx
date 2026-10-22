@@ -1,13 +1,47 @@
 "use client";
 
+import {
+	Bell,
+	BookOpenText,
+	FilePlus2,
+	Files,
+	LayoutDashboard,
+	LifeBuoy,
+	LogOut,
+	MessageSquareCode,
+	Settings,
+	ShieldCheck,
+	UsersRound,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, BookOpenText, FilePlus2, Files, LayoutDashboard, LifeBuoy, LogOut, MessageSquareCode, Settings, ShieldCheck, UsersRound } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarRail, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarGroupLabel,
+	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+	SidebarProvider,
+	SidebarRail,
+	SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/use-auth";
 import { initials } from "@/lib/format";
 
@@ -42,7 +76,12 @@ const sharedNav = [
 export function AppSidebar() {
 	const { user, logout } = useAuth();
 	const pathname = usePathname();
-	const items = user?.role === "ADMIN" ? adminNav : user?.role === "REVIEWER" ? reviewerNav : studentNav;
+	const items =
+		user?.role === "ADMIN"
+			? adminNav
+			: user?.role === "REVIEWER"
+				? reviewerNav
+				: studentNav;
 
 	return (
 		<Sidebar collapsible="icon" className="border-r border-sidebar-border">
@@ -55,8 +94,12 @@ export function AppSidebar() {
 									<MessageSquareCode className="size-4" />
 								</div>
 								<div className="flex flex-col leading-tight">
-									<span className="text-sm font-semibold">Dev<span className="text-primary">Review</span></span>
-									<span className="text-xs text-muted-foreground">Project review platform</span>
+									<span className="text-sm font-semibold">
+										Dev<span className="text-primary">Review</span>
+									</span>
+									<span className="text-xs text-muted-foreground">
+										Project review platform
+									</span>
 								</div>
 							</Link>
 						</SidebarMenuButton>
@@ -70,7 +113,14 @@ export function AppSidebar() {
 						<SidebarMenu>
 							{items.map((item) => (
 								<SidebarMenuItem key={item.href}>
-									<SidebarMenuButton asChild isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)} tooltip={item.title}>
+									<SidebarMenuButton
+										asChild
+										isActive={
+											pathname === item.href ||
+											pathname.startsWith(`${item.href}/`)
+										}
+										tooltip={item.title}
+									>
 										<Link href={item.href}>
 											<item.icon />
 											<span>{item.title}</span>
@@ -87,7 +137,11 @@ export function AppSidebar() {
 						<SidebarMenu>
 							{sharedNav.map((item) => (
 								<SidebarMenuItem key={item.href}>
-									<SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
+									<SidebarMenuButton
+										asChild
+										isActive={pathname === item.href}
+										tooltip={item.title}
+									>
 										<Link href={item.href}>
 											<item.icon />
 											<span>{item.title}</span>
@@ -104,14 +158,26 @@ export function AppSidebar() {
 					<SidebarMenuItem>
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+								<SidebarMenuButton
+									size="lg"
+									className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+								>
 									<Avatar className="size-8">
-										<AvatarImage src={user?.avatar ?? undefined} alt={user?.name} />
-										<AvatarFallback className="text-xs">{initials(user?.name)}</AvatarFallback>
+										<AvatarImage
+											src={user?.avatar ?? undefined}
+											alt={user?.name}
+										/>
+										<AvatarFallback className="text-xs">
+											{initials(user?.name)}
+										</AvatarFallback>
 									</Avatar>
 									<div className="flex min-w-0 flex-col leading-tight">
-										<span className="truncate text-sm">{user?.name ?? "User"}</span>
-										<span className="truncate text-xs text-muted-foreground">{user?.role ?? ""}</span>
+										<span className="truncate text-sm">
+											{user?.name ?? "User"}
+										</span>
+										<span className="truncate text-xs text-muted-foreground">
+											{user?.role ?? ""}
+										</span>
 									</div>
 								</SidebarMenuButton>
 							</DropdownMenuTrigger>
@@ -119,16 +185,34 @@ export function AppSidebar() {
 								<DropdownMenuLabel>
 									<div className="flex flex-col">
 										<span className="truncate text-sm">{user?.name}</span>
-										<span className="truncate text-xs text-muted-foreground">{user?.email}</span>
+										<span className="truncate text-xs text-muted-foreground">
+											{user?.email}
+										</span>
 									</div>
 								</DropdownMenuLabel>
 								<DropdownMenuSeparator />
 								<DropdownMenuGroup>
-									<DropdownMenuItem asChild><Link href="/profile"><Settings />Profile & settings</Link></DropdownMenuItem>
-									<DropdownMenuItem asChild><Link href="/notifications"><Bell />Notifications</Link></DropdownMenuItem>
+									<DropdownMenuItem asChild>
+										<Link href="/profile">
+											<Settings />
+											Profile & settings
+										</Link>
+									</DropdownMenuItem>
+									<DropdownMenuItem asChild>
+										<Link href="/notifications">
+											<Bell />
+											Notifications
+										</Link>
+									</DropdownMenuItem>
 								</DropdownMenuGroup>
 								<DropdownMenuSeparator />
-								<DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => void logout()}><LogOut />Sign out</DropdownMenuItem>
+								<DropdownMenuItem
+									className="text-destructive focus:text-destructive"
+									onClick={() => void logout()}
+								>
+									<LogOut />
+									Sign out
+								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</SidebarMenuItem>
@@ -150,7 +234,10 @@ export function AppHeader() {
 					<span className="text-foreground">DevReview</span>
 				</div>
 				<Button asChild variant="ghost" size="sm" className="hidden sm:flex">
-					<Link href="/notifications"><Bell className="size-3.5" />Notifications</Link>
+					<Link href="/notifications">
+						<Bell className="size-3.5" />
+						Notifications
+					</Link>
 				</Button>
 			</div>
 		</header>
