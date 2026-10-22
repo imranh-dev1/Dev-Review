@@ -1,5 +1,5 @@
 import {
-	ArrowRight, 
+	ArrowRight,
 	Code2,
 	FileText,
 	GitBranch,
@@ -67,15 +67,6 @@ const features = [
 export default function HomePage() {
 	return (
 		<div className="relative overflow-hidden">
-			<div
-				aria-hidden
-				className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] bg-grid bg-grid-fade"
-			/>
-			<div
-				aria-hidden
-				className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,color-mix(in_oklch,var(--primary)_10%,transparent),transparent)]"
-			/>
-
 			<section className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-28 pb-16 sm:px-6 lg:px-8 lg:pt-36 lg:pb-24">
 				<div className="flex max-w-3xl flex-col gap-6">
 					<div className="flex flex-wrap items-center gap-2">

@@ -19,6 +19,7 @@ import {
 	NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import Logo from "../../../public/logo.png";
+import { useGetMe } from "@/hooks";
 
 export type NavigationSection = {
 	title: string;
@@ -68,6 +69,10 @@ const CtaButton = ({ className }: { className?: string }) => (
 export function Navbar() {
 	const [scrolled, setScrolled] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
+	const { data, isLoading } = useGetMe();
+
+	console.log(data);
+
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 12);

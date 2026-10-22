@@ -1,20 +1,10 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
-import config from "../../config";
 import { catchAsync } from "../../utils/catchAsync";
 import { AppError } from "../../utils/AppError";
 import { sendResponse } from "../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
-
-const REFRESH_COOKIE = "refresh_token";
-
-const refreshCookieOptions = () => ({
-    httpOnly: true,
-    secure: config.node_env === "production",
-    sameSite: (config.node_env === "production" ? "none" : "lax") as "none" | "lax",
-    path: "/api/v1/auth",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-});
+import { clearAuthCookies, setAuthCookies } from "../../utils/authCookie";
 
 const currentUserId = (req: Request): string => {
     if (!req.user) {
@@ -37,7 +27,7 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {
     const result = await AuthServices.verifyEmail(req.body);
 
-    res.cookie(REFRESH_COOKIE, result.refreshToken, refreshCookieOptions());
+    setAuthCookies(res, result.accessToken, result.refreshToken);
 
     sendResponse(res, {
         success: true,
@@ -46,6 +36,7 @@ const verifyEmail = catchAsync(async (req: Request, res: Response) => {
         data: {
             user: result.user,
             accessToken: result.accessToken,
+            refreshToken: result.refreshToken
         },
     });
 });
@@ -64,21 +55,22 @@ const resendOtp = catchAsync(async (req: Request, res: Response) => {
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const result = await AuthServices.loginUser(req.body);
 
-    res.cookie(REFRESH_COOKIE, result.refreshToken, refreshCookieOptions());
+    setAuthCookies(res, result.accessToken, result.refreshToken);
 
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.OK,
         message: "Logged in successfully.",
         data: {
-            user: result.user,
+            user: resul.user
+            refreshToken: result.refreshToken,
             accessToken: result.accessToken,
         },
     });
 });
 
 const refreshTokens = catchAsync(async (req: Request, res: Response) => {
-    const refreshToken = req.cookies?.[REFRESH_COOKIE] as string | undefined;
+    const refreshToken = req.cookies?.refreshToken as string | undefined;
 
     if (!refreshToken) {
         throw new AppError(httpStatus.UNAUTHORIZED, "Refresh token missing");
@@ -86,7 +78,7 @@ const refreshTokens = catchAsync(async (req: Request, res: Response) => {
 
     const result = await AuthServices.refreshTokens(refreshToken);
 
-    res.cookie(REFRESH_COOKIE, result.refreshToken, refreshCookieOptions());
+    setAuthCookies(res, result.accessToken, result.refreshToken);
 
     sendResponse(res, {
         success: true,
@@ -95,21 +87,17 @@ const refreshTokens = catchAsync(async (req: Request, res: Response) => {
         data: {
             user: result.user,
             accessToken: result.accessToken,
+            refreshToken: result.refreshToken
         },
     });
 });
 
 const logout = catchAsync(async (req: Request, res: Response) => {
-    const refreshToken = req.cookies?.[REFRESH_COOKIE] as string | undefined;
+    const refreshToken = req.body;
 
     await AuthServices.logout(refreshToken);
 
-    res.clearCookie(REFRESH_COOKIE, {
-        httpOnly: true,
-        secure: config.node_env === "production",
-        sameSite: config.node_env === "production" ? "none" : "lax",
-        path: "/api/v1/auth",
-    });
+    clearAuthCookies(res);
 
     sendResponse(res, {
         success: true,
@@ -120,7 +108,10 @@ const logout = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getMe = catchAsync(async (req: Request, res: Response) => {
-    const user = await AuthServices.getMe(currentUserId(req));
+    const user = await AuthServices.getMe(currentUserId as string);
+
+    console.log(user);
+
 
     sendResponse(res, {
         success: true,

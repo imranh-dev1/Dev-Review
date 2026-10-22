@@ -16,13 +16,9 @@ export function userLogin(payload: { email: string; password: string }) {
     return apiClint("/auth/login", { method: "POST", body: payload });
 }
 
-// export function googleAuthLogin(payload: { idToken: string }) {
-//     return apiClint("/auth/google", { method: "POST", body: payload });
-// }
-
-// export function getMe() {
-//     return apiClint("/auth/me", { method: "GET" });
-// }
+export function getMe() {
+    return apiClint("/auth/me", { method: "GET" });
+}
 
 // export function userLogout() {
 //     return apiClint("/auth/logout", { method: "POST" });
