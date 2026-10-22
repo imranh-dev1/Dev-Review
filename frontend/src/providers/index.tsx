@@ -7,7 +7,7 @@ import QueryProvider from "./query.provider";
 export default function Providers({ children }: { children: ReactNode }) {
 	return (
 		<QueryProvider>
-			<TooltipProvider>{children}</TooltipProvider>
+			<TooltipProvider delayDuration={200}>{children}</TooltipProvider>
 		</QueryProvider>
 	);
 }

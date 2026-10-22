@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useGetMe } from "@/hooks";
 import Logo from "../../../public/logo.png";
-import { NavUserDropdown } from "./nav-user-dropdown";
+import { NavUserDropdown } from "../dropdown/nav-user-dropdown";
 
 export type NavigationSection = {
 	title: string;

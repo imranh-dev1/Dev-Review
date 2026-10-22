@@ -1,4 +1,4 @@
-import { type UserRole, UserStatus } from ".";
+import { type UserRole } from ".";
 
 export interface IUserRegisterPayload {
 	name: string;

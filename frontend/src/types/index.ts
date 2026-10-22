@@ -170,4 +170,3 @@ export interface AuthPayload {
 	accessToken: string;
 }
 
-export * from "./auth.types";

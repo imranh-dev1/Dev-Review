@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-import { LoginForm } from "@/components/auth/login-form";
+import { LoginForm } from "@/components/forms/login-form";
 
 export const metadata = {
 	title: "Sign in",

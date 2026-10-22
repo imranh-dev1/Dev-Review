@@ -1,47 +1,31 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { LoadingState } from "@/components/shared/state";
-import { useAuth } from "@/hooks/use-auth";
+import { useGetMe } from "@/hooks";
+import { ReactNode, useEffect } from "react";
+import { useRouter } from "next/navigation"; 
+import AuthLoading from "./auth-loading";
 
-export function AuthGuard({
-	children,
-	requiredRoles,
-}: {
-	children: React.ReactNode;
-	requiredRoles?: string[];
-}) {
-	const router = useRouter();
-	const { user, status } = useAuth();
+export default function AuthGuard({ children }: { children: ReactNode }) {
+  const { data, isPending, isError } = useGetMe();
 
-	useEffect(() => {
-		if (status === "unauthenticated") {
-			router.replace("/login");
-		}
-	}, [status, router]);
+  const router = useRouter();
+  const user = data?.data;
 
-	useEffect(() => {
-		if (status === "authenticated" && requiredRoles && user) {
-			if (!requiredRoles.includes(user.role)) {
-				router.replace("/dashboard");
-			}
-		}
-	}, [status, user, requiredRoles, router]);
+  useEffect(() => {
+    if (isPending) return;
 
-	if (status === "loading") {
-		return <LoadingState label="Checking session" className="min-h-svh" />;
-	}
+    if (isError || !user) {
+      router.replace("/login");
+    }
+  }, [router, user, isError, isPending]);
 
-	if (status === "unauthenticated") {
-		return (
-			<LoadingState label="Redirecting to sign in" className="min-h-svh" />
-		);
-	}
+  if (isPending) {
+    return <AuthLoading value="Verifying your account..." />;
+  }
 
-	if (requiredRoles && user && !requiredRoles.includes(user.role)) {
-		return <LoadingState label="Redirecting" className="min-h-svh" />;
-	}
+  if (isError || !user) {
+    return <AuthLoading value="Redirecting..." />;
+  }
 
-	return <>{children}</>;
+  return <>{children}</>;
 }

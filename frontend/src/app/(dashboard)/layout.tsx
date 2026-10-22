@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-
-import { AppShell } from "@/components/app-shell/app-shell";
-import { AuthGuard } from "@/components/auth/auth-guard";
+import AuthGuard from "@/components/auth/auth-guard";
+import { ReactNode } from "react";
 
 export const metadata: Metadata = {
 	title: {
@@ -10,14 +9,6 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function DashboardLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
-	return (
-		<AuthGuard>
-			<AppShell>{children}</AppShell>
-		</AuthGuard>
-	);
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  return <AuthGuard>{children}</AuthGuard>;
 }
