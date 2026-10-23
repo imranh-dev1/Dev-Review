@@ -1,8 +1,7 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Loader2, Mail, Send } from "lucide-react";
+import { ArrowLeft, Loader2, LockKeyholeOpen, Mail } from "lucide-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -19,12 +18,13 @@ import {
 } from "@/components/ui/card";
 import {
 	Field,
-	FieldDescription,
 	FieldError,
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input"; 
+import { Input } from "@/components/ui/input";
+import { useForgotPassword } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
 	email: z
@@ -37,7 +37,8 @@ const formSchema = z.object({
 type ForgotPasswordFormValues = z.infer<typeof formSchema>;
 
 export function ForgotPasswordForm() {
-	// const { mutate: forgotPassword, isPending } = useForgotPassword();
+	const { mutate: forgotPassword, isPending } = useForgotPassword();
+	const router = useRouter();
 
 	const form = useForm<ForgotPasswordFormValues>({
 		resolver: zodResolver(formSchema),
@@ -47,25 +48,31 @@ export function ForgotPasswordForm() {
 	});
 
 	const handleSubmit = (values: ForgotPasswordFormValues) => {
-		// forgotPassword(
-		// 	{ email: values.email },
-		// 	{
-		// 		onSuccess: () => {
-		// 			toast.success("Password reset request submitted.", {
-		// 				description:
-		// 					"If an account exists with this email, you will receive password reset instructions.",
-		// 			});
-		// 		},
-		// 		onError: (error) => {
-		// 			toast.error("Unable to request password reset.", {
-		// 				description:
-		// 					error instanceof Error
-		// 						? error.message
-		// 						: "Something went wrong. Please try again.",
-		// 			});
-		// 		},
-		// 	},
-		// );
+		forgotPassword(
+			{ email: values.email },
+			{
+				onSuccess: () => {
+					toast.success("Password reset request submitted.", {
+						description:
+							"If an account exists with this email, you will receive password reset instructions.",
+					});
+
+					router.push(
+						`/forgot-password-otp-verify?email=${encodeURIComponent(
+							values.email.trim().toLowerCase(),
+						)}`,
+					);
+				},
+				onError: (error) => {
+					toast.error("Unable to request password reset.", {
+						description:
+							error instanceof Error
+								? error.message
+								: "Something went wrong. Please try again.",
+					});
+				},
+			},
+		);
 	};
 
 	return (
@@ -78,9 +85,8 @@ export function ForgotPasswordForm() {
 				<CardTitle className="text-2xl">Forgot password?</CardTitle>
 
 				<CardDescription>
-					No worries! Enter the email address associated with your
-					account, and we&apos;ll send you instructions to reset your
-					password.
+					No worries! Enter the email address associated with your account, and
+					we&apos;ll send you instructions to reset your password.
 				</CardDescription>
 			</CardHeader>
 
@@ -96,9 +102,7 @@ export function ForgotPasswordForm() {
 							control={form.control}
 							render={({ field, fieldState }) => (
 								<Field data-invalid={fieldState.invalid}>
-									<FieldLabel htmlFor="email">
-										Email address
-									</FieldLabel>
+									<FieldLabel htmlFor="email">Email address</FieldLabel>
 
 									<Input
 										{...field}
@@ -107,7 +111,7 @@ export function ForgotPasswordForm() {
 										placeholder="you@example.com"
 										autoComplete="email"
 										aria-invalid={fieldState.invalid}
-										// disabled={isPending}
+										disabled={isPending}
 									/>
 
 									{fieldState.invalid && (
@@ -118,22 +122,18 @@ export function ForgotPasswordForm() {
 						/>
 					</FieldGroup>
 
-					<Button
-						type="submit"
-						className="w-full"
-						// disabled={isPending}
-					>
-						{/* {isPending ? (
+					<Button type="submit" className="w-full" disabled={isPending}>
+						{isPending ? (
 							<>
 								<Loader2 className="mr-2 size-4 animate-spin" />
-								Sending instructions...
+								Sending ...
 							</>
 						) : (
 							<>
-								<Send className="mr-2 size-4" />
-								Send reset link
+								<LockKeyholeOpen className="mr-2 size-4" />
+								Forgot password
 							</>
-						)} */}
+						)}
 					</Button>
 				</form>
 			</CardContent>
@@ -143,7 +143,7 @@ export function ForgotPasswordForm() {
 					asChild
 					variant="outline"
 					className="w-full"
-					// disabled={isPending}
+					disabled={isPending}
 				>
 					<Link href="/login">
 						<ArrowLeft className="mr-2 size-4" />

@@ -35,7 +35,7 @@ export default function LoginPage() {
 						Need an account?{" "}
 						<Link
 							href="/signup"
-							className="text-foreground underline-offset-4 hover:underline"
+							className="underline-offset-4 hover:underline text-primary"
 						>
 							Create one
 						</Link>

@@ -51,4 +51,10 @@ router.post(
 	AuthControllers.forgotPassword,
 );
 
+router.post(
+	"/forgot-password-otp-verify",
+	validateRequest(userValidation.forgotPasswordOtpVerifySchema),
+	AuthControllers.forgotPasswordOtpVerify,
+);
+
 export const AuthRoutes = router;

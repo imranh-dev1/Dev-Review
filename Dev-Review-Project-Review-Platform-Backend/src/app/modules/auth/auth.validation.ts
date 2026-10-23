@@ -29,6 +29,15 @@ const forgotPasswordSchema = z.object({
 	email: z.string().trim().email().min(1),
 });
 
+const forgotPasswordOtpVerifySchema = z.object({
+	email: z.string().trim().email(),
+	otp: z.string().length(6, "OTP must be 6 digits"),
+	newPassword: z
+		.string()
+		.min(8, "Password must be at least 8 characters")
+		.max(72, "Password must not exceed 72 characters"),
+});
+
 export const userValidation = {
 	registerSchema,
 	verifyEmailSchema,
@@ -36,4 +45,5 @@ export const userValidation = {
 	loginSchema,
 	changePasswordSchema,
 	forgotPasswordSchema,
+	forgotPasswordOtpVerifySchema,
 };

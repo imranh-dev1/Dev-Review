@@ -20,3 +20,9 @@ export interface IChangePassword {
 	currentPassword: string;
 	newPassword: string;
 }
+
+export interface IForgotPasswordOtpVerifyPayload {
+	email: string;
+	otp: string;
+	newPassword: string;
+}

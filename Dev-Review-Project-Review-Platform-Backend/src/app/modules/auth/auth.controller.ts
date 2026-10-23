@@ -125,6 +125,19 @@ const forgotPassword = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const forgotPasswordOtpVerify = catchAsync(
+	async (req: Request, res: Response) => {
+		const result = await AuthServices.forgotPasswordOtpVerify(req.body);
+
+		sendResponse(res, {
+			success: true,
+			statusCode: httpStatus.OK,
+			message: result.message,
+			data: null,
+		});
+	},
+);
+
 export const AuthControllers = {
 	registerUser,
 	verifyEmail,
@@ -134,4 +147,5 @@ export const AuthControllers = {
 	getMe,
 	logout,
 	forgotPassword,
+	forgotPasswordOtpVerify,
 };

@@ -7,6 +7,7 @@ import { redisClient } from "../../lib/redis";
 import { AppError } from "../../utils/AppError";
 import sendEmail from "../../utils/sendEmail";
 import type {
+	IForgotPasswordOtpVerifyPayload,
 	ILoginPayload,
 	IRequestUser,
 	IResendOtpPayload,
@@ -378,6 +379,57 @@ const forgotPassword = async (payload: { email: string }) => {
 	};
 };
 
+const forgotPasswordOtpVerify = async (
+	payload: IForgotPasswordOtpVerifyPayload,
+) => {
+	const email = payload.email.trim().toLowerCase();
+	const { otp, newPassword } = payload;
+
+	const user = await db.orm.public.User.first({ email });
+
+	if (!user) {
+		throw new AppError(httpStatus.NOT_FOUND, "User not found with this email.");
+	}
+
+	if (!user.passwordHash) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"This account does not have a password.",
+		);
+	}
+
+	const otpKey = `forgot-password-otp:${email}`;
+	const storedOTP = await redisClient.get(otpKey);
+
+	if (!storedOTP) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"OTP has expired or was not found. Please request a new code.",
+		);
+	}
+
+	if (storedOTP !== otp) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"Invalid OTP. Please enter the correct code.",
+		);
+	}
+
+	const passwordHash = await bcrypt.hash(
+		newPassword,
+		Number(config.bcrypt_salt_rounds),
+	);
+
+	await db.orm.public.User.where({ id: user.id }).update({ passwordHash });
+
+	await redisClient.del(otpKey);
+
+	return {
+		success: true,
+		message: "Password reset successfully.",
+	};
+};
+
 export const AuthServices = {
 	registerUser,
 	verifyEmail,
@@ -386,4 +438,5 @@ export const AuthServices = {
 	refreshToken,
 	getMe,
 	forgotPassword,
+	forgotPasswordOtpVerify,
 };

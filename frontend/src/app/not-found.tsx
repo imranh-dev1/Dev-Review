@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Compass, Home, Search } from "lucide-react";
 
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export default function NotFound() {
 	return (
 		<main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-16">
-			{/* Background decoration */} 
+			{/* Background decoration */}
 
 			<div className="relative mx-auto w-full max-w-xl text-center">
 				{/* Error illustration */}
@@ -28,8 +28,8 @@ export default function NotFound() {
 				</h1>
 
 				<p className="mx-auto mt-5 max-w-md text-base leading-7 text-muted-foreground">
-					Oops! The page you&apos;re looking for doesn&apos;t exist,
-					may have been moved, or the link might be incorrect.
+					Oops! The page you&apos;re looking for doesn&apos;t exist, may have
+					been moved, or the link might be incorrect.
 				</p>
 
 				<div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

@@ -49,3 +49,9 @@ export interface IPublicUser {
 	createdAt: unknown;
 	updatedAt: unknown;
 }
+
+export interface IForgotPasswordOtpVerifyPayload {
+	email: string;
+	otp: string;
+	newPassword: string;
+}

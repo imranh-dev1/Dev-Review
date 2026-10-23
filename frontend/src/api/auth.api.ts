@@ -1,5 +1,6 @@
 import apiClint from "@/lib/apiClint";
 import type {
+	IForgotPasswordOtpVerifyPayload,
 	IResendOtpPayload,
 	IUserRegisterPayload,
 	IVerifyEmailPayload,
@@ -30,4 +31,20 @@ export function getMe() {
 
 export function userLogout() {
 	return apiClint("/auth/logout", { method: "POST" });
+}
+
+export function userForgotPassword(payload: { email: string }) {
+	return apiClint("/auth/forgot-password", {
+		method: "POST",
+		body: payload,
+	});
+}
+
+export function userForgotPasswordOtpVerify(
+	payload: IForgotPasswordOtpVerifyPayload,
+) {
+	return apiClint("/auth/forgot-password-otp-verify", {
+		method: "POST",
+		body: payload,
+	});
 }
