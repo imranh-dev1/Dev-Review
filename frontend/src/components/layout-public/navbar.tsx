@@ -1,13 +1,7 @@
 "use client";
 
 import { cn } from "cn";
-import {
-	ArrowUpRight,
-	LogIn,
-	Menu,
-	Sparkles,
-	SquareCenterlineDashedVerticalIcon,
-} from "lucide-react";
+import { ArrowUpRight, LogIn, Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -78,8 +72,6 @@ export function Navbar() {
 	const { data, isLoading } = useGetMe();
 
 	const user = data?.data;
-
-	console.log(user?.name);
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 12);

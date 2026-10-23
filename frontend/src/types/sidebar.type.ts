@@ -1,11 +1,11 @@
 export type SidebarItem = {
-    title: string;
-    url: string;
+	title: string;
+	url: string;
 };
 
 export type SidebarGroup = {
-    title: string;
-    items: SidebarItem[];
+	title: string;
+	items: SidebarItem[];
 };
 
 export type SidebarRoutes = SidebarGroup[];

@@ -169,4 +169,3 @@ export interface AuthPayload {
 	user: IUser;
 	accessToken: string;
 }
-

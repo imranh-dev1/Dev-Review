@@ -1,47 +1,45 @@
 "use client";
 
-import { useGetMe } from "@/hooks";
-import { UserRole } from "@/types";
 import { useRouter } from "next/navigation";
-import { ReactNode, useEffect } from "react";
-import AuthLoading from "./auth-loading";
+import { type ReactNode, useEffect } from "react";
+import { useGetMe } from "@/hooks";
+import type { UserRole } from "@/types";
 import AccessDenied from "../errors/access-denied";
-
- 
+import AuthLoading from "./auth-loading";
 
 interface RoleGuardProps {
-  children: ReactNode;
-  allowedRoles: UserRole[];
+	children: ReactNode;
+	allowedRoles: UserRole[];
 }
 
 export default function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
-  const { data, isPending, isError } = useGetMe();
-  const router = useRouter();
+	const { data, isPending, isError } = useGetMe();
+	const router = useRouter();
 
-  const user = data?.data;
+	const user = data?.data;
 
-  const isAuthorized = user && allowedRoles.includes(user.role as UserRole);
+	const isAuthorized = user && allowedRoles.includes(user.role as UserRole);
 
-  useEffect(() => {
-    if (isPending) return;
+	useEffect(() => {
+		if (isPending) return;
 
-    if (isError || !user) {
-      router.replace("/login");
-      return;
-    }
-  }, [user, isPending, isError, router]);
+		if (isError || !user) {
+			router.replace("/login");
+			return;
+		}
+	}, [user, isPending, isError, router]);
 
-  if (isPending) {
-    return <AuthLoading value="Verifying your account..." />;
-  }
+	if (isPending) {
+		return <AuthLoading value="Verifying your account..." />;
+	}
 
-  if (isError || !user) {
-    return <AuthLoading value="Redirecting to login..." />;
-  }
+	if (isError || !user) {
+		return <AuthLoading value="Redirecting to login..." />;
+	}
 
-  if (isAuthorized) {
-    return <>{children}</>;
-  }
+	if (isAuthorized) {
+		return <>{children}</>;
+	}
 
-  return <AccessDenied />;
+	return <AccessDenied />;
 }

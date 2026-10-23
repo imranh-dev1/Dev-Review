@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip"; 
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/providers/theme-provider";
 
 import "./globals.css";
@@ -59,9 +59,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 		>
 			<body className="min-h-full bg-background font-sans antialiased">
 				<Providers>
-					<ThemeProvider>  
+					<ThemeProvider>
 						{children}
-						<Toaster position="bottom-right" richColors closeButton /> 
+						<Toaster position="bottom-right" richColors closeButton />
 					</ThemeProvider>
 				</Providers>
 			</body>

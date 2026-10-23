@@ -1,13 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -22,7 +22,8 @@ import {
 	FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useLogin } from "@/hooks";
+import { useGetMe, useLogin } from "@/hooks";
+import AuthLoading from "../auth/auth-loading";
 
 const schema = z.object({
 	email: z.string().trim().email("Enter a valid email address"),
@@ -34,8 +35,9 @@ type FormValues = z.infer<typeof schema>;
 export function LoginForm() {
 	const router = useRouter();
 	const [showPassword, setShowPassword] = useState(false);
-
+	const queryClient = useQueryClient();
 	const { mutate: login, isPending: isLoading } = useLogin();
+	const { data, isPending } = useGetMe();
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(schema),
@@ -45,18 +47,38 @@ export function LoginForm() {
 		},
 	});
 
+	if (isPending) {
+		return <AuthLoading />;
+	}
+
+	const role = data?.data.role.toLowerCase();
+
 	async function onSubmit(values: FormValues) {
 		const payload = {
 			email: values.email.trim().toLowerCase(),
 			password: values.password,
 		};
 		login(payload, {
-			onSuccess: () => {
+			onSuccess: async () => {
+				await queryClient.invalidateQueries({
+					queryKey: ["user"],
+					exact: true,
+				});
+
+				const user = queryClient.getQueryData<{
+					data: { role: string };
+				}>(["user"])?.data;
+
+				if (!user?.role) {
+					toast.error("Unable to identify your account role.");
+					return;
+				}
+
 				toast.success("Signed in", {
 					description: `Welcome back, ${payload.email}.`,
 				});
 
-				router.replace("/dashboard");
+				router.replace(`/${user.role.toLowerCase()}`);
 			},
 			onError: (error) => {
 				const message =
