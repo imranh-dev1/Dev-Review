@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "../ui/button";
 import { Eye } from "lucide-react";
+import UserDetailsDialog from "../dialog/user-details-dialog";
 
 export default function UsersTable() {
 	const [filters, setFilters] = useState<IUserListQuery>({
@@ -178,12 +179,9 @@ export default function UsersTable() {
 
 									<TableCell>{formatDate(user.createdAt)}</TableCell>
 
-									<TableCell>
-                                        <Button variant="outline" size="sm"> 
-                                              <Eye className="mr-2 size-4" /> View Details 
-                                        </Button>
+									<TableCell> 
+										<UserDetailsDialog userId={user.id} />
                                     </TableCell> 
-
 								</TableRow>
 							))
 						)}

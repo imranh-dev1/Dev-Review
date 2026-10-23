@@ -129,7 +129,6 @@ const changePassword = async (
 	};
 };
 
-
 const listUsers = async (query: UserListQuery) => {
 	const { page, limit, skip, take } = getPagination(query);
 
@@ -141,8 +140,7 @@ const listUsers = async (query: UserListQuery) => {
 	if (query.search) {
 		const term = `%${query.search}%`;
 
-		users = users.where((u) => or(u.name.ilike(term), u.email.ilike(term)),
-		);
+		users = users.where((u) => or(u.name.ilike(term), u.email.ilike(term)));
 	}
 
 	const { count } = await users.aggregate((a) => ({
@@ -162,9 +160,37 @@ const listUsers = async (query: UserListQuery) => {
 	};
 };
 
+const getUserDetail = async (id: string) => {
+	const user = await db.orm.public.User.where({ id })
+		.select(...USER_PUBLIC_FIELDS)
+		.first();
+
+	if (!user) {
+		throw new AppError(httpStatus.NOT_FOUND, "User not found");
+	}
+
+	const [submissionCountResult, reviewCountResult] = await Promise.all([
+		db.orm.public.ProjectSubmission.where({
+			ownerId: id,
+			deletedAt: null,
+		}).aggregate((a) => ({ count: a.count() })),
+		db.orm.public.Review.where({ reviewerId: id }).aggregate((a) => ({
+			count: a.count(),
+		})),
+	]);
+
+	return {
+		...user,
+		counts: {
+			submissions: submissionCountResult.count,
+			reviews: reviewCountResult.count,
+		},
+	};
+};
 
 export const UserServices = {
 	updateProfile,
 	changePassword,
-	listUsers
+	listUsers,
+	getUserDetail,
 };

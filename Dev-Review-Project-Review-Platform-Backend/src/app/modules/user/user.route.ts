@@ -23,6 +23,17 @@ router.patch(
 	UserControllers.changePassword,
 );
 
-router.get("/all", auth(UserRole.ADMIN), validateRequest(listUsersQuerySchema), UserControllers.listUsers);
+router.get(
+	"/all",
+	auth(UserRole.ADMIN),
+	validateRequest(listUsersQuerySchema),
+	UserControllers.listUsers,
+);
+
+router.get(
+	"/:id",
+	auth(UserRole.ADMIN, UserRole.REVIEWER, UserRole.STUDENT),
+	UserControllers.getUserDetail,
+);
 
 export const UserRoutes = router;

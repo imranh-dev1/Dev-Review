@@ -42,20 +42,32 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
 });
 
 const listUsers = catchAsync(async (req: Request, res: Response) => {
-
 	const { data, meta } = await UserServices.listUsers(req.query);
 
 	sendResponse(res, {
 		success: true,
 		statusCode: httpStatus.OK,
 		message: "Users fetched successfully.",
-		data: data, meta
+		data: data,
+		meta,
+	});
+});
 
+const getUserDetail = catchAsync(async (req: Request, res: Response) => {  
+
+	const user = await UserServices.getUserDetail(req?.params?.id as string);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "User fetched successfully.",
+		data: user,
 	});
 });
 
 export const UserControllers = {
 	updateProfile,
 	changePassword,
-	listUsers
+	listUsers,
+	getUserDetail,
 };

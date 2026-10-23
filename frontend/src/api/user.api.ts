@@ -22,3 +22,9 @@ export function getAllUsers(params?: IUserListQuery) {
 		query: params,
 	});
 }
+
+export const getUserDetails = (id: string) => {
+	return apiClint(`/user/${id}`, {
+		method: "GET",
+	});
+};

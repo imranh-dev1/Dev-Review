@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
 	getAllUsers,
+	getUserDetails,
 	userChangePassword,
 	userUpdateProfile,
 } from "@/api/user.api";
@@ -22,5 +23,13 @@ export function useGetAllUsers(params?: IUserListQuery) {
 	return useQuery({
 		queryKey: ["users", params],
 		queryFn: () => getAllUsers(params),
+	});
+}
+
+export function useGetUserDetails(id: string) {
+	return useQuery({
+		queryKey: ["user-details", id],
+		queryFn: () => getUserDetails(id),
+		enabled: Boolean(id),
 	});
 }
