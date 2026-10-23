@@ -38,7 +38,6 @@ export function useGetMe() {
 	return useQuery({
 		queryKey: ["user"],
 		queryFn: getMe,
-		retry: false,
 	});
 }
 
