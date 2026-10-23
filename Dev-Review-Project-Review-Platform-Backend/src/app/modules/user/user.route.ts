@@ -3,6 +3,8 @@ import { auth } from "../../middleware/checkAuth";
 import { UserRole } from "../../types/models";
 import { UserControllers } from "./user.controller";
 import { upload } from "../../lib/multer";
+import { userValidation } from "../auth/auth.validation";
+import { validateRequest } from "../../middleware/validateRequest";
 
 const router = Router();
 
@@ -11,6 +13,13 @@ router.patch(
 	auth(UserRole.ADMIN, UserRole.REVIEWER, UserRole.STUDENT),
 	upload.single("profile-image"),
 	UserControllers.updateProfile,
+);
+
+router.patch(
+	"/me/password",
+	auth(UserRole.ADMIN, UserRole.REVIEWER, UserRole.STUDENT),
+	validateRequest(userValidation.changePasswordSchema),
+	UserControllers.changePassword,
 );
 
 export const UserRoutes = router;

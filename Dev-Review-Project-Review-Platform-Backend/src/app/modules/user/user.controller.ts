@@ -4,6 +4,7 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { AppError } from "../../utils/AppError";
 import { UserServices } from "./user.service";
+import type { RequestUser } from "../../middleware/checkAuth";
 
 const updateProfile = catchAsync(async (req: Request, res: Response) => {
 	if (!req.user?.userId) {
@@ -27,6 +28,20 @@ const updateProfile = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const changePassword = catchAsync(async (req: Request, res: Response) => {
+	const user: RequestUser = req.user!;
+
+	const result = await UserServices.changePassword(user, req.body);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: result.message,
+		data: null,
+	});
+});
+
 export const UserControllers = {
 	updateProfile,
+	changePassword,
 };

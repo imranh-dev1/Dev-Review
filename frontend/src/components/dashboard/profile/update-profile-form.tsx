@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { Camera, Check, ImagePlus, Loader2, UserRound, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -41,6 +40,8 @@ export function UpdateProfileForm() {
 	const user = data?.data;
 	const currentName = user?.name ?? "";
 	const currentAvatar = user?.avatar ?? null;
+
+	console.log(user);
 
 	const {
 		register,
@@ -148,7 +149,6 @@ export function UpdateProfileForm() {
 			},
 		});
 	};
- 
 
 	if (isLoading) {
 		return (
@@ -198,8 +198,7 @@ export function UpdateProfileForm() {
 											/>
 
 											<AvatarFallback className="bg-muted">
-													<UserRound className="size-10 text-muted-foreground" />
-												
+												<UserRound className="size-10 text-muted-foreground" />
 											</AvatarFallback>
 										</Avatar>
 

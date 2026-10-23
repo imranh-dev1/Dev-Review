@@ -4,6 +4,10 @@ import httpStatus from "http-status";
 import { db } from "../../../prisma/db";
 import { cloudinary } from "../../lib/cloudinary";
 import { AppError } from "../../utils/AppError";
+import type { IChangePasswordPayload } from "../auth/auth.interface";
+import type { RequestUser } from "../../middleware/checkAuth";
+import bcrypt from "bcryptjs";
+import config from "../../config";
 
 type UpdateProfilePayload = {
 	name?: string;
@@ -45,7 +49,7 @@ const updateProfile = async (
 				.end(buffer);
 		});
 
-		updateData.avatar = image.secure_url; 
+		updateData.avatar = image.secure_url;
 	}
 
 	if (Object.keys(updateData).length === 0) {
@@ -59,6 +63,58 @@ const updateProfile = async (
 	return updatedUser;
 };
 
+const changePassword = async (
+	user: RequestUser,
+	payload: IChangePasswordPayload,
+) => {
+	const userExist = await db.orm.public.User.where({ id: user.userId }).first();
+
+	if (!userExist || !userExist.passwordHash) {
+		throw new AppError(
+			httpStatus.NOT_FOUND,
+			"User not found or password login is not enabled",
+		);
+	}
+
+	const currentMatches = await bcrypt.compare(
+		payload.currentPassword,
+		userExist.passwordHash,
+	);
+
+	if (!currentMatches) {
+		throw new AppError(
+			httpStatus.UNAUTHORIZED,
+			"Current password is incorrect",
+		);
+	}
+
+	const samePassword = await bcrypt.compare(
+		payload.newPassword,
+		userExist.passwordHash,
+	);
+
+	if (samePassword) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"New password must be different from your current password",
+		);
+	}
+
+	const saltRounds = Number(config.bcrypt_salt_rounds);
+
+	const hashedPassword = await bcrypt.hash(payload.newPassword, saltRounds);
+
+	await db.orm.public.User.where({ id: user.userId }).update({
+		passwordHash: hashedPassword,
+	});
+
+	return {
+		success: true,
+		message: "Password updated successfully.",
+	};
+};
+
 export const UserServices = {
 	updateProfile,
+	changePassword,
 };
