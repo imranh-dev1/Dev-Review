@@ -1,24 +1,33 @@
 import type { UploadApiResponse } from "cloudinary";
+import httpStatus from "http-status";
+
 import { db } from "../../../prisma/db";
 import { cloudinary } from "../../lib/cloudinary";
 import { AppError } from "../../utils/AppError";
-import httpStatus from "http-status";
+
+type UpdateProfilePayload = {
+	name?: string;
+};
 
 const updateProfile = async (
 	userId: string,
-	payload: { name: string },
+	payload: UpdateProfilePayload,
 	buffer?: Buffer,
 ) => {
-	const user = await db.orm.public.User.where({ id: userId }).first();
+	const user = await db.orm.public.User.where({
+		id: userId,
+	}).first();
 
 	if (!user) {
 		throw new AppError(httpStatus.NOT_FOUND, "User not found.");
 	}
 
-	const data: Record<string, unknown> = {};
+	const updateData: Record<string, unknown> = {};
 
-	if (payload.name?.trim()) {
-		data.name = payload.name.trim();
+	const name = payload.name?.trim();
+
+	if (name) {
+		updateData.name = name;
 	}
 
 	if (buffer) {
@@ -26,30 +35,26 @@ const updateProfile = async (
 			cloudinary.uploader
 				.upload_stream({ folder: "devreview/profiles" }, (error, result) => {
 					if (error) return reject(error);
-					if (!result) return reject(new Error("Image upload failed."));
+
+					if (!result) {
+						return reject(new Error("Image upload failed."));
+					}
+
 					resolve(result);
 				})
 				.end(buffer);
 		});
 
-		data.imageUrl = image.secure_url;
-		data.imagePublicId = image.public_id;
+		updateData.avatar = image.secure_url; 
 	}
 
-	if (!Object.keys(data).length) {
+	if (Object.keys(updateData).length === 0) {
 		throw new AppError(httpStatus.BAD_REQUEST, "Nothing to update.");
 	}
 
 	const updatedUser = await db.orm.public.User.where({
 		id: userId,
-	}).update({
-		name: data.name as string,
-		avatar: data.imageUrl as string,
-	});
-
-	if (buffer && user.id) {
-		await cloudinary.uploader.destroy(user.id);
-	}
+	}).update(updateData);
 
 	return updatedUser;
 };

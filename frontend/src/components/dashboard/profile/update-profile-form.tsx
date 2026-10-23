@@ -1,12 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { Camera, Check, ImagePlus, Loader2, UserRound, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +33,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 export function UpdateProfileForm() {
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [preview, setPreview] = useState<string | null>(null);
+	const queryClient = useQueryClient();
 
 	const { data, isLoading } = useGetMe();
 	const { mutate: updateProfile, isPending } = useProfileUpdate();
@@ -131,7 +133,9 @@ export function UpdateProfileForm() {
 		updateProfile(formData, {
 			onSuccess: async () => {
 				setImageFile(null);
-
+				await queryClient.invalidateQueries({
+					queryKey: ["user"],
+				});
 				toast.success("Your profile has been updated.");
 			},
 			onError: (error) => {
@@ -144,15 +148,7 @@ export function UpdateProfileForm() {
 			},
 		});
 	};
-
-	const initials = currentName
-		.trim()
-		.split(/\s+/)
-		.filter(Boolean)
-		.slice(0, 2)
-		.map((part: string) => part[0])
-		.join("")
-		.toUpperCase();
+ 
 
 	if (isLoading) {
 		return (
@@ -202,9 +198,8 @@ export function UpdateProfileForm() {
 											/>
 
 											<AvatarFallback className="bg-muted">
-												{initials || (
 													<UserRound className="size-10 text-muted-foreground" />
-												)}
+												
 											</AvatarFallback>
 										</Avatar>
 
