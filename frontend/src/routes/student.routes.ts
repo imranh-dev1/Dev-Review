@@ -1,10 +1,10 @@
 import {
-	AlertCircle,
 	Bell,
 	Edit,
 	FileText,
 	FolderKanban,
 	LayoutDashboard,
+	LockKeyhole,
 	MessageSquareText,
 	UserRound,
 } from "lucide-react";
@@ -63,7 +63,7 @@ export const studentRoutes: SidebarGroup[] = [
 			{
 				title: "Change Password",
 				url: "/student/change-password",
-				icon: AlertCircle,
+				icon: LockKeyhole,
 			},
 		],
 	},

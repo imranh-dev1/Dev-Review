@@ -24,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useGetMe, useLogin } from "@/hooks";
 import AuthLoading from "../auth/auth-loading";
+import Link from "next/link";
 
 const schema = z.object({
 	email: z.string().trim().email("Enter a valid email address"),
@@ -130,9 +131,12 @@ export function LoginForm() {
 							<div className="flex items-center justify-between">
 								<FieldLabel htmlFor="password">Password</FieldLabel>
 
-								<span className="text-xs text-muted-foreground">
-									Need help?
-								</span>
+								<Link
+									href="/forgot-password"
+									className="text-sm text-primary underline-offset-4 hover:underline"
+								>
+									Forgot password?
+								</Link>
 							</div>
 
 							<div className="relative">

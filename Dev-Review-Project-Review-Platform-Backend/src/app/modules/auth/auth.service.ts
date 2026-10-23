@@ -326,6 +326,58 @@ const getMe = async (user: IRequestUser) => {
 	return currentUser;
 };
 
+const forgotPassword = async (payload: { email: string }) => {
+	const email = payload.email.trim().toLowerCase();
+
+	if (!email) {
+		throw new AppError(httpStatus.BAD_REQUEST, "Email is required.");
+	}
+
+	const user = await db.orm.public.User.first({
+		email,
+	});
+
+	if (!user) {
+		throw new AppError(httpStatus.NOT_FOUND, "User not found with this email.");
+	}
+
+	if (!user.passwordHash) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"This account does not have a password. Please use your registered authentication method.",
+		);
+	}
+
+	const otpKey = `forgot-password-otp:${email}`;
+	const otpValue = crypto.randomInt(100000, 1000000).toString();
+
+	const expirationSeconds = 5 * 60;
+
+	await redisClient.set(otpKey, otpValue, {
+		expiration: {
+			type: "EX",
+			value: expirationSeconds,
+		},
+	});
+
+	await sendEmail({
+		to: email,
+		subject: "DevReview Password Reset Code",
+		template: "forgot-password",
+		data: {
+			name: user.name,
+			otp: otpValue,
+			expirationMinutes: Math.ceil(expirationSeconds / 60),
+			year: new Date().getFullYear(),
+		},
+	});
+
+	return {
+		success: true,
+		message: "Password reset OTP sent to email successfully.",
+	};
+};
+
 export const AuthServices = {
 	registerUser,
 	verifyEmail,
@@ -333,4 +385,5 @@ export const AuthServices = {
 	loginUser,
 	refreshToken,
 	getMe,
+	forgotPassword,
 };

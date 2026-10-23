@@ -25,10 +25,15 @@ const changePasswordSchema = z.object({
 	newPassword: z.string().min(8).max(72),
 });
 
+const forgotPasswordSchema = z.object({
+	email: z.string().trim().email().min(1),
+});
+
 export const userValidation = {
 	registerSchema,
 	verifyEmailSchema,
 	resendOtpSchema,
 	loginSchema,
 	changePasswordSchema,
+	forgotPasswordSchema,
 };
