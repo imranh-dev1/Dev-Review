@@ -38,7 +38,6 @@ export function LoginForm() {
 	const [showPassword, setShowPassword] = useState(false);
 	const queryClient = useQueryClient();
 	const { mutate: login, isPending: isLoading } = useLogin();
-	const { data, isPending } = useGetMe();
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(schema),
@@ -48,12 +47,6 @@ export function LoginForm() {
 		},
 	});
 
-	if (isPending) {
-		return <AuthLoading />;
-	}
-
-	const role = data?.data.role.toLowerCase();
-
 	async function onSubmit(values: FormValues) {
 		const payload = {
 			email: values.email.trim().toLowerCase(),
@@ -61,25 +54,11 @@ export function LoginForm() {
 		};
 		login(payload, {
 			onSuccess: async () => {
-				await queryClient.invalidateQueries({
-					queryKey: ["user"],
-					exact: true,
-				});
-
-				const user = queryClient.getQueryData<{
-					data: { role: string };
-				}>(["user"])?.data;
-
-				if (!user?.role) {
-					toast.error("Unable to identify your account role.");
-					return;
-				}
-
 				toast.success("Signed in", {
 					description: `Welcome back, ${payload.email}.`,
 				});
 
-				router.replace(`/${user.role.toLowerCase()}`);
+				router.replace(`/`);
 			},
 			onError: (error) => {
 				const message =

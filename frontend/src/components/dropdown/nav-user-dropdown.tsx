@@ -33,9 +33,9 @@ export function NavUserDropdown({ user }: { user: IUser }) {
 
 	const menuItems = [
 		{
-			label: "Account",
+			label: "My Profile",
 			icon: User,
-			href: "/account",
+			href: `${dashboardRoute}/profile`,
 		},
 		{
 			label: "Dashboard",
@@ -45,7 +45,7 @@ export function NavUserDropdown({ user }: { user: IUser }) {
 		{
 			label: "Notifications",
 			icon: Bell,
-			href: "/notifications",
+			href: `${dashboardRoute}/notifications`,
 		},
 	];
 
@@ -85,7 +85,7 @@ export function NavUserDropdown({ user }: { user: IUser }) {
 				<button
 					type="button"
 					aria-label="Open user menu"
-					className="rounded-full outline-none transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+					className="rounded-full border-2 border-primary outline-none transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
 				>
 					<Avatar className="size-9 cursor-pointer border">
 						<AvatarImage src={user.avatar || undefined} alt={user.name} />
