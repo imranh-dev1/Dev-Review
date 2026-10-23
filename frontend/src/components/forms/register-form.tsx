@@ -22,8 +22,7 @@ import {
 	FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useRegister } from "@/hooks";
-import { ApiError } from "@/lib/api-client";
+import { useRegister } from "@/hooks"; 
 
 const schema = z.object({
 	name: z.string().trim().min(2, "Name must be at least 2 characters"),

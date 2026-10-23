@@ -41,7 +41,7 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
 					<Image
 						src={Logo}
 						alt="Dev Review"
-						width={50}
+						width={100}
 						height={50}
 						className="h-7 w-auto object-contain lg:h-15"
 						priority

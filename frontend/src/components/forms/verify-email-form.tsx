@@ -70,7 +70,7 @@ export function VerifyEmailForm() {
 				toast.success("Email verified", {
 					description: `You're in, ${payload.email}.`,
 				});
-				router.replace("/dashboard");
+				router.replace("/");
 			},
 			onError: (error) => {
 				const message =
