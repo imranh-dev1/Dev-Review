@@ -15,7 +15,7 @@ export const studentRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "Dashboard",
-				url: "/dashboard",
+				url: "/student",
 				icon: LayoutDashboard,
 			},
 		],
@@ -25,17 +25,17 @@ export const studentRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "My Submissions",
-				url: "/dashboard/submissions",
+				url: "/student/submissions",
 				icon: FolderKanban,
 			},
 			{
 				title: "Submit a Project",
-				url: "/dashboard/submissions/new",
+				url: "/student/submissions/new",
 				icon: FileText,
 			},
 			{
 				title: "Review Feedback",
-				url: "/dashboard/feedback",
+				url: "/student/feedback",
 				icon: MessageSquareText,
 			},
 		],
@@ -45,17 +45,17 @@ export const studentRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "Notifications",
-				url: "/dashboard/notifications",
+				url: "/student/notifications",
 				icon: Bell,
 			},
 			{
 				title: "My Profile",
-				url: "/dashboard/profile",
+				url: "/student/profile",
 				icon: UserRound,
 			},
 			{
 				title: "Settings",
-				url: "/dashboard/settings",
+				url: "/student/settings",
 				icon: Settings,
 			},
 		],

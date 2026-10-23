@@ -3,7 +3,7 @@ import type {
 	IResendOtpPayload,
 	IUserRegisterPayload,
 	IVerifyEmailPayload,
-} from "@/types";
+} from "@/types/auth.types";
 
 export function userRegister(payload: IUserRegisterPayload) {
 	return apiClint("/auth/register", { method: "POST", body: payload });
