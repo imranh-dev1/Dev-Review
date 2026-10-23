@@ -1,70 +1,91 @@
-import { cn } from "cn";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
+"use client";
 
-import { Button } from "@/components/ui/button";
-import { formatNumber } from "@/lib/format";
+import {
+	Pagination,
+	PaginationContent,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+} from "@/components/ui/pagination";
 
-export function Pagination({
-	page,
-	totalPages,
-	total,
-	limit,
-	onPageChange,
-	className,
-}: {
+interface DataPaginationProps {
 	page: number;
 	totalPages: number;
 	total: number;
 	limit: number;
+	isPending?: boolean;
 	onPageChange: (page: number) => void;
-	className?: string;
-}) {
-	if (totalPages <= 1) return null;
+}
 
-	const start = (page - 1) * limit + 1;
+export default function DataPagination({
+	page,
+	totalPages,
+	total,
+	limit,
+	isPending = false,
+	onPageChange,
+}: DataPaginationProps) {
+	if (totalPages <= 0) return null;
+
+	const start = total === 0 ? 0 : (page - 1) * limit + 1;
 	const end = Math.min(page * limit, total);
 
-	const canPrevious = page > 1;
-	const canNext = page < totalPages;
-
 	return (
-		<nav
-			aria-label="Pagination"
-			className={cn(
-				"flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between",
-				className,
-			)}
-		>
-			<p className="tnum text-xs text-muted-foreground">
-				Showing <span className="text-foreground">{formatNumber(start)}</span>–
-				<span className="text-foreground">{formatNumber(end)}</span> of{" "}
-				<span className="text-foreground">{formatNumber(total)}</span>
+		<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+			<p className="text-sm text-muted-foreground">
+				Showing {start}–{end} of {total} users
 			</p>
 
-			<div className="flex items-center gap-1">
-				<Button
-					variant="ghost"
-					size="sm"
-					disabled={!canPrevious}
-					onClick={() => onPageChange(page - 1)}
-				>
-					<ChevronLeft />
-					Previous
-				</Button>
-				<span className="tnum px-2 text-xs text-muted-foreground">
-					Page {formatNumber(page)} / {formatNumber(totalPages)}
-				</span>
-				<Button
-					variant="ghost"
-					size="sm"
-					disabled={!canNext}
-					onClick={() => onPageChange(page + 1)}
-				>
-					Next
-					<ChevronRight />
-				</Button>
-			</div>
-		</nav>
+			<Pagination className="mx-0 w-auto justify-end">
+				<PaginationContent>
+					<PaginationItem>
+						<PaginationPrevious
+							href="#"
+							aria-disabled={page <= 1 || isPending}
+							className={
+								page <= 1 || isPending ? "pointer-events-none opacity-50" : ""
+							}
+							onClick={(event) => {
+								event.preventDefault();
+
+								if (page > 1 && !isPending) {
+									onPageChange(page - 1);
+								}
+							}}
+						/>
+					</PaginationItem>
+
+					<PaginationItem>
+						<PaginationLink
+							href="#"
+							isActive
+							onClick={(event) => event.preventDefault()}
+						>
+							{page}
+						</PaginationLink>
+					</PaginationItem>
+
+					<PaginationItem>
+						<PaginationNext
+							href="#"
+							aria-disabled={page >= totalPages || isPending}
+							className={
+								page >= totalPages || isPending
+									? "pointer-events-none opacity-50"
+									: ""
+							}
+							onClick={(event) => {
+								event.preventDefault();
+
+								if (page < totalPages && !isPending) {
+									onPageChange(page + 1);
+								}
+							}}
+						/>
+					</PaginationItem>
+				</PaginationContent>
+			</Pagination>
+		</div>
 	);
 }

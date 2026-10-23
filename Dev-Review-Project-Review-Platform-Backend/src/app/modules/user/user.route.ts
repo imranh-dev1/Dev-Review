@@ -5,6 +5,7 @@ import { UserControllers } from "./user.controller";
 import { upload } from "../../lib/multer";
 import { userValidation } from "../auth/auth.validation";
 import { validateRequest } from "../../middleware/validateRequest";
+import { listUsersQuerySchema } from "./user.validation";
 
 const router = Router();
 
@@ -21,5 +22,7 @@ router.patch(
 	validateRequest(userValidation.changePasswordSchema),
 	UserControllers.changePassword,
 );
+
+router.get("/all", auth(UserRole.ADMIN), validateRequest(listUsersQuerySchema), UserControllers.listUsers);
 
 export const UserRoutes = router;

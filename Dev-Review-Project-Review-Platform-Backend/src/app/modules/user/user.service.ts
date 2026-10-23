@@ -8,10 +8,25 @@ import type { IChangePasswordPayload } from "../auth/auth.interface";
 import type { RequestUser } from "../../middleware/checkAuth";
 import bcrypt from "bcryptjs";
 import config from "../../config";
+import type { UserListQuery } from "./user.interface";
+import { buildMeta, getPagination } from "../../utils/pagination";
+import { or } from "@prisma/orm-postgres/orm-client";
 
 type UpdateProfilePayload = {
 	name?: string;
 };
+
+const USER_PUBLIC_FIELDS = [
+	"id",
+	"name",
+	"email",
+	"avatar",
+	"role",
+	"status",
+	"emailVerifiedAt",
+	"createdAt",
+	"updatedAt",
+] as const;
 
 const updateProfile = async (
 	userId: string,
@@ -114,7 +129,42 @@ const changePassword = async (
 	};
 };
 
+
+const listUsers = async (query: UserListQuery) => {
+	const { page, limit, skip, take } = getPagination(query);
+
+	let users = db.orm.public.User.where({
+		...(query.role && { role: query.role }),
+		...(query.status && { status: query.status }),
+	});
+
+	if (query.search) {
+		const term = `%${query.search}%`;
+
+		users = users.where((u) => or(u.name.ilike(term), u.email.ilike(term)),
+		);
+	}
+
+	const { count } = await users.aggregate((a) => ({
+		count: a.count(),
+	}));
+
+	const data = await users
+		.orderBy([(u) => u.createdAt.desc(), (u) => u.id.desc()])
+		.limit(take)
+		.offset(skip)
+		.select(...USER_PUBLIC_FIELDS)
+		.all();
+
+	return {
+		data,
+		meta: buildMeta(page, limit, count),
+	};
+};
+
+
 export const UserServices = {
 	updateProfile,
 	changePassword,
+	listUsers
 };

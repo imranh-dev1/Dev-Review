@@ -160,13 +160,13 @@ export default function Profile() {
 						<InfoItem
 							icon={GraduationCap}
 							label="Account role"
-							value="Student"
+							value={user?.role}
 						/>
 
 						<InfoItem
 							icon={ShieldCheck}
 							label="Account status"
-							value="Active"
+							value={user?.status}
 						/>
 					</CardContent>
 				</Card>

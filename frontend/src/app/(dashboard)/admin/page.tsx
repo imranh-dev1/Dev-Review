@@ -1,7 +1,7 @@
-export default function UserDashboardPage() {
+export default function AdminDashboardPage() {
 	return (
 		<div>
-			<h1>User Dashboard Page</h1>
+			<h1>Admin Dashboard Page</h1>
 		</div>
 	);
 }

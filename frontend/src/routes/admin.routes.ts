@@ -2,10 +2,10 @@ import {
 	Bell,
 	ChartNoAxesCombined,
 	ClipboardCheck,
+	Edit,
 	FolderKanban,
-	History,
 	LayoutDashboard,
-	Settings,
+	LockKeyhole,
 	UserCog,
 	UserRound,
 	Users,
@@ -18,12 +18,12 @@ export const adminRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "Dashboard",
-				url: "/dashboard",
+				url: "/admin",
 				icon: LayoutDashboard,
 			},
 			{
 				title: "Analytics",
-				url: "/dashboard/analytics",
+				url: "/admin/analytics",
 				icon: ChartNoAxesCombined,
 			},
 		],
@@ -33,22 +33,22 @@ export const adminRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "Users",
-				url: "/dashboard/users",
+				url: "/admin/users",
 				icon: Users,
 			},
 			{
 				title: "Submissions",
-				url: "/dashboard/submissions",
+				url: "/admin/submissions",
 				icon: FolderKanban,
 			},
 			{
 				title: "Reviews",
-				url: "/dashboard/reviews",
+				url: "/admin/reviews",
 				icon: ClipboardCheck,
 			},
 			{
 				title: "Review Assignments",
-				url: "/dashboard/assignments",
+				url: "/admin/assignments",
 				icon: UserCog,
 			},
 		],
@@ -58,23 +58,23 @@ export const adminRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "Notifications",
-				url: "/dashboard/notifications",
+				url: "/admin/notifications",
 				icon: Bell,
 			},
 			{
-				title: "Audit Logs",
-				url: "/dashboard/audit-logs",
-				icon: History,
-			},
-			{
-				title: "Settings",
-				url: "/dashboard/settings",
-				icon: Settings,
-			},
-			{
 				title: "My Profile",
-				url: "/dashboard/profile",
+				url: "/admin/profile",
 				icon: UserRound,
+			},
+			{
+				title: "Update My Profile",
+				url: "/admin/update-my-profile",
+				icon: Edit,
+			},
+			{
+				title: "Change Password",
+				url: "/admin/change-password",
+				icon: LockKeyhole,
 			},
 		],
 	},
