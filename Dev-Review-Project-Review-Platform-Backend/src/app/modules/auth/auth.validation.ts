@@ -20,15 +20,6 @@ const loginSchema = z.object({
 	password: z.string().min(1).max(72),
 });
 
-const updateProfileSchema = z
-	.object({
-		name: z.string().trim().min(2).max(100).optional(),
-		avatar: z.url().max(2048).optional(),
-	})
-	.refine((data) => data.name !== undefined || data.avatar !== undefined, {
-		message: "At least one field (name or avatar) is required",
-	});
-
 const changePasswordSchema = z.object({
 	currentPassword: z.string().min(1).max(72),
 	newPassword: z.string().min(8).max(72),
@@ -39,6 +30,5 @@ export const userValidation = {
 	verifyEmailSchema,
 	resendOtpSchema,
 	loginSchema,
-	updateProfileSchema,
 	changePasswordSchema,
 };
