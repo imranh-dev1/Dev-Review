@@ -2,6 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { Bell, LayoutDashboard, LogOut, User } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,14 +16,46 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLogout } from "@/hooks";
-import type { IUser } from "@/types";
+import type { IUser, UserRole } from "@/types";
+
+const dashboardRoutes: Record<UserRole, string> = {
+	ADMIN: "/admin",
+	REVIEWER: "/reviewer",
+	STUDENT: "/student",
+};
 
 export function NavUserDropdown({ user }: { user: IUser }) {
 	const router = useRouter();
-
+	const queryClient = useQueryClient();
 	const { mutate: logout, isPending } = useLogout();
 
-	const queryClient = useQueryClient();
+	const dashboardRoute = dashboardRoutes[user.role];
+
+	const menuItems = [
+		{
+			label: "Account",
+			icon: User,
+			href: "/account",
+		},
+		{
+			label: "Dashboard",
+			icon: LayoutDashboard,
+			href: dashboardRoute,
+		},
+		{
+			label: "Notifications",
+			icon: Bell,
+			href: "/notifications",
+		},
+	];
+
+	const initials = user.name
+		.trim()
+		.split(/\s+/)
+		.slice(0, 2)
+		.map((part) => part[0])
+		.join("")
+		.toUpperCase();
 
 	const handleLogout = () => {
 		logout(undefined, {
@@ -35,27 +68,16 @@ export function NavUserDropdown({ user }: { user: IUser }) {
 
 				router.replace("/login");
 			},
-
 			onError: (error) => {
-				const message =
-					error instanceof Error
-						? error.message
-						: "Unable to sign out. Please try again.";
-
 				toast.error("Sign out failed", {
-					description: message,
+					description:
+						error instanceof Error
+							? error.message
+							: "Unable to sign out. Please try again.",
 				});
 			},
 		});
 	};
-
-	const initials = user.name
-		.trim()
-		.split(/\s+/)
-		.slice(0, 2)
-		.map((part) => part[0])
-		.join("")
-		.toUpperCase();
 
 	return (
 		<DropdownMenu>
@@ -63,7 +85,7 @@ export function NavUserDropdown({ user }: { user: IUser }) {
 				<button
 					type="button"
 					aria-label="Open user menu"
-					className="rounded-full outline-none ring-offset-background transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+					className="rounded-full outline-none transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
 				>
 					<Avatar className="size-9 cursor-pointer border">
 						<AvatarImage src={user.avatar || undefined} alt={user.name} />
@@ -96,6 +118,7 @@ export function NavUserDropdown({ user }: { user: IUser }) {
 							<span className="truncate text-xs text-muted-foreground">
 								{user.email}
 							</span>
+							<span className="text-xs text-muted-foreground">{user.role}</span>
 						</div>
 					</div>
 				</DropdownMenuLabel>
@@ -103,29 +126,18 @@ export function NavUserDropdown({ user }: { user: IUser }) {
 				<DropdownMenuSeparator />
 
 				<DropdownMenuGroup>
-					<DropdownMenuItem
-						onSelect={() => router.push("/account")}
-						className="cursor-pointer gap-2"
-					>
-						<User className="size-4" />
-						Account
-					</DropdownMenuItem>
-
-					<DropdownMenuItem
-						onSelect={() => router.push("/billing")}
-						className="cursor-pointer gap-2"
-					>
-						<LayoutDashboard className="size-4" />
-						Dashboard
-					</DropdownMenuItem>
-
-					<DropdownMenuItem
-						onSelect={() => router.push("/notifications")}
-						className="cursor-pointer gap-2"
-					>
-						<Bell className="size-4" />
-						Notifications
-					</DropdownMenuItem>
+					{menuItems.map(({ label, icon: Icon, href }) => (
+						<DropdownMenuItem
+							key={label}
+							asChild
+							className="cursor-pointer gap-2"
+						>
+							<Link href={href}>
+								<Icon className="size-4" />
+								<span>{label}</span>
+							</Link>
+						</DropdownMenuItem>
+					))}
 				</DropdownMenuGroup>
 
 				<DropdownMenuSeparator />
