@@ -1,14 +1,13 @@
-
-import { SidebarGroup } from "@/types/sidebar.type";
 import {
-	LayoutDashboard,
-	FolderKanban,
-	UserRound,
 	Bell,
-	Settings,
 	FileText,
+	FolderKanban,
+	LayoutDashboard,
 	MessageSquareText,
+	Settings,
+	UserRound,
 } from "lucide-react";
+import type { SidebarGroup } from "@/types/sidebar.type";
 
 export const studentRoutes: SidebarGroup[] = [
 	{

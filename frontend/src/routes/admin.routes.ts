@@ -1,18 +1,16 @@
-
-import { SidebarGroup } from "@/types/sidebar.type";
 import {
-	LayoutDashboard,
-	FolderKanban,
-	ClipboardCheck,
-	Users,
-	UserRound,
 	Bell,
-	Settings,
-	History,
 	ChartNoAxesCombined,
+	ClipboardCheck,
+	FolderKanban,
+	History,
+	LayoutDashboard,
+	Settings,
 	UserCog,
+	UserRound,
+	Users,
 } from "lucide-react";
-
+import type { SidebarGroup } from "@/types/sidebar.type";
 
 export const adminRoutes: SidebarGroup[] = [
 	{

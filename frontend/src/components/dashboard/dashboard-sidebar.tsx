@@ -49,34 +49,34 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
 				</Link>
 			</SidebarHeader>
 			<SidebarContent>
-  {routes.map((group) => (
-    <SidebarGroup key={group.title}>
-      <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+				{routes.map((group) => (
+					<SidebarGroup key={group.title}>
+						<SidebarGroupLabel>{group.title}</SidebarGroupLabel>
 
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {group.items.map((item) => {
-            const Icon = item.icon;
+						<SidebarGroupContent>
+							<SidebarMenu>
+								{group.items.map((item) => {
+									const Icon = item.icon;
 
-            return (
-              <SidebarMenuItem key={item.url}>
-                <SidebarMenuButton
-                  isActive={pathnme === item.url}
-                  asChild
-                >
-                  <Link href={item.url}>
-                    <Icon className="size-4" />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  ))}
-</SidebarContent>
+									return (
+										<SidebarMenuItem key={item.url}>
+											<SidebarMenuButton
+												isActive={pathnme === item.url}
+												asChild
+											>
+												<Link href={item.url}>
+													<Icon className="size-4 text-primary" />
+													<span>{item.title}</span>
+												</Link>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+									);
+								})}
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				))}
+			</SidebarContent>
 			<SidebarRail />
 		</Sidebar>
 	);
