@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/card";
 import { useGetMe } from "@/hooks";
 import Link from "next/link";
+import cover_image from "../../../../public/assets/profile-cover.jpg";
 
 function formatDate(date: string) {
 	return new Intl.DateTimeFormat("en-US", {
@@ -75,7 +76,12 @@ export default function Profile() {
 
 			{/* Profile header */}
 			<Card className="overflow-hidden border-border/70 shadow-sm">
-				<div className="h-28 bg-gradient-to-r from-primary/20 via-primary/10 to-muted sm:h-36" />
+				<div
+					className="h-40 bg-cover bg-center bg-no-repeat sm:h-36"
+					style={{
+						backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0.05)), url(${cover_image.src})`,
+					}}
+				/>
 
 				<CardContent className="-mt-12 relative pb-6 sm:-mt-14">
 					<div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
