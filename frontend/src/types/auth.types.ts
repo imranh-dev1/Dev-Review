@@ -15,3 +15,8 @@ export interface IVerifyEmailPayload {
 export interface IResendOtpPayload {
 	email: string;
 }
+
+export interface IChangePassword {
+	currentPassword: string;
+	newPassword: string;
+}

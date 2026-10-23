@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
 	BadgeCheck,
@@ -41,8 +41,6 @@ function InfoItem({
 	label: string;
 	value: string;
 }) {
-	
-
 	return (
 		<div className="flex items-start gap-3 rounded-xl border bg-background p-4">
 			<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
@@ -58,7 +56,6 @@ function InfoItem({
 }
 
 export default function Profile() {
-
 	const { data } = useGetMe();
 
 	const user = data?.data;
@@ -132,7 +129,7 @@ export default function Profile() {
 						</div>
 
 						<Button asChild className="w-full sm:w-auto">
-							<Link href={`/${user.role.toLowerCase()}/settings`}>
+							<Link href={`/${user.role.toLowerCase()}/update-my-profile`}>
 								<UserRound className="mr-2 size-4" />
 								Edit Profile
 							</Link>

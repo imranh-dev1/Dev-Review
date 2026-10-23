@@ -1,12 +1,14 @@
 import {
+	AlertCircle,
 	Bell,
+	Edit,
 	FileText,
 	FolderKanban,
 	LayoutDashboard,
 	MessageSquareText,
-	Settings,
 	UserRound,
 } from "lucide-react";
+
 import type { SidebarGroup } from "@/types/sidebar.type";
 
 export const studentRoutes: SidebarGroup[] = [
@@ -54,9 +56,14 @@ export const studentRoutes: SidebarGroup[] = [
 				icon: UserRound,
 			},
 			{
-				title: "Settings",
-				url: "/student/settings",
-				icon: Settings,
+				title: "Update My Profile",
+				url: "/student/update-my-profile",
+				icon: Edit,
+			},
+			{
+				title: "Change Password",
+				url: "/student/change-password",
+				icon: AlertCircle,
 			},
 		],
 	},
