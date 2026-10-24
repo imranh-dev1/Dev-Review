@@ -2,10 +2,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
 	getAllUsers,
 	getUserDetails,
+	updateUserStatus,
 	userChangePassword,
 	userUpdateProfile,
 } from "@/api/user.api";
 import { IUserListQuery } from "@/types/user.types";
+import { UserStatus } from "@/types";
 
 export function useProfileUpdate() {
 	return useMutation({
@@ -31,5 +33,12 @@ export function useGetUserDetails(id: string) {
 		queryKey: ["user-details", id],
 		queryFn: () => getUserDetails(id),
 		enabled: Boolean(id),
+	});
+}
+
+export function useUpdateUserStatus() {
+	return useMutation({
+		mutationFn: ({ id, status }: { id: string; status: UserStatus }) =>
+			updateUserStatus(id, status),
 	});
 }

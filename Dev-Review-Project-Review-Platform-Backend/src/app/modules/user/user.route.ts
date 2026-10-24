@@ -5,7 +5,7 @@ import { UserControllers } from "./user.controller";
 import { upload } from "../../lib/multer";
 import { userValidation } from "../auth/auth.validation";
 import { validateRequest } from "../../middleware/validateRequest";
-import { listUsersQuerySchema } from "./user.validation";
+import { listUsersQuerySchema, updateUserStatusSchema } from "./user.validation";
 
 const router = Router();
 
@@ -34,6 +34,13 @@ router.get(
 	"/:id",
 	auth(UserRole.ADMIN, UserRole.REVIEWER, UserRole.STUDENT),
 	UserControllers.getUserDetail,
+);
+
+router.patch(
+	"/:id/status",
+	auth(UserRole.ADMIN),
+	validateRequest(updateUserStatusSchema),
+	UserControllers.updateUserStatus,
 );
 
 export const UserRoutes = router;

@@ -1,4 +1,5 @@
 import apiClint from "@/lib/apiClint";
+import { UserStatus } from "@/types";
 import { IChangePassword } from "@/types/auth.types";
 import { IUserListQuery } from "@/types/user.types";
 
@@ -26,5 +27,12 @@ export function getAllUsers(params?: IUserListQuery) {
 export const getUserDetails = (id: string) => {
 	return apiClint(`/user/${id}`, {
 		method: "GET",
+	});
+};
+
+export const updateUserStatus = (id: string, status: UserStatus) => {
+	return apiClint(`/user/${id}/status`, {
+		method: "PATCH",
+		body: { status },
 	});
 };

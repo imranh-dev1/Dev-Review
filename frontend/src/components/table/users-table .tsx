@@ -26,6 +26,7 @@ import {
 import { Button } from "../ui/button";
 import { Eye } from "lucide-react";
 import UserDetailsDialog from "../dialog/user-details-dialog";
+import UserStatusDialog from "../dialog/user-status-dialog";
 
 export default function UsersTable() {
 	const [filters, setFilters] = useState<IUserListQuery>({
@@ -111,6 +112,7 @@ export default function UsersTable() {
 							<TableHead>Status</TableHead>
 							<TableHead>Joined</TableHead>
 							<TableHead>View Details</TableHead>
+							<TableHead>Change Status</TableHead>
 						</TableRow>
 					</TableHeader>
 
@@ -179,9 +181,17 @@ export default function UsersTable() {
 
 									<TableCell>{formatDate(user.createdAt)}</TableCell>
 
-									<TableCell> 
+									<TableCell>
 										<UserDetailsDialog userId={user.id} />
-                                    </TableCell> 
+									</TableCell>
+
+									<TableCell>
+										<UserStatusDialog
+											userId={user.id}
+											userName={user.name}
+											status={user.status}
+										/>
+									</TableCell>
 								</TableRow>
 							))
 						)}

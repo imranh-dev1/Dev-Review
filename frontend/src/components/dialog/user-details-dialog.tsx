@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Eye, Loader2 } from "lucide-react";
@@ -12,7 +11,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/components/ui/dialog"; 
+} from "@/components/ui/dialog";
 import { useGetUserDetails } from "@/hooks";
 import { Spinner } from "../ui/spinner";
 
@@ -20,21 +19,19 @@ interface UserDetailsDialogProps {
 	userId: string;
 }
 
-export default function UserDetailsDialog({
-	userId,
-}: UserDetailsDialogProps) {
+export default function UserDetailsDialog({ userId }: UserDetailsDialogProps) {
 	const [open, setOpen] = useState(false);
 
 	const { data, isPending, isError } = useGetUserDetails(open ? userId : "");
 
-	const user = data?.data; 
+	const user = data?.data;
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button variant="outline" size="sm">
-					<Eye className="mr-2 size-4" />
-					View Details
+					<Eye className="mr-2 size-4 text-primary" />
+					Details
 				</Button>
 			</DialogTrigger>
 
@@ -45,7 +42,7 @@ export default function UserDetailsDialog({
 
 				{isPending && (
 					<div className="flex justify-center py-10">
-						<Spinner className="text-primary"/>
+						<Spinner className="text-primary" />
 					</div>
 				)}
 
@@ -107,9 +104,7 @@ export default function UserDetailsDialog({
 
 							<div className="flex justify-between gap-3">
 								<span className="text-muted-foreground">Joined</span>
-								<span>
-									{new Date(user.createdAt).toLocaleDateString()}
-								</span>
+								<span>{new Date(user.createdAt).toLocaleDateString()}</span>
 							</div>
 						</div>
 					</div>
