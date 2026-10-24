@@ -3,12 +3,13 @@ import {
 	deleteUser,
 	getAllUsers,
 	getUserDetails,
+	updateUserRole,
 	updateUserStatus,
 	userChangePassword,
 	userUpdateProfile,
 } from "@/api/user.api";
 import { IUserListQuery } from "@/types/user.types";
-import { UserStatus } from "@/types";
+import { UserRole, UserStatus } from "@/types";
 
 export function useProfileUpdate() {
 	return useMutation({
@@ -41,6 +42,13 @@ export function useUpdateUserStatus() {
 	return useMutation({
 		mutationFn: ({ id, status }: { id: string; status: UserStatus }) =>
 			updateUserStatus(id, status),
+	});
+}
+
+export function useUpdateUserRole() {
+	return useMutation({
+		mutationFn: ({ id, role }: { id: string; role: UserRole }) =>
+			updateUserRole(id, role),
 	});
 }
 

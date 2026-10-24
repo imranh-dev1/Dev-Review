@@ -5,7 +5,11 @@ import { UserControllers } from "./user.controller";
 import { upload } from "../../lib/multer";
 import { userValidation } from "../auth/auth.validation";
 import { validateRequest } from "../../middleware/validateRequest";
-import { listUsersQuerySchema, updateUserStatusSchema } from "./user.validation";
+import {
+	listUsersQuerySchema,
+	updateUserRoleSchema,
+	updateUserStatusSchema,
+} from "./user.validation";
 
 const router = Router();
 
@@ -43,10 +47,13 @@ router.patch(
 	UserControllers.updateUserStatus,
 );
 
-router.delete(
-	"/:id",
+router.patch(
+	"/:id/role",
 	auth(UserRole.ADMIN),
-	UserControllers.deleteUser,
+	validateRequest(updateUserRoleSchema),
+	UserControllers.updateUserRole,
 );
+
+router.delete("/:id", auth(UserRole.ADMIN), UserControllers.deleteUser);
 
 export const UserRoutes = router;

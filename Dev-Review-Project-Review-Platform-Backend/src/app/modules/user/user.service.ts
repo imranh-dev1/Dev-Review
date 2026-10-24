@@ -11,7 +11,7 @@ import config from "../../config";
 import type { UserListQuery } from "./user.interface";
 import { buildMeta, getPagination } from "../../utils/pagination";
 import { or } from "@prisma/orm-postgres/orm-client";
-import type { UserStatus } from "../../types/models";
+import { UserRole, type UserStatus } from "../../types/models";
 
 type UpdateProfilePayload = {
 	name?: string;
@@ -189,16 +189,24 @@ const getUserDetail = async (id: string) => {
 	};
 };
 
-const updateUserStatus = async (id: string, actor: RequestUser, status: UserStatus) => {
-
-	const user = await db.orm.public.User.where({ id }).select("id", "name", "status").first();
+const updateUserStatus = async (
+	id: string,
+	actor: RequestUser,
+	status: UserStatus,
+) => {
+	const user = await db.orm.public.User.where({ id })
+		.select("id", "name", "status")
+		.first();
 
 	if (!user) {
 		throw new AppError(httpStatus.NOT_FOUND, "User not found");
 	}
 
 	if (user.id === actor.userId && status !== "ACTIVE") {
-		throw new AppError(httpStatus.BAD_REQUEST, "You cannot change your own account status");
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"You cannot change your own account status",
+		);
 	}
 
 	if (user.status === status) {
@@ -208,6 +216,46 @@ const updateUserStatus = async (id: string, actor: RequestUser, status: UserStat
 	await db.orm.public.User.where({ id }).update({ status });
 
 	return { id: user.id, status };
+};
+
+const updateUserRole = async (
+	id: string,
+	actor: RequestUser,
+	role: UserRole,
+) => {
+	const user = await db.orm.public.User.where({ id })
+		.select("id", "name", "role")
+		.first();
+
+	if (!user) {
+		throw new AppError(httpStatus.NOT_FOUND, "User not found");
+	}
+
+	if (user.role === UserRole.ADMIN) {
+		throw new AppError(httpStatus.FORBIDDEN, "Admin role cannot be changed");
+	}
+
+	if (user.id === actor.userId) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"You cannot change your own role",
+		);
+	}
+
+	if (role !== UserRole.STUDENT && role !== UserRole.REVIEWER) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"Only STUDENT and REVIEWER roles are allowed",
+		);
+	}
+
+	if (user.role === role) {
+		return { id: user.id, name: user.name, role };
+	}
+
+	await db.orm.public.User.where({ id }).update({ role });
+
+	return null;
 };
 
 const deleteUser = async (id: string, actor: RequestUser) => {
@@ -237,5 +285,6 @@ export const UserServices = {
 	listUsers,
 	getUserDetail,
 	updateUserStatus,
-	deleteUser
+	updateUserRole,
+	deleteUser,
 };

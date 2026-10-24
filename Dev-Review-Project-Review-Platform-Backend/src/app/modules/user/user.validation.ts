@@ -15,4 +15,3 @@ export const updateUserStatusSchema = z.object({
 export const updateUserRoleSchema = z.object({
 	role: z.enum(["STUDENT", "REVIEWER", "ADMIN"]),
 });
-

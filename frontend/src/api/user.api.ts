@@ -1,5 +1,5 @@
 import apiClint from "@/lib/apiClint";
-import { UserStatus } from "@/types";
+import { UserRole, UserStatus } from "@/types";
 import { IChangePassword } from "@/types/auth.types";
 import { IUserListQuery } from "@/types/user.types";
 
@@ -34,6 +34,13 @@ export const updateUserStatus = (id: string, status: UserStatus) => {
 	return apiClint(`/user/${id}/status`, {
 		method: "PATCH",
 		body: { status },
+	});
+};
+
+export const updateUserRole = (id: string, role: UserRole) => {
+	return apiClint(`/user/${id}/role`, {
+		method: "PATCH",
+		body: { role },
 	});
 };
 

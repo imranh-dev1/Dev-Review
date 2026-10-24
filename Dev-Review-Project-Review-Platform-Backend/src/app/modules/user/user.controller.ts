@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 import { AppError } from "../../utils/AppError";
 import { UserServices } from "./user.service";
 import type { RequestUser } from "../../middleware/checkAuth";
-import { UserStatus } from "../../types/models";
+import { UserRole, UserStatus } from "../../types/models";
 
 const updateProfile = catchAsync(async (req: Request, res: Response) => {
 	if (!req.user?.userId) {
@@ -55,7 +55,6 @@ const listUsers = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getUserDetail = catchAsync(async (req: Request, res: Response) => {
-
 	const user = await UserServices.getUserDetail(req?.params?.id as string);
 
 	sendResponse(res, {
@@ -82,6 +81,23 @@ const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const updateUserRole = catchAsync(async (req: Request, res: Response) => {
+	const id = req.params.id as string;
+
+	const result = await UserServices.updateUserRole(
+		id,
+		req.user as RequestUser,
+		req.body.role as UserRole,
+	);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "User role updated successfully.",
+		data: result,
+	});
+});
+
 const deleteUser = catchAsync(async (req: Request, res: Response) => {
 	const id = req.params.id as string;
 
@@ -101,5 +117,6 @@ export const UserControllers = {
 	listUsers,
 	getUserDetail,
 	updateUserStatus,
-	deleteUser
+	updateUserRole,
+	deleteUser,
 };
