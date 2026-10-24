@@ -3,7 +3,7 @@
 import { Loader2, ShieldCheck, ShieldOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
 	AlertDialog,
@@ -35,6 +35,7 @@ export default function UserStatusDialog({
 	const [open, setOpen] = useState(false);
 	const [nextStatus, setNextStatus] = useState<UserStatus>(status);
 	const { mutate, isPending } = useUpdateUserStatus();
+	const queryClient = useQueryClient();
 
 	const handleOpenChange = (value: boolean) => {
 		if (isPending) return;
@@ -53,13 +54,15 @@ export default function UserStatusDialog({
 			{ id: userId, status: nextStatus },
 			{
 				onSuccess: () => {
-					toast.success("Password changed successfully.", {
-						description: "Your account password has been updated securely.",
+					queryClient.invalidateQueries({
+						queryKey: ["users"],
 					});
+
+					toast.success(`${userName}'s status updated successfully.`);
 					setOpen(false);
 				},
 				onError: (error) => {
-					toast.error("Failed to change password.", {
+					toast.error("Failed to update user status.", {
 						description:
 							error instanceof Error
 								? error.message
