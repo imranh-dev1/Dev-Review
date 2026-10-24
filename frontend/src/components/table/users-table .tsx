@@ -216,6 +216,7 @@ export default function UsersTable() {
 			</div>
 
 			<DataPagination
+				content="Users"
 				page={meta?.page ?? 1}
 				totalPages={meta?.totalPages ?? 0}
 				total={meta?.total ?? 0}

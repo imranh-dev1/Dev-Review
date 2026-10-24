@@ -234,10 +234,10 @@ export function NewSubmissionForm() {
 					description: "Your project has been saved as a draft.",
 				});
 				queryClint.invalidateQueries({
-					queryKey: ["projects"],
+					queryKey: ["my-submissions"],
 				});
 
-				router.push(`/${user?.role.toLowerCase()}/submissions`);
+				router.push(`/${user?.role.toLowerCase()}/submissions/my-submissions`);
 			},
 			onError: (error) => {
 				toast.error("Failed to create submission.", {

@@ -48,6 +48,11 @@ export const adminRoutes: SidebarGroup[] = [
 				icon: FileText,
 			},
 			{
+				title: "My Submissions",
+				url: "/admin/submissions/my-submissions",
+				icon: FolderKanban,
+			},
+			{
 				title: "Reviews",
 				url: "/admin/reviews",
 				icon: ClipboardCheck,

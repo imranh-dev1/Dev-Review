@@ -27,7 +27,7 @@ export const studentRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "My Submissions",
-				url: "/student/submissions",
+				url: "/student/submissions/my-submissions",
 				icon: FolderKanban,
 			},
 			{

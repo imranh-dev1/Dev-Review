@@ -3,6 +3,8 @@ import { auth } from "../../middleware/checkAuth";
 import { UserRole } from "../../types/models";
 import { upload } from "../../lib/multer";
 import { SubmissionControllers } from "./submission.controller";
+import { validateRequest } from "../../middleware/validateRequest";
+import { SubmissionValidation } from "./submission.validation";
 
 const router = Router();
 
@@ -15,5 +17,16 @@ router.post(
 	]),
 	SubmissionControllers.createSubmission,
 );
+
+router.get(
+	"/my",
+	auth(UserRole.STUDENT, UserRole.ADMIN),
+	validateRequest(SubmissionValidation.listSubmissionsQuerySchema), SubmissionControllers.listMySubmissions
+);
+
+router.get("/", auth(UserRole.ADMIN), validateRequest(SubmissionValidation.listSubmissionsQuerySchema), SubmissionControllers.listAllSubmissions);
+
+
+
 
 export const SubmissionRoutes = router;

@@ -1,9 +1,10 @@
 import { db } from "../../../prisma/db";
 import { AppError } from "../../utils/AppError";
-import type { ICreateSubmissionPayload } from "./submission.interface";
+import type { ICreateSubmissionPayload, IListQuery } from "./submission.interface";
 import httpStatus from "http-status";
 import type { UploadApiResponse } from "cloudinary";
 import { cloudinary } from "../../lib/cloudinary";
+import { buildMeta, getPagination } from "../../utils/pagination";
 
 const createSubmission = async (
 	ownerId: string,
@@ -62,6 +63,101 @@ const createSubmission = async (
 	return submission;
 };
 
+const listMySubmissions = async (userId: string, query: IListQuery) => {
+	const { page, limit, skip, take } = getPagination(query);
+
+	let submissions = db.orm.public.ProjectSubmission.where({
+		ownerId: userId,
+		deletedAt: null,
+		...(query.status ? { status: query.status } : {}),
+	});
+
+	if (query.search) {
+		submissions = submissions.where((s) =>
+			s.title.ilike(`%${query.search}%`),
+		);
+	}
+
+	const { count } = await submissions.aggregate((a) => ({
+		count: a.count(),
+	}));
+
+	const data = await submissions
+		.orderBy([
+			(submission) => submission.createdAt.desc(),
+			(submission) => submission.id.desc(),
+		])
+		.limit(take)
+		.offset(skip)
+		.select(
+			"id",
+			"title",
+			"summary",
+			"status",
+			"technologies",
+			"repositoryUrl",
+			"liveDemoUrl",
+			"submittedAt",
+			"createdAt",
+			"updatedAt",
+		)
+		.include("owner", (owner) => owner.select("id", "name", "email"))
+		.all();
+
+	return {
+		data,
+		meta: buildMeta(page, limit, count),
+	};
+};
+
+const listAllSubmissions = async (query: IListQuery) => {
+	const { page, limit, skip, take } = getPagination(query);
+
+	let submissions = db.orm.public.ProjectSubmission.where({
+		deletedAt: null,
+		...(query.status ? { status: query.status } : {}),
+	});
+
+	if (query.search) {
+		submissions = submissions.where((submission) =>
+			submission.title.ilike(`%${query.search}%`),
+		);
+	}
+
+	const { count } = await submissions.aggregate((a) => ({
+		count: a.count(),
+	}));
+
+	const data = await submissions
+		.orderBy([
+			(submission) => submission.createdAt.desc(),
+			(submission) => submission.id.desc(),
+		])
+		.limit(take)
+		.offset(skip)
+		.select(
+			"id",
+			"title",
+			"summary",
+			"status",
+			"technologies",
+			"repositoryUrl",
+			"liveDemoUrl",
+			"screenshots",
+			"submittedAt",
+			"createdAt",
+			"updatedAt",
+		)
+		.include("owner", (owner) => owner.select("id", "name", "email"))
+		.all();
+
+	return {
+		data,
+		meta: buildMeta(page, limit, count),
+	};
+};
 export const SubmissionServices = {
 	createSubmission,
+	listMySubmissions,
+	listAllSubmissions
 };

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/pagination";
 
 interface DataPaginationProps {
+	content: string;
 	page: number;
 	totalPages: number;
 	total: number;
@@ -19,6 +20,7 @@ interface DataPaginationProps {
 }
 
 export default function DataPagination({
+	content,
 	page,
 	totalPages,
 	total,
@@ -34,7 +36,7 @@ export default function DataPagination({
 	return (
 		<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 			<p className="text-sm text-muted-foreground">
-				Showing {start}–{end} of {total} users
+				Showing {start}–{end} of {total} {content}
 			</p>
 
 			<Pagination className="mx-0 w-auto justify-end">

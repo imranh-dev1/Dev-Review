@@ -1,5 +1,15 @@
 import z from "zod";
 
+export const submissionStatusEnum = z.enum([
+	"DRAFT",
+	"SUBMITTED",
+	"IN_REVIEW",
+	"CHANGES_REQUESTED",
+	"RESUBMITTED",
+	"APPROVED",
+	"REJECTED",
+]);
+
 const createSubmissionSchema = z.object({
 	data: z.object({
 		title: z.string().trim().min(3).max(150),
@@ -11,6 +21,20 @@ const createSubmissionSchema = z.object({
 	}),
 });
 
+const listSubmissionsQuerySchema = z.object({
+	page: z.coerce.number().int().min(1).default(1),
+	limit: z.coerce.number().int().min(1).max(100).default(10),
+	status: submissionStatusEnum.optional(),
+	technology: z.string().trim().min(1).max(50).optional(),
+	search: z.string().trim().max(150).optional(),
+	includeDeleted: z
+		.enum(["true", "false"])
+		.transform((value) => value === "true")
+		.optional(),
+	scope: z.enum(["pending", "all"]).optional(),
+});
+
 export const SubmissionValidation = {
 	createSubmissionSchema,
+	listSubmissionsQuerySchema
 };

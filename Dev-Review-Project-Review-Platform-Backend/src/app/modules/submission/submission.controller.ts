@@ -33,6 +33,34 @@ const createSubmission = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const listMySubmissions = catchAsync(async (req: Request, res: Response) => {
+	const user = req.user as RequestUser;
+
+	const { data, meta } = await SubmissionServices.listMySubmissions(user.userId, req.query);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Submissions fetched successfully.",
+		data: data,
+		meta,
+	});
+});
+
+const listAllSubmissions = catchAsync(async (req: Request, res: Response) => {
+	const { data, meta } = await SubmissionServices.listAllSubmissions(req.query);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Submissions fetched successfully.",
+		data: data,
+		meta,
+	});
+});
+
 export const SubmissionControllers = {
 	createSubmission,
+	listMySubmissions,
+	listAllSubmissions
 };
