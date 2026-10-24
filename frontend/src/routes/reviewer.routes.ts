@@ -1,9 +1,11 @@
 import {
 	Bell,
 	ClipboardCheck,
+	Edit,
 	FolderKanban,
 	History,
 	LayoutDashboard,
+	LockKeyhole,
 	Settings,
 	ShieldCheck,
 	UserRound,
@@ -16,7 +18,7 @@ export const reviewerRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "Dashboard",
-				url: "/dashboard",
+				url: "/reviewer",
 				icon: LayoutDashboard,
 			},
 		],
@@ -26,22 +28,22 @@ export const reviewerRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "Assigned Projects",
-				url: "/dashboard/assignments",
+				url: "/reviewer/assignments",
 				icon: FolderKanban,
 			},
 			{
 				title: "Pending Reviews",
-				url: "/dashboard/reviews/pending",
+				url: "/reviewer/reviews/pending",
 				icon: ClipboardCheck,
 			},
 			{
 				title: "Completed Reviews",
-				url: "/dashboard/reviews/completed",
+				url: "/reviewer/reviews/completed",
 				icon: ShieldCheck,
 			},
 			{
 				title: "Review History",
-				url: "/dashboard/reviews/history",
+				url: "/reviewer/reviews/history",
 				icon: History,
 			},
 		],
@@ -51,18 +53,23 @@ export const reviewerRoutes: SidebarGroup[] = [
 		items: [
 			{
 				title: "Notifications",
-				url: "/dashboard/notifications",
+				url: "/reviewer/notifications",
 				icon: Bell,
 			},
 			{
 				title: "My Profile",
-				url: "/dashboard/profile",
+				url: "/reviewer/profile",
 				icon: UserRound,
 			},
 			{
-				title: "Settings",
-				url: "/dashboard/settings",
-				icon: Settings,
+				title: "Update My Profile",
+				url: "/reviewer/update-my-profile",
+				icon: Edit,
+			},
+			{
+				title: "Change Password",
+				url: "/reviewer/change-password",
+				icon: LockKeyhole,
 			},
 		],
 	},
