@@ -27,6 +27,7 @@ import { Button } from "../ui/button";
 import { Eye } from "lucide-react";
 import UserDetailsDialog from "../dialog/user-details-dialog";
 import UserStatusDialog from "../dialog/user-status-dialog";
+import { DeleteUserDialog } from "../dialog/delete-user-dialog";
 
 export default function UsersTable() {
 	const [filters, setFilters] = useState<IUserListQuery>({
@@ -113,6 +114,7 @@ export default function UsersTable() {
 							<TableHead>Joined</TableHead>
 							<TableHead>View Details</TableHead>
 							<TableHead>Change Status</TableHead>
+							<TableHead>Delete User</TableHead>
 						</TableRow>
 					</TableHeader>
 
@@ -191,6 +193,9 @@ export default function UsersTable() {
 											userName={user.name}
 											status={user.status}
 										/>
+									</TableCell>
+									<TableCell>
+										<DeleteUserDialog userId={user.id} userName={user.name} />
 									</TableCell>
 								</TableRow>
 							))

@@ -210,10 +210,32 @@ const updateUserStatus = async (id: string, actor: RequestUser, status: UserStat
 	return { id: user.id, status };
 };
 
+const deleteUser = async (id: string, actor: RequestUser) => {
+	const user = await db.orm.public.User.where({ id })
+		.select("id", "name", "status")
+		.first();
+
+	if (!user) {
+		throw new AppError(httpStatus.NOT_FOUND, "User not found");
+	}
+
+	if (user.id === actor.userId) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"You cannot delete your own account",
+		);
+	}
+
+	await db.orm.public.User.where({ id }).delete();
+
+	return null;
+};
+
 export const UserServices = {
 	updateProfile,
 	changePassword,
 	listUsers,
 	getUserDetail,
-	updateUserStatus
+	updateUserStatus,
+	deleteUser
 };

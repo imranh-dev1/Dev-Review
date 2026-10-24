@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+	deleteUser,
 	getAllUsers,
 	getUserDetails,
 	updateUserStatus,
@@ -40,5 +41,11 @@ export function useUpdateUserStatus() {
 	return useMutation({
 		mutationFn: ({ id, status }: { id: string; status: UserStatus }) =>
 			updateUserStatus(id, status),
+	});
+}
+
+export function useDeleteUser() {
+	return useMutation({
+		mutationFn: (id: string) => deleteUser(id),
 	});
 }

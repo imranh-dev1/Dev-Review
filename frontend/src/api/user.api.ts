@@ -36,3 +36,9 @@ export const updateUserStatus = (id: string, status: UserStatus) => {
 		body: { status },
 	});
 };
+
+export const deleteUser = (id: string) => {
+	return apiClint(`/user/${id}`, {
+		method: "DELETE",
+	});
+};
