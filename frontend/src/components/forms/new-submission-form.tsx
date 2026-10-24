@@ -27,7 +27,6 @@ import {
 import {
 	InputGroup,
 	InputGroupAddon,
-	InputGroupButton,
 	InputGroupInput,
 	InputGroupText,
 } from "@/components/ui/input-group";
@@ -35,6 +34,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateSubmission } from "@/hooks/submission.hook";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useGetMe } from "@/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 
 const MAX_SCREENSHOTS = 5;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -88,9 +90,13 @@ interface ScreenshotPreview {
 }
 
 export function NewSubmissionForm() {
+	const router = useRouter();
+	const queryClint = useQueryClient();
 	const { mutate: createSubmission, isPending } = useCreateSubmission();
-
+	const { data } = useGetMe();
 	const [previews, setPreviews] = useState<ScreenshotPreview[]>([]);
+
+	const user = data.data;
 
 	const {
 		register,
@@ -193,8 +199,6 @@ export function NewSubmissionForm() {
 
 		clearErrors("screenshots");
 	};
- 
-	 
 
 	const onSubmit = (values: SubmissionFormValues) => {
 		const technologies = [
@@ -212,24 +216,28 @@ export function NewSubmissionForm() {
 				message: `You can add up to ${MAX_TECHNOLOGIES} technologies.`,
 			});
 			return;
-		}  
-        
-        const payload = {
-            title: values.title,
-            summary: values.summary,
-            description: values.description,
-            repositoryUrl: values.repositoryUrl,
-            liveDemoUrl: values.liveDemoUrl || undefined,
+		}
+
+		const payload = {
+			title: values.title,
+			summary: values.summary,
+			description: values.description,
+			repositoryUrl: values.repositoryUrl,
+			liveDemoUrl: values.liveDemoUrl || undefined,
 			technologies,
-            screenshots: values.screenshots
-        };
- 
+			screenshots: values.screenshots,
+		};
 
 		createSubmission(payload, {
 			onSuccess: () => {
 				toast.success("Submission created successfully.", {
 					description: "Your project has been saved as a draft.",
 				});
+				queryClint.invalidateQueries({
+					queryKey: ["projects"],
+				});
+
+				router.push(`/${user?.role.toLowerCase()}/submissions`);
 			},
 			onError: (error) => {
 				toast.error("Failed to create submission.", {
