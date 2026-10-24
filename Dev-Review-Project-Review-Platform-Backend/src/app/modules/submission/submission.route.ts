@@ -6,13 +6,14 @@ import { SubmissionControllers } from "./submission.controller";
 
 const router = Router();
 
-router.post("/", auth(UserRole.STUDENT, UserRole.REVIEWER),
-    upload.fields([
-        { name: "screenshots", maxCount: 5 },
-        { name: "data", maxCount: 1 }
-    ]),
-    SubmissionControllers.createSubmission,
+router.post(
+	"/",
+	auth(UserRole.STUDENT, UserRole.ADMIN),
+	upload.fields([
+		{ name: "screenshots", maxCount: 5 },
+		{ name: "data", maxCount: 1 },
+	]),
+	SubmissionControllers.createSubmission,
 );
-
 
 export const SubmissionRoutes = router;

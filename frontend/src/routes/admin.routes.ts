@@ -3,6 +3,7 @@ import {
 	ChartNoAxesCombined,
 	ClipboardCheck,
 	Edit,
+	FileText,
 	FolderKanban,
 	LayoutDashboard,
 	LockKeyhole,
@@ -40,6 +41,11 @@ export const adminRoutes: SidebarGroup[] = [
 				title: "Submissions",
 				url: "/admin/submissions",
 				icon: FolderKanban,
+			},
+			{
+				title: "Submit a Project",
+				url: "/admin/submissions/new",
+				icon: FileText,
 			},
 			{
 				title: "Reviews",
