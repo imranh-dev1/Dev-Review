@@ -1,7 +1,7 @@
 import apiClint from "@/lib/apiClint";
-import { UserRole, UserStatus } from "@/types";
-import { IChangePassword } from "@/types/auth.types";
-import { IUserListQuery } from "@/types/user.types";
+import type { UserRole, UserStatus } from "@/types";
+import type { IChangePassword } from "@/types/auth.types";
+import type { IUserListQuery } from "@/types/user.types";
 
 export function userUpdateProfile(payload: FormData) {
 	return apiClint("/user/profile-update", {

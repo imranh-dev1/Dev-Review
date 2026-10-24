@@ -8,8 +8,8 @@ import {
 	userChangePassword,
 	userUpdateProfile,
 } from "@/api/user.api";
-import { IUserListQuery } from "@/types/user.types";
-import { UserRole, UserStatus } from "@/types";
+import type { UserRole, UserStatus } from "@/types";
+import type { IUserListQuery } from "@/types/user.types";
 
 export function useProfileUpdate() {
 	return useMutation({

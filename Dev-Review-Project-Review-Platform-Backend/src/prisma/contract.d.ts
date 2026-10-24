@@ -4,7 +4,6 @@
 import type {
 	CodecTypes as PgTypes,
 	Numeric,
-	Varchar,
 } from "@prisma/orm-postgres/target/codec-types";
 import type { QueryOperationTypes as PgTargetQueryOps } from "@prisma/orm-postgres/target/operation-types";
 
@@ -22,7 +21,7 @@ import type {
 } from "@prisma/orm-postgres/contract/types";
 
 export type StorageHash =
-	StorageHashBase<"9b749fadd70ed393644ac2fc093f743cc71be65891dc516103b6e213a8bc16bf">;
+	StorageHashBase<"732d5b1425a44200578e7bfc9fcd3e17a2d825e1f0496fbd2fd04ef52ed03d5e">;
 export type ExecutionHash =
 	ExecutionHashBase<"ad8beafcf0b5118edde04821235c4c446b5d4cb5908a5a81db056cb3140bb191">;
 export type ProfileHash =
@@ -534,7 +533,7 @@ export type FieldOutputTypes = {
 			readonly readAt: CodecTypes["pg/timestamptz-temporal@1"]["output"] | null;
 			readonly recipientId: CodecTypes["pg/uuid@1"]["output"];
 			readonly submissionId: CodecTypes["pg/uuid@1"]["output"] | null;
-			readonly title: Varchar<150>;
+			readonly title: CodecTypes["pg/text@1"]["output"];
 			readonly type:
 				| "SUBMISSION_RECEIVED"
 				| "REVIEW_STARTED"
@@ -552,9 +551,9 @@ export type FieldOutputTypes = {
 				| null;
 			readonly description: CodecTypes["pg/text@1"]["output"];
 			readonly id: CodecTypes["pg/uuid@1"]["output"];
-			readonly liveDemoUrl: Varchar<2048> | null;
+			readonly liveDemoUrl: CodecTypes["pg/text@1"]["output"] | null;
 			readonly ownerId: CodecTypes["pg/uuid@1"]["output"];
-			readonly repositoryUrl: Varchar<2048>;
+			readonly repositoryUrl: CodecTypes["pg/text@1"]["output"];
 			readonly screenshots: ReadonlyArray<CodecTypes["pg/text@1"]["output"]>;
 			readonly status:
 				| "DRAFT"
@@ -567,9 +566,9 @@ export type FieldOutputTypes = {
 			readonly submittedAt:
 				| CodecTypes["pg/timestamptz-temporal@1"]["output"]
 				| null;
-			readonly summary: Varchar<300>;
+			readonly summary: CodecTypes["pg/text@1"]["output"];
 			readonly technologies: ReadonlyArray<CodecTypes["pg/text@1"]["output"]>;
-			readonly title: Varchar<150>;
+			readonly title: CodecTypes["pg/text@1"]["output"];
 			readonly updatedAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
 		};
 		readonly Review: {
@@ -648,7 +647,7 @@ export type FieldInputTypes = {
 			readonly readAt: CodecTypes["pg/timestamptz-temporal@1"]["input"] | null;
 			readonly recipientId: CodecTypes["pg/uuid@1"]["input"];
 			readonly submissionId: CodecTypes["pg/uuid@1"]["input"] | null;
-			readonly title: CodecTypes["sql/varchar@1"]["input"];
+			readonly title: CodecTypes["pg/text@1"]["input"];
 			readonly type:
 				| "SUBMISSION_RECEIVED"
 				| "REVIEW_STARTED"
@@ -666,9 +665,9 @@ export type FieldInputTypes = {
 				| null;
 			readonly description: CodecTypes["pg/text@1"]["input"];
 			readonly id: CodecTypes["pg/uuid@1"]["input"];
-			readonly liveDemoUrl: CodecTypes["sql/varchar@1"]["input"] | null;
+			readonly liveDemoUrl: CodecTypes["pg/text@1"]["input"] | null;
 			readonly ownerId: CodecTypes["pg/uuid@1"]["input"];
-			readonly repositoryUrl: CodecTypes["sql/varchar@1"]["input"];
+			readonly repositoryUrl: CodecTypes["pg/text@1"]["input"];
 			readonly screenshots: ReadonlyArray<CodecTypes["pg/text@1"]["input"]>;
 			readonly status:
 				| "DRAFT"
@@ -681,9 +680,9 @@ export type FieldInputTypes = {
 			readonly submittedAt:
 				| CodecTypes["pg/timestamptz-temporal@1"]["input"]
 				| null;
-			readonly summary: CodecTypes["sql/varchar@1"]["input"];
+			readonly summary: CodecTypes["pg/text@1"]["input"];
 			readonly technologies: ReadonlyArray<CodecTypes["pg/text@1"]["input"]>;
-			readonly title: CodecTypes["sql/varchar@1"]["input"];
+			readonly title: CodecTypes["pg/text@1"]["input"];
 			readonly updatedAt: CodecTypes["pg/timestamptz-temporal@1"]["input"];
 		};
 		readonly Review: {
@@ -764,7 +763,7 @@ export type StorageColumnTypes = {
 				| null;
 			readonly recipient_id: CodecTypes["pg/uuid@1"]["output"];
 			readonly submission_id: CodecTypes["pg/uuid@1"]["output"] | null;
-			readonly title: Varchar<150>;
+			readonly title: CodecTypes["pg/text@1"]["output"];
 			readonly type:
 				| "SUBMISSION_RECEIVED"
 				| "REVIEW_STARTED"
@@ -782,9 +781,9 @@ export type StorageColumnTypes = {
 				| null;
 			readonly description: CodecTypes["pg/text@1"]["output"];
 			readonly id: CodecTypes["pg/uuid@1"]["output"];
-			readonly live_demo_url: Varchar<2048> | null;
+			readonly live_demo_url: CodecTypes["pg/text@1"]["output"] | null;
 			readonly owner_id: CodecTypes["pg/uuid@1"]["output"];
-			readonly repository_url: Varchar<2048>;
+			readonly repository_url: CodecTypes["pg/text@1"]["output"];
 			readonly screenshots: ReadonlyArray<CodecTypes["pg/text@1"]["output"]>;
 			readonly status:
 				| "DRAFT"
@@ -797,9 +796,9 @@ export type StorageColumnTypes = {
 			readonly submitted_at:
 				| CodecTypes["pg/timestamptz-temporal@1"]["output"]
 				| null;
-			readonly summary: Varchar<300>;
+			readonly summary: CodecTypes["pg/text@1"]["output"];
 			readonly technologies: ReadonlyArray<CodecTypes["pg/text@1"]["output"]>;
-			readonly title: Varchar<150>;
+			readonly title: CodecTypes["pg/text@1"]["output"];
 			readonly updated_at: CodecTypes["pg/timestamptz-temporal@1"]["output"];
 		};
 		readonly review_assignments: {
@@ -878,7 +877,7 @@ export type StorageColumnInputTypes = {
 			readonly read_at: CodecTypes["pg/timestamptz-temporal@1"]["input"] | null;
 			readonly recipient_id: CodecTypes["pg/uuid@1"]["input"];
 			readonly submission_id: CodecTypes["pg/uuid@1"]["input"] | null;
-			readonly title: CodecTypes["sql/varchar@1"]["input"];
+			readonly title: CodecTypes["pg/text@1"]["input"];
 			readonly type:
 				| "SUBMISSION_RECEIVED"
 				| "REVIEW_STARTED"
@@ -896,9 +895,9 @@ export type StorageColumnInputTypes = {
 				| null;
 			readonly description: CodecTypes["pg/text@1"]["input"];
 			readonly id: CodecTypes["pg/uuid@1"]["input"];
-			readonly live_demo_url: CodecTypes["sql/varchar@1"]["input"] | null;
+			readonly live_demo_url: CodecTypes["pg/text@1"]["input"] | null;
 			readonly owner_id: CodecTypes["pg/uuid@1"]["input"];
-			readonly repository_url: CodecTypes["sql/varchar@1"]["input"];
+			readonly repository_url: CodecTypes["pg/text@1"]["input"];
 			readonly screenshots: ReadonlyArray<CodecTypes["pg/text@1"]["input"]>;
 			readonly status:
 				| "DRAFT"
@@ -911,9 +910,9 @@ export type StorageColumnInputTypes = {
 			readonly submitted_at:
 				| CodecTypes["pg/timestamptz-temporal@1"]["input"]
 				| null;
-			readonly summary: CodecTypes["sql/varchar@1"]["input"];
+			readonly summary: CodecTypes["pg/text@1"]["input"];
 			readonly technologies: ReadonlyArray<CodecTypes["pg/text@1"]["input"]>;
-			readonly title: CodecTypes["sql/varchar@1"]["input"];
+			readonly title: CodecTypes["pg/text@1"]["input"];
 			readonly updated_at: CodecTypes["pg/timestamptz-temporal@1"]["input"];
 		};
 		readonly review_assignments: {
@@ -992,7 +991,7 @@ export namespace Models {
 		readAt: CodecTypes["pg/timestamptz-temporal@1"]["output"] | null;
 		recipientId: CodecTypes["pg/uuid@1"]["output"];
 		submissionId: CodecTypes["pg/uuid@1"]["output"] | null;
-		title: Varchar<150>;
+		title: CodecTypes["pg/text@1"]["output"];
 		type:
 			| "SUBMISSION_RECEIVED"
 			| "REVIEW_STARTED"
@@ -1011,9 +1010,9 @@ export namespace Models {
 		deletedAt: CodecTypes["pg/timestamptz-temporal@1"]["output"] | null;
 		description: CodecTypes["pg/text@1"]["output"];
 		id: CodecTypes["pg/uuid@1"]["output"];
-		liveDemoUrl: Varchar<2048> | null;
+		liveDemoUrl: CodecTypes["pg/text@1"]["output"] | null;
 		ownerId: CodecTypes["pg/uuid@1"]["output"];
-		repositoryUrl: Varchar<2048>;
+		repositoryUrl: CodecTypes["pg/text@1"]["output"];
 		screenshots: ReadonlyArray<CodecTypes["pg/text@1"]["output"]>;
 		status:
 			| "DRAFT"
@@ -1024,9 +1023,9 @@ export namespace Models {
 			| "APPROVED"
 			| "REJECTED";
 		submittedAt: CodecTypes["pg/timestamptz-temporal@1"]["output"] | null;
-		summary: Varchar<300>;
+		summary: CodecTypes["pg/text@1"]["output"];
 		technologies: ReadonlyArray<CodecTypes["pg/text@1"]["output"]>;
-		title: Varchar<150>;
+		title: CodecTypes["pg/text@1"]["output"];
 		updatedAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
 		assignments: public_ReviewAssignment[];
 		notifications: public_Notification[];
@@ -1204,10 +1203,9 @@ type ContractBase = Omit<
 									readonly many: false;
 								};
 								readonly title: {
-									readonly dataType: "pg/varchar";
-									readonly codecId: "sql/varchar@1";
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
 									readonly nullable: false;
-									readonly typeParams: { readonly length: 150 };
 									readonly many: false;
 								};
 								readonly type: {
@@ -1301,10 +1299,9 @@ type ContractBase = Omit<
 									readonly many: false;
 								};
 								readonly live_demo_url: {
-									readonly dataType: "pg/varchar";
-									readonly codecId: "sql/varchar@1";
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
 									readonly nullable: true;
-									readonly typeParams: { readonly length: 2048 };
 									readonly many: false;
 								};
 								readonly owner_id: {
@@ -1314,10 +1311,9 @@ type ContractBase = Omit<
 									readonly many: false;
 								};
 								readonly repository_url: {
-									readonly dataType: "pg/varchar";
-									readonly codecId: "sql/varchar@1";
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
 									readonly nullable: false;
-									readonly typeParams: { readonly length: 2048 };
 									readonly many: false;
 								};
 								readonly screenshots: {
@@ -1350,10 +1346,9 @@ type ContractBase = Omit<
 									readonly many: false;
 								};
 								readonly summary: {
-									readonly dataType: "pg/varchar";
-									readonly codecId: "sql/varchar@1";
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
 									readonly nullable: false;
-									readonly typeParams: { readonly length: 300 };
 									readonly many: false;
 								};
 								readonly technologies: {
@@ -1370,10 +1365,9 @@ type ContractBase = Omit<
 									readonly many: { readonly elementNullable: false };
 								};
 								readonly title: {
-									readonly dataType: "pg/varchar";
-									readonly codecId: "sql/varchar@1";
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
 									readonly nullable: false;
-									readonly typeParams: { readonly length: 150 };
 									readonly many: false;
 								};
 								readonly updated_at: {
@@ -2071,8 +2065,7 @@ type ContractBase = Omit<
 								readonly nullable: false;
 								readonly type: {
 									readonly kind: "scalar";
-									readonly codecId: "sql/varchar@1";
-									readonly typeParams: { readonly length: 150 };
+									readonly codecId: "pg/text@1";
 								};
 							};
 							readonly type: {
@@ -2159,8 +2152,7 @@ type ContractBase = Omit<
 								readonly nullable: true;
 								readonly type: {
 									readonly kind: "scalar";
-									readonly codecId: "sql/varchar@1";
-									readonly typeParams: { readonly length: 2048 };
+									readonly codecId: "pg/text@1";
 								};
 							};
 							readonly ownerId: {
@@ -2174,8 +2166,7 @@ type ContractBase = Omit<
 								readonly nullable: false;
 								readonly type: {
 									readonly kind: "scalar";
-									readonly codecId: "sql/varchar@1";
-									readonly typeParams: { readonly length: 2048 };
+									readonly codecId: "pg/text@1";
 								};
 							};
 							readonly screenshots: {
@@ -2204,8 +2195,7 @@ type ContractBase = Omit<
 								readonly nullable: false;
 								readonly type: {
 									readonly kind: "scalar";
-									readonly codecId: "sql/varchar@1";
-									readonly typeParams: { readonly length: 300 };
+									readonly codecId: "pg/text@1";
 								};
 							};
 							readonly technologies: {
@@ -2220,8 +2210,7 @@ type ContractBase = Omit<
 								readonly nullable: false;
 								readonly type: {
 									readonly kind: "scalar";
-									readonly codecId: "sql/varchar@1";
-									readonly typeParams: { readonly length: 150 };
+									readonly codecId: "pg/text@1";
 								};
 							};
 							readonly updatedAt: {

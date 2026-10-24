@@ -92,11 +92,11 @@ model User {
 
 model ProjectSubmission {
   id            Uuid                      @id @default(uuid())
-  title         VarChar(150)
-  summary       VarChar(300)
+  title         String
+  summary       String
   description   String
-  repositoryUrl VarChar(2048)             @map("repository_url")
-  liveDemoUrl   VarChar(2048)?            @map("live_demo_url")
+  repositoryUrl String                    @map("repository_url")
+  liveDemoUrl   String?                   @map("live_demo_url")
   technologies  String[]                  @default([])
   screenshots   String[]                  @default([])
   status        SubmissionStatus          @default(DRAFT)
@@ -185,7 +185,7 @@ model Notification {
   recipientId  Uuid               @map("recipient_id")
   submissionId Uuid?              @map("submission_id")
   type         NotificationType
-  title        VarChar(150)
+  title        String
   message      String
   isRead       Boolean            @default(false) @map("is_read")
   readAt       DateTime?          @map("read_at")

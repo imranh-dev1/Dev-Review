@@ -11,6 +11,7 @@ import { notFound } from "./app/middleware/notFound";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { AuthRoutes } from "./app/modules/auth/auth.route";
 import { UserRoutes } from "./app/modules/user/user.route";
+import { SubmissionRoutes } from "./app/modules/submission/submission.route";
 
 const app: Application = express();
 
@@ -41,6 +42,7 @@ app.get("/api/v1/health", (req: Request, res: Response) => {
 
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/user", UserRoutes);
+app.use("/api/v1/submissions", SubmissionRoutes);
 
 app.use(globalErrorHandler);
 app.use(notFound);

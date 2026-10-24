@@ -1,5 +1,5 @@
-import { ForgetPasswordOTPForm } from "@/components/forms/forgot-password-form-otp-verify";
 import type { Metadata } from "next";
+import { ForgetPasswordOTPForm } from "@/components/forms/forgot-password-form-otp-verify";
 
 export const metadata: Metadata = {
 	title: "Verify OTP | DevReview",

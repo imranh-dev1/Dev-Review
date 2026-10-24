@@ -1,5 +1,5 @@
-import { ChangePasswordForm } from "@/components/forms/change-password-form";
 import type { Metadata } from "next";
+import { ChangePasswordForm } from "@/components/forms/change-password-form";
 
 export const metadata: Metadata = {
 	title: "Change Password | DevReview",

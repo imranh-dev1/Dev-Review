@@ -1,9 +1,17 @@
 "use client";
 
+import { Eye } from "lucide-react";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import {
 	Table,
 	TableBody,
@@ -12,23 +20,15 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { IUserListQuery } from "@/types/user.types";
 import { useGetAllUsers } from "@/hooks";
-import { IUser } from "@/types";
-import DataPagination from "../shared/pagination";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { Button } from "../ui/button";
-import { Eye } from "lucide-react";
-import UserDetailsDialog from "../dialog/user-details-dialog";
-import UserStatusDialog from "../dialog/user-status-dialog";
+import type { IUser } from "@/types";
+import type { IUserListQuery } from "@/types/user.types";
 import { DeleteUserDialog } from "../dialog/delete-user-dialog";
 import { UpdateUserRoleDialog } from "../dialog/update-user-role-dialog";
+import UserDetailsDialog from "../dialog/user-details-dialog";
+import UserStatusDialog from "../dialog/user-status-dialog";
+import DataPagination from "../shared/pagination";
+import { Button } from "../ui/button";
 
 export default function UsersTable() {
 	const [filters, setFilters] = useState<IUserListQuery>({

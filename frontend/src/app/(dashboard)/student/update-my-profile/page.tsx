@@ -1,5 +1,5 @@
-import { UpdateProfileForm } from "@/components/dashboard/profile/update-profile-form";
 import type { Metadata } from "next";
+import { UpdateProfileForm } from "@/components/dashboard/profile/update-profile-form";
 
 export const metadata: Metadata = {
 	title: "Update Profile | DevReview",

@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from ".";
+import type { UserRole, UserStatus } from ".";
 
 export interface IUserListQuery {
 	page?: number;

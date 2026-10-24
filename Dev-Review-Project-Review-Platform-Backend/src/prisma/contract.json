@@ -309,11 +309,8 @@
 							"title": {
 								"nullable": false,
 								"type": {
-									"codecId": "sql/varchar@1",
-									"kind": "scalar",
-									"typeParams": {
-										"length": 150
-									}
+									"codecId": "pg/text@1",
+									"kind": "scalar"
 								}
 							},
 							"type": {
@@ -423,11 +420,8 @@
 							"liveDemoUrl": {
 								"nullable": true,
 								"type": {
-									"codecId": "sql/varchar@1",
-									"kind": "scalar",
-									"typeParams": {
-										"length": 2048
-									}
+									"codecId": "pg/text@1",
+									"kind": "scalar"
 								}
 							},
 							"ownerId": {
@@ -440,11 +434,8 @@
 							"repositoryUrl": {
 								"nullable": false,
 								"type": {
-									"codecId": "sql/varchar@1",
-									"kind": "scalar",
-									"typeParams": {
-										"length": 2048
-									}
+									"codecId": "pg/text@1",
+									"kind": "scalar"
 								}
 							},
 							"screenshots": {
@@ -480,11 +471,8 @@
 							"summary": {
 								"nullable": false,
 								"type": {
-									"codecId": "sql/varchar@1",
-									"kind": "scalar",
-									"typeParams": {
-										"length": 300
-									}
+									"codecId": "pg/text@1",
+									"kind": "scalar"
 								}
 							},
 							"technologies": {
@@ -500,11 +488,8 @@
 							"title": {
 								"nullable": false,
 								"type": {
-									"codecId": "sql/varchar@1",
-									"kind": "scalar",
-									"typeParams": {
-										"length": 150
-									}
+									"codecId": "pg/text@1",
+									"kind": "scalar"
 								}
 							},
 							"updatedAt": {
@@ -1269,12 +1254,9 @@
 									"nullable": true
 								},
 								"title": {
-									"codecId": "sql/varchar@1",
-									"dataType": "pg/varchar",
-									"nullable": false,
-									"typeParams": {
-										"length": 150
-									}
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
 								},
 								"type": {
 									"codecId": "pg/text@1",
@@ -1385,12 +1367,9 @@
 									"nullable": false
 								},
 								"live_demo_url": {
-									"codecId": "sql/varchar@1",
-									"dataType": "pg/varchar",
-									"nullable": true,
-									"typeParams": {
-										"length": 2048
-									}
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": true
 								},
 								"owner_id": {
 									"codecId": "pg/uuid@1",
@@ -1398,12 +1377,9 @@
 									"nullable": false
 								},
 								"repository_url": {
-									"codecId": "sql/varchar@1",
-									"dataType": "pg/varchar",
-									"nullable": false,
-									"typeParams": {
-										"length": 2048
-									}
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
 								},
 								"screenshots": {
 									"codecId": "pg/text@1",
@@ -1438,12 +1414,9 @@
 									"nullable": true
 								},
 								"summary": {
-									"codecId": "sql/varchar@1",
-									"dataType": "pg/varchar",
-									"nullable": false,
-									"typeParams": {
-										"length": 300
-									}
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
 								},
 								"technologies": {
 									"codecId": "pg/text@1",
@@ -1458,12 +1431,9 @@
 									"nullable": false
 								},
 								"title": {
-									"codecId": "sql/varchar@1",
-									"dataType": "pg/varchar",
-									"nullable": false,
-									"typeParams": {
-										"length": 150
-									}
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
 								},
 								"updated_at": {
 									"codecId": "pg/timestamptz-temporal@1",
@@ -2117,7 +2087,7 @@
 				"kind": "postgres-schema"
 			}
 		},
-		"storageHash": "9b749fadd70ed393644ac2fc093f743cc71be65891dc516103b6e213a8bc16bf"
+		"storageHash": "732d5b1425a44200578e7bfc9fcd3e17a2d825e1f0496fbd2fd04ef52ed03d5e"
 	},
 	"execution": {
 		"executionHash": "ad8beafcf0b5118edde04821235c4c446b5d4cb5908a5a81db056cb3140bb191",

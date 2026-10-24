@@ -1,5 +1,5 @@
-import Profile from "@/components/dashboard/profile/profile";
 import type { Metadata } from "next";
+import Profile from "@/components/dashboard/profile/profile";
 
 export const metadata: Metadata = {
 	title: "My Profile | DevReview",

@@ -10,7 +10,7 @@ import {
 	ShieldCheck,
 	UserRound,
 } from "lucide-react";
-
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,6 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { useGetMe } from "@/hooks";
-import Link from "next/link";
 import cover_image from "../../../../public/assets/profile-cover.jpg";
 
 function formatDate(date: string) {

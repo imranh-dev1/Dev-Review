@@ -1,11 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, Eye, EyeOff, RotateCcw } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -19,16 +21,13 @@ import {
 	FieldGroup,
 	FieldLabel,
 } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
 	InputOTP,
 	InputOTPGroup,
 	InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Input } from "@/components/ui/input";
 import { useForgotPasswordOtpVerify } from "@/hooks";
-import { useState } from "react";
-import { ArrowLeft, Eye, EyeOff, RotateCcw } from "lucide-react";
-import Link from "next/link";
 
 const schema = z.object({
 	email: z.string().trim().email("Enter a valid email address"),

@@ -1,10 +1,9 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, ShieldCheck, ShieldOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -16,6 +15,7 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { useUpdateUserStatus } from "@/hooks";
 import type { UserStatus } from "@/types";
 

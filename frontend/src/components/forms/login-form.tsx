@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,7 +25,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useGetMe, useLogin } from "@/hooks";
 import AuthLoading from "../auth/auth-loading";
-import Link from "next/link";
 
 const schema = z.object({
 	email: z.string().trim().email("Enter a valid email address"),
