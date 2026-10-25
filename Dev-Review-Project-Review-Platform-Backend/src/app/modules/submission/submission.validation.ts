@@ -46,5 +46,5 @@ export const reviewerQuerySchema = z.object({
 export const SubmissionValidation = {
 	createSubmissionSchema,
 	listSubmissionsQuerySchema,
-	reviewerQuerySchema
+	reviewerQuerySchema,
 };

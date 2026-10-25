@@ -36,7 +36,10 @@ const createSubmission = catchAsync(async (req: Request, res: Response) => {
 const listMySubmissions = catchAsync(async (req: Request, res: Response) => {
 	const user = req.user as RequestUser;
 
-	const { data, meta } = await SubmissionServices.listMySubmissions(user.userId, req.query);
+	const { data, meta } = await SubmissionServices.listMySubmissions(
+		user.userId,
+		req.query,
+	);
 
 	sendResponse(res, {
 		success: true,
@@ -59,17 +62,36 @@ const listAllSubmissions = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
-const listReviewerSubmissions = catchAsync(async (req: Request, res: Response) => {
-	const user = req?.user as RequestUser;
+const listReviewerSubmissions = catchAsync(
+	async (req: Request, res: Response) => {
+		const user = req?.user as RequestUser;
 
-	const { data, meta } = await SubmissionServices.listReviewerSubmissions(req.query, user.userId);
+		const { data, meta } = await SubmissionServices.listReviewerSubmissions(
+			req.query,
+			user.userId,
+		);
+
+		sendResponse(res, {
+			success: true,
+			statusCode: httpStatus.OK,
+			message: "Reviewer Submissions fetched successfully.",
+			data: data,
+			meta,
+		});
+	},
+);
+
+const getSubmissionDetails = catchAsync(async (req: Request, res: Response) => {
+	const user = req.user as RequestUser;
+	const id = req.params?.id as string;
+
+	const submission = await SubmissionServices.getSubmissionDetails(id, user);
 
 	sendResponse(res, {
 		success: true,
 		statusCode: httpStatus.OK,
-		message: "Reviewer Submissions fetched successfully.",
-		data: data,
-		meta,
+		message: "Submission fetched successfully.",
+		data: submission,
 	});
 });
 
@@ -77,5 +99,6 @@ export const SubmissionControllers = {
 	createSubmission,
 	listMySubmissions,
 	listAllSubmissions,
-	listReviewerSubmissions
+	listReviewerSubmissions,
+	getSubmissionDetails,
 };

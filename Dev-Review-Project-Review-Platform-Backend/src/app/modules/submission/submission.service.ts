@@ -1,10 +1,14 @@
 import { db } from "../../../prisma/db";
 import { AppError } from "../../utils/AppError";
-import type { ICreateSubmissionPayload, IListQuery } from "./submission.interface";
+import type {
+	ICreateSubmissionPayload,
+	IListQuery,
+} from "./submission.interface";
 import httpStatus from "http-status";
 import type { UploadApiResponse } from "cloudinary";
 import { cloudinary } from "../../lib/cloudinary";
 import { buildMeta, getPagination } from "../../utils/pagination";
+import type { RequestUser } from "../../middleware/checkAuth";
 
 const createSubmission = async (
 	ownerId: string,
@@ -73,9 +77,7 @@ const listMySubmissions = async (userId: string, query: IListQuery) => {
 	});
 
 	if (query.search) {
-		submissions = submissions.where((s) =>
-			s.title.ilike(`%${query.search}%`),
-		);
+		submissions = submissions.where((s) => s.title.ilike(`%${query.search}%`));
 	}
 
 	const { count } = await submissions.aggregate((a) => ({
@@ -251,9 +253,46 @@ const listReviewerSubmissions = async (
 	};
 };
 
+const getSubmissionDetails = async (id: string, user: RequestUser) => {
+	const submission = await db.orm.public.ProjectSubmission.where({ id })
+		.include("owner", (o) => o.select("id", "name", "email", "avatar"))
+		.include("reviews", (r) =>
+			r
+				.orderBy((x) => x.createdAt.desc())
+				.include("reviewer", (rv) =>
+					rv.select("id", "name", "email", "avatar"),
+				),
+		)
+		.include("statusHistory", (h) => h.orderBy((x) => x.createdAt.desc()))
+		.include("assignments", (a) =>
+			a.include("reviewer", (rv) => rv.select("id", "name", "email")),
+		)
+		.first();
+
+	if (!submission || (submission.deletedAt && user.role !== "ADMIN")) {
+		throw new AppError(httpStatus.NOT_FOUND, "Submission not found");
+	}
+
+	const isOwner = submission.ownerId === user.userId;
+	const isAdmin = user.role === "ADMIN";
+	const isAssignedReviewer = submission.assignments.some(
+		(assignment) => assignment.reviewerId === user.userId,
+	);
+
+	if (!isOwner && !isAdmin && !isAssignedReviewer) {
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"You do not have access to this submission",
+		);
+	}
+
+	return submission;
+};
+
 export const SubmissionServices = {
 	createSubmission,
 	listMySubmissions,
 	listAllSubmissions,
-	listReviewerSubmissions
+	listReviewerSubmissions,
+	getSubmissionDetails,
 };

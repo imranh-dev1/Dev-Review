@@ -3,6 +3,7 @@ import {
 	getAllReviewerSubmissions,
 	getAllSubmissions,
 	getMySubmission,
+	getSubmissionDetails,
 } from "@/api/submission.api";
 import { IListQuery } from "@/types/submission.types";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -30,5 +31,13 @@ export const useListAllReviewerSubmissions = (params: IListQuery) => {
 	return useQuery({
 		queryKey: ["reviewer-submissions", params],
 		queryFn: () => getAllReviewerSubmissions(params),
+	});
+};
+
+export const useSubmissionDetails = (id: string) => {
+	return useQuery({
+		queryKey: ["submission", id],
+		queryFn: () => getSubmissionDetails(id),
+		enabled: !!id,
 	});
 };

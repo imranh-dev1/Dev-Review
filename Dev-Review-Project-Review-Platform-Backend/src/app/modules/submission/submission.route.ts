@@ -21,10 +21,16 @@ router.post(
 router.get(
 	"/my",
 	auth(UserRole.STUDENT, UserRole.ADMIN),
-	validateRequest(SubmissionValidation.listSubmissionsQuerySchema), SubmissionControllers.listMySubmissions
+	validateRequest(SubmissionValidation.listSubmissionsQuerySchema),
+	SubmissionControllers.listMySubmissions,
 );
 
-router.get("/", auth(UserRole.ADMIN), validateRequest(SubmissionValidation.listSubmissionsQuerySchema), SubmissionControllers.listAllSubmissions);
+router.get(
+	"/",
+	auth(UserRole.ADMIN),
+	validateRequest(SubmissionValidation.listSubmissionsQuerySchema),
+	SubmissionControllers.listAllSubmissions,
+);
 
 router.get(
 	"/reviewer",
@@ -33,5 +39,10 @@ router.get(
 	SubmissionControllers.listReviewerSubmissions,
 );
 
+router.get(
+	"/:id",
+	auth(UserRole.ADMIN, UserRole.REVIEWER, UserRole.STUDENT),
+	SubmissionControllers.getSubmissionDetails,
+);
 
 export const SubmissionRoutes = router;
