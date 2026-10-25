@@ -156,8 +156,104 @@ const listAllSubmissions = async (query: IListQuery) => {
 		meta: buildMeta(page, limit, count),
 	};
 };
+
+const idsMatchingTechnology = async (technology: string): Promise<string[]> => {
+	const submissions = await db.orm.public.ProjectSubmission.select(
+		"id",
+		"technologies",
+	).all();
+
+	return submissions
+		.filter((submission) =>
+			submission.technologies.some(
+				(item) => item.toLowerCase() === technology.toLowerCase(),
+			),
+		)
+		.map((submission) => submission.id);
+};
+
+const listReviewerSubmissions = async (
+	query: IListQuery,
+	reviewerId: string,
+) => {
+	const { page, limit, skip, take } = getPagination(query);
+
+	const technologyIds = query.technology
+		? await idsMatchingTechnology(query.technology)
+		: null;
+
+	if (technologyIds && technologyIds.length === 0) {
+		return {
+			data: [],
+			meta: buildMeta(page, limit, 0),
+		};
+	}
+
+	const assignmentStatuses =
+		query.scope === "all"
+			? ["ASSIGNED", "ACCEPTED", "COMPLETED"]
+			: ["ASSIGNED", "ACCEPTED"];
+
+	let submissions = db.orm.public.ProjectSubmission.where({
+		deletedAt: null,
+		...(query.status ? { status: query.status } : {}),
+	});
+
+	submissions = submissions.where((submission) =>
+		submission.assignments.some(
+			(assignment) =>
+				assignment.reviewerId.eq(reviewerId) &&
+				assignment.status.in(assignmentStatuses as never),
+		),
+	);
+
+	if (technologyIds) {
+		submissions = submissions.where((submission) =>
+			submission.id.in(technologyIds),
+		);
+	}
+
+	if (query.search?.trim()) {
+		submissions = submissions.where((submission) =>
+			submission.title.ilike(`% ${query.search!.trim()}% `),
+		);
+	}
+	const { count } = await submissions.aggregate((a) => ({
+		count: a.count(),
+	}));
+
+	const data = await submissions
+		.orderBy([
+			(submission) => submission.createdAt.desc(),
+			(submission) => submission.id.desc(),
+		])
+		.limit(take)
+		.offset(skip)
+		.select(
+			"id",
+			"title",
+			"summary",
+			"status",
+			"technologies",
+			"repositoryUrl",
+			"liveDemoUrl",
+			"screenshots",
+			"submittedAt",
+			"createdAt",
+			"updatedAt",
+		)
+		.include("owner", (owner) => owner.select("id", "name", "email"))
+		.all();
+
+	return {
+		data,
+		meta: buildMeta(page, limit, count),
+	};
+};
+
 export const SubmissionServices = {
 	createSubmission,
 	listMySubmissions,
-	listAllSubmissions
+	listAllSubmissions,
+	listReviewerSubmissions
 };

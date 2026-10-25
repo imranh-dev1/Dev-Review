@@ -29,3 +29,10 @@ export const getAllSubmissions = (query: IListQuery) => {
 		query,
 	});
 };
+
+export const getAllReviewerSubmissions = (query: IListQuery) => {
+	return apiClint("/submissions/reviewer", {
+		method: "GET",
+		query,
+	});
+};

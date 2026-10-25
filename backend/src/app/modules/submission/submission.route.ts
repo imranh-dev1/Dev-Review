@@ -54,6 +54,7 @@ router.get(
     SubmissionControllers.getSubmissionDetail,
 );
 
+
 router.patch(
     "/:id",
     validate({ params: idParamsSchema, body: updateSubmissionSchema }),

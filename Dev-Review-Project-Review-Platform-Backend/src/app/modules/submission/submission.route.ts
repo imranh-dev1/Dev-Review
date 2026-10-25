@@ -26,7 +26,12 @@ router.get(
 
 router.get("/", auth(UserRole.ADMIN), validateRequest(SubmissionValidation.listSubmissionsQuerySchema), SubmissionControllers.listAllSubmissions);
 
-
+router.get(
+	"/reviewer",
+	auth(UserRole.REVIEWER),
+	validateRequest(SubmissionValidation.reviewerQuerySchema),
+	SubmissionControllers.listReviewerSubmissions,
+);
 
 
 export const SubmissionRoutes = router;

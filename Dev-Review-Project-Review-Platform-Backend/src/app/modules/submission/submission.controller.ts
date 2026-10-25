@@ -59,8 +59,23 @@ const listAllSubmissions = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const listReviewerSubmissions = catchAsync(async (req: Request, res: Response) => {
+	const user = req?.user as RequestUser;
+
+	const { data, meta } = await SubmissionServices.listReviewerSubmissions(req.query, user.userId);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Reviewer Submissions fetched successfully.",
+		data: data,
+		meta,
+	});
+});
+
 export const SubmissionControllers = {
 	createSubmission,
 	listMySubmissions,
-	listAllSubmissions
+	listAllSubmissions,
+	listReviewerSubmissions
 };

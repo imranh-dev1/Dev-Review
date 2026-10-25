@@ -1,5 +1,6 @@
 import {
 	createSubmission,
+	getAllReviewerSubmissions,
 	getAllSubmissions,
 	getMySubmission,
 } from "@/api/submission.api";
@@ -22,5 +23,12 @@ export const useListAllSubmissions = (params: IListQuery) => {
 	return useQuery({
 		queryKey: ["admin-submissions", params],
 		queryFn: () => getAllSubmissions(params),
+	});
+};
+
+export const useListAllReviewerSubmissions = (params: IListQuery) => {
+	return useQuery({
+		queryKey: ["reviewer-submissions", params],
+		queryFn: () => getAllReviewerSubmissions(params),
 	});
 };

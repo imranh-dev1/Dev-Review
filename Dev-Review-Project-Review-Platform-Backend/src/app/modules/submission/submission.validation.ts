@@ -34,7 +34,17 @@ const listSubmissionsQuerySchema = z.object({
 	scope: z.enum(["pending", "all"]).optional(),
 });
 
+export const reviewerQuerySchema = z.object({
+	page: z.coerce.number().int().min(1).default(1),
+	limit: z.coerce.number().int().min(1).max(100).default(10),
+	status: submissionStatusEnum.optional(),
+	technology: z.string().trim().min(1).max(50).optional(),
+	search: z.string().trim().max(150).optional(),
+	scope: z.enum(["pending", "all"]).optional(),
+});
+
 export const SubmissionValidation = {
 	createSubmissionSchema,
-	listSubmissionsQuerySchema
+	listSubmissionsQuerySchema,
+	reviewerQuerySchema
 };
