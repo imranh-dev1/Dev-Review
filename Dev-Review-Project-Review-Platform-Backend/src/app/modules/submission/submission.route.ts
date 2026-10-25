@@ -45,4 +45,11 @@ router.get(
 	SubmissionControllers.getSubmissionDetails,
 );
 
+router.patch(
+	"/:id",
+	auth(UserRole.STUDENT, UserRole.ADMIN),
+	validateRequest(SubmissionValidation.updateSubmissionSchema),
+	SubmissionControllers.updateSubmission,
+);
+
 export const SubmissionRoutes = router;

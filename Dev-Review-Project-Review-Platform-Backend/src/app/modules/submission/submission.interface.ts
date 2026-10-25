@@ -9,7 +9,9 @@ export interface ICreateSubmissionPayload {
 	technologies: string[];
 }
 
-export type IUpdateSubmissionPayload = Partial<ICreateSubmissionPayload>;
+export type IUpdateSubmissionPayload = Partial<ICreateSubmissionPayload> & {
+	screenshots?: string[];
+};
 
 export interface IListQuery {
 	page?: number;

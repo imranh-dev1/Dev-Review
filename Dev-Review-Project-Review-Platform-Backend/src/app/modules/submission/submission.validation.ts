@@ -43,8 +43,11 @@ export const reviewerQuerySchema = z.object({
 	scope: z.enum(["pending", "all"]).optional(),
 });
 
+export const updateSubmissionSchema = createSubmissionSchema.partial();
+
 export const SubmissionValidation = {
 	createSubmissionSchema,
 	listSubmissionsQuerySchema,
 	reviewerQuerySchema,
+	updateSubmissionSchema,
 };

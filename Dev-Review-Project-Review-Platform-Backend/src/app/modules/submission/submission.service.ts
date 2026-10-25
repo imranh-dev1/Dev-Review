@@ -3,12 +3,16 @@ import { AppError } from "../../utils/AppError";
 import type {
 	ICreateSubmissionPayload,
 	IListQuery,
+	IUpdateSubmissionPayload,
 } from "./submission.interface";
 import httpStatus from "http-status";
 import type { UploadApiResponse } from "cloudinary";
 import { cloudinary } from "../../lib/cloudinary";
 import { buildMeta, getPagination } from "../../utils/pagination";
 import type { RequestUser } from "../../middleware/checkAuth";
+import type { SubmissionStatus } from "../../types/models";
+
+const EDITABLE_STATUSES: SubmissionStatus[] = ["DRAFT", "CHANGES_REQUESTED"];
 
 const createSubmission = async (
 	ownerId: string,
@@ -289,10 +293,95 @@ const getSubmissionDetails = async (id: string, user: RequestUser) => {
 	return submission;
 };
 
+const updateSubmission = async (
+	id: string,
+	user: RequestUser,
+	payload: IUpdateSubmissionPayload,
+) => {
+	const submission = await db.orm.public.ProjectSubmission.where({
+		id,
+	}).first();
+
+	if (!submission || submission.deletedAt) {
+		throw new AppError(httpStatus.NOT_FOUND, "Submission not found");
+	}
+
+	if (submission.ownerId !== user.userId) {
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"Only the owner can edit this submission",
+		);
+	}
+
+	const status = submission.status as SubmissionStatus;
+
+	if (!EDITABLE_STATUSES.includes(status)) {
+		throw new AppError(
+			httpStatus.CONFLICT,
+			`Only submissions in ${EDITABLE_STATUSES.join(" or ")} status can be edited`,
+		);
+	}
+
+	const { repositoryUrl } = payload;
+
+	if (repositoryUrl && repositoryUrl !== submission.repositoryUrl) {
+		const duplicate = await db.orm.public.ProjectSubmission.first({
+			ownerId: user.userId,
+			repositoryUrl,
+		});
+
+		if (duplicate) {
+			throw new AppError(
+				httpStatus.CONFLICT,
+				"You already have a submission with this repository URL",
+			);
+		}
+	}
+
+	const update: Record<string, unknown> = {};
+
+	if (payload.title !== undefined) {
+		update.title = payload.title;
+	}
+
+	if (payload.summary !== undefined) {
+		update.summary = payload.summary;
+	}
+
+	if (payload.description !== undefined) {
+		update.description = payload.description;
+	}
+
+	if (payload.repositoryUrl !== undefined) {
+		update.repositoryUrl = payload.repositoryUrl;
+	}
+
+	if (payload.liveDemoUrl !== undefined) {
+		update.liveDemoUrl = payload.liveDemoUrl || null;
+	}
+
+	if (payload.technologies !== undefined) {
+		update.technologies = [...new Set(payload.technologies)];
+	}
+
+	if (payload.screenshots !== undefined) {
+		update.screenshots = payload.screenshots;
+	}
+
+	if (Object.keys(update).length === 0) {
+		throw new AppError(httpStatus.BAD_REQUEST, "No fields provided to update");
+	}
+
+	await db.orm.public.ProjectSubmission.where({ id }).update(update as never);
+
+	return getSubmissionDetails(id, user);
+};
+
 export const SubmissionServices = {
 	createSubmission,
 	listMySubmissions,
 	listAllSubmissions,
 	listReviewerSubmissions,
 	getSubmissionDetails,
+	updateSubmission,
 };
