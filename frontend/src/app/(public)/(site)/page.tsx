@@ -9,7 +9,7 @@ import {
 	Sparkles,
 	Users,
 } from "lucide-react";
-import Link from "next/link"; 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const workflow = [
@@ -67,7 +67,7 @@ export default function HomePage() {
 	return (
 		<div className="relative overflow-hidden">
 			<section className="mx-auto flex max-w-7xl flex-col gap-8 px-4 pt-28 pb-16 sm:px-6 lg:px-8 lg:pt-36 lg:pb-24">
-				<div className="flex max-w-3xl flex-col gap-6">  
+				<div className="flex max-w-3xl flex-col gap-6">
 					<h1 className="text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
 						Ship better projects with{" "}
 						<span className="text-primary">structured, actionable</span> review

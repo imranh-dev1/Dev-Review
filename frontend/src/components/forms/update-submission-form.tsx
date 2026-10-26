@@ -33,7 +33,7 @@ import {
 	InputGroupText,
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea"; 
+import { Textarea } from "@/components/ui/textarea";
 import { Submission } from "@/types";
 
 const MAX_SCREENSHOTS = 5;
@@ -81,10 +81,7 @@ interface UpdateSubmissionDialogProps {
 	submission: Submission;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	onUpdate: (
-		id: string,
-		payload: UpdateSubmissionPayload,
-	) => Promise<unknown>;
+	onUpdate: (id: string, payload: UpdateSubmissionPayload) => Promise<unknown>;
 	uploadScreenshots: (files: File[]) => Promise<string[]>;
 }
 
@@ -130,8 +127,7 @@ export default function UpdateSubmissionDialog({
 		(url) => !removedScreenshots.includes(url),
 	);
 
-	const totalScreenshots =
-		existingScreenshots.length + newScreenshots.length;
+	const totalScreenshots = existingScreenshots.length + newScreenshots.length;
 
 	useEffect(() => {
 		if (!open) return;
@@ -175,9 +171,7 @@ export default function UpdateSubmissionDialog({
 		}
 
 		const invalidFile = files.find(
-			(file) =>
-				!ALLOWED_TYPES.includes(file.type) ||
-				file.size > MAX_FILE_SIZE,
+			(file) => !ALLOWED_TYPES.includes(file.type) || file.size > MAX_FILE_SIZE,
 		);
 
 		if (invalidFile) {
@@ -206,15 +200,11 @@ export default function UpdateSubmissionDialog({
 	};
 
 	const restoreExistingScreenshot = (url: string) => {
-		setRemovedScreenshots((current) =>
-			current.filter((item) => item !== url),
-		);
+		setRemovedScreenshots((current) => current.filter((item) => item !== url));
 	};
 
 	const removeNewScreenshot = (url: string) => {
-		setNewScreenshots((current) =>
-			current.filter((item) => item.url !== url),
-		);
+		setNewScreenshots((current) => current.filter((item) => item.url !== url));
 	};
 
 	const onSubmit = async (values: SubmissionFormValues) => {
@@ -239,15 +229,10 @@ export default function UpdateSubmissionDialog({
 
 		try {
 			const uploadedUrls = newScreenshots.length
-				? await uploadScreenshots(
-						newScreenshots.map(({ file }) => file),
-					)
+				? await uploadScreenshots(newScreenshots.map(({ file }) => file))
 				: [];
 
-			const screenshots = [
-				...existingScreenshots,
-				...uploadedUrls,
-			];
+			const screenshots = [...existingScreenshots, ...uploadedUrls];
 
 			await onUpdate(submission.id, {
 				title: values.title,
@@ -267,9 +252,7 @@ export default function UpdateSubmissionDialog({
 		} catch (error) {
 			toast.error("Failed to update submission.", {
 				description:
-					error instanceof Error
-						? error.message
-						: "Please try again later.",
+					error instanceof Error ? error.message : "Please try again later.",
 			});
 		} finally {
 			setIsPending(false);
@@ -343,9 +326,7 @@ export default function UpdateSubmissionDialog({
 
 						{/* Description */}
 						<div className="space-y-2">
-							<Label htmlFor="update-description">
-								Project description
-							</Label>
+							<Label htmlFor="update-description">Project description</Label>
 							<Textarea
 								id="update-description"
 								className="min-h-44 resize-y"
@@ -362,9 +343,7 @@ export default function UpdateSubmissionDialog({
 
 						{/* Repository */}
 						<div className="space-y-2">
-							<Label htmlFor="update-repositoryUrl">
-								Repository URL
-							</Label>
+							<Label htmlFor="update-repositoryUrl">Repository URL</Label>
 							<InputGroup>
 								<InputGroupAddon>
 									<Code2 className="size-4" />
@@ -377,9 +356,7 @@ export default function UpdateSubmissionDialog({
 									{...register("repositoryUrl")}
 								/>
 								<InputGroupAddon align="inline-end">
-									<span className="text-xs text-muted-foreground">
-										GitHub
-									</span>
+									<span className="text-xs text-muted-foreground">GitHub</span>
 								</InputGroupAddon>
 							</InputGroup>
 							{errors.repositoryUrl && (
@@ -479,9 +456,7 @@ export default function UpdateSubmissionDialog({
 													size="icon"
 													className="size-8 shrink-0 text-destructive"
 													aria-label="Remove screenshot"
-													onClick={() =>
-														removeExistingScreenshot(url)
-													}
+													onClick={() => removeExistingScreenshot(url)}
 												>
 													<X className="size-4" />
 												</Button>
@@ -532,9 +507,7 @@ export default function UpdateSubmissionDialog({
 									<div className="mb-3 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
 										<ImagePlus className="size-6" />
 									</div>
-									<p className="text-sm font-medium">
-										Add project screenshots
-									</p>
+									<p className="text-sm font-medium">Add project screenshots</p>
 									<p className="mt-1 text-xs text-muted-foreground">
 										Choose images from your device
 									</p>
@@ -588,7 +561,12 @@ export default function UpdateSubmissionDialog({
 						</Button>
 						<Button
 							type="submit"
-							disabled={isPending || (!isDirty && !newScreenshots.length && !removedScreenshots.length)}
+							disabled={
+								isPending ||
+								(!isDirty &&
+									!newScreenshots.length &&
+									!removedScreenshots.length)
+							}
 							className="gap-2"
 						>
 							{isPending ? (
@@ -608,4 +586,4 @@ export default function UpdateSubmissionDialog({
 			</DialogContent>
 		</Dialog>
 	);
-} 
+}
