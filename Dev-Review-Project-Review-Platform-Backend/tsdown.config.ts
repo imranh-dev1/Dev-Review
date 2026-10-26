@@ -2,9 +2,9 @@ import { isBuiltin } from "node:module";
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: { server: "src/index.ts" },
+  entry: { server: "src/server.ts" },
   platform: "node",
-  target: "node22.18",
+  target: "esnext",
   format: "esm",
   clean: true,
   hash: false,
@@ -16,4 +16,6 @@ export default defineConfig({
     alwaysBundle: (id) =>
       !isBuiltin(id),
   },
+
+  fixedExtension: false,
 });

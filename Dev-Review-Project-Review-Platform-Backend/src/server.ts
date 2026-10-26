@@ -1,7 +1,7 @@
 import app from "./app";
 import config from "./app/config";
 import { redisClient } from "./app/lib/redis";
-import { connectDatabase, db } from "./prisma/db";
+import { connectDatabase } from "./prisma/db";
 
 const PORT = config.port;
 
@@ -24,3 +24,5 @@ const main = async () => {
 };
 
 main();
+
+export default app;

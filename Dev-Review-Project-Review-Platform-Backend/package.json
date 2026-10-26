@@ -15,7 +15,7 @@
     "db:update": "prisma db update",
     "db:verify": "prisma db verify",
     "deploy": "bun run build && bun run composer:deploy",
-    "dev": "tsx watch --env-file=.env src/index.ts",
+    "dev": "tsx watch --env-file=.env src/server.ts",
     "dev:composer": "bun run build && bun run composer:dev",
     "migrate": "prisma db migrate",
     "migration:plan": "prisma migration plan",
