@@ -98,17 +98,22 @@ const getSubmissionDetails = catchAsync(async (req: Request, res: Response) => {
 const updateSubmission = catchAsync(async (req: Request, res: Response) => {
 	const user = req.user as RequestUser;
 	const id = req.params?.id;
-	const submission = await SubmissionServices.updateSubmission(
-		id as string,
-		user,
-		req.body,
-	);
+
+
+	console.log("SId", id, req.body);
+
+
+	// const submission = await SubmissionServices.updateSubmission(
+	// 	id as string,
+	// 	user,
+	// 	req.body,
+	// );
 
 	sendResponse(res, {
 		success: true,
 		statusCode: httpStatus.OK,
 		message: "Submission updated successfully.",
-		data: submission,
+		data: null,
 	});
 });
 

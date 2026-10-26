@@ -19,3 +19,14 @@ export interface IListQuery {
 	includeDeleted?: boolean;
 	scope?: "pending" | "all";
 }
+
+export interface IUpdateSubmissionPayload {
+	title: string;
+	summary: string;
+	description: string;
+	repositoryUrl: string;
+	liveDemoUrl?: string;
+	technologies: string[];
+	screenshotPreUrls: string[];
+	screenshots: File[];
+}

@@ -4,8 +4,13 @@ import {
 	getAllSubmissions,
 	getMySubmission,
 	getSubmissionDetails,
+	updateSubmission,
 } from "@/api/submission.api";
-import { IListQuery } from "@/types/submission.types";
+import {
+	ICreateSubmissionPayload,
+	IListQuery,
+	IUpdateSubmissionPayload,
+} from "@/types/submission.types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useCreateSubmission() {
@@ -39,5 +44,17 @@ export const useSubmissionDetails = (id: string) => {
 		queryKey: ["submission", id],
 		queryFn: () => getSubmissionDetails(id),
 		enabled: !!id,
+	});
+};
+
+export const useUpdateSubmission = () => {
+	return useMutation({
+		mutationFn: ({
+			id,
+			payload,
+		}: {
+			id: string;
+			payload: IUpdateSubmissionPayload;
+		}) => updateSubmission(id, payload),
 	});
 };

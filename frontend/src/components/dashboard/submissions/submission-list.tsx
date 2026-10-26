@@ -31,6 +31,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMySubmissions } from "@/hooks/submission.hook";
 import type { Submission } from "@/types";
+import UpdateSubmissionDialog from "@/components/dialog/update-submission-dilog";
 
 interface SubmissionListProps {
 	title?: string;
@@ -106,6 +107,7 @@ export function SubmissionList({
 	});
 
 	const submissions: Submission[] = response?.data ?? [];
+
 	const meta = response?.meta;
 
 	const stats = [
@@ -365,6 +367,8 @@ export function SubmissionList({
 													</Button>
 												)}
 											</div>
+
+											<UpdateSubmissionDialog id={submission.id} />
 
 											<Button asChild variant="default" size="sm">
 												<Link href={`${detailBasePath}/${submission.id}`}>

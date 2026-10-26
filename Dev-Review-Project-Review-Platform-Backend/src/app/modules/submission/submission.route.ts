@@ -48,7 +48,11 @@ router.get(
 router.patch(
 	"/:id",
 	auth(UserRole.STUDENT, UserRole.ADMIN),
-	validateRequest(SubmissionValidation.updateSubmissionSchema),
+	// validateRequest(SubmissionValidation.updateSubmissionSchema),
+	upload.fields([
+		{ name: "screenshots", maxCount: 5 },
+		{ name: "data", maxCount: 1 },
+	]),
 	SubmissionControllers.updateSubmission,
 );
 

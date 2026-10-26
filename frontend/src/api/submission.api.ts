@@ -1,5 +1,9 @@
 import apiClint from "@/lib/apiClint";
-import { ICreateSubmissionPayload, IListQuery } from "@/types/submission.types";
+import {
+	ICreateSubmissionPayload,
+	IListQuery,
+	IUpdateSubmissionPayload,
+} from "@/types/submission.types";
 
 export const createSubmission = (payload: ICreateSubmissionPayload) => {
 	const formData = new FormData();
@@ -40,5 +44,23 @@ export const getAllReviewerSubmissions = (query: IListQuery) => {
 export const getSubmissionDetails = (id: string) => {
 	return apiClint(`/submissions/${id}`, {
 		method: "GET",
+	});
+};
+
+export const updateSubmission = (
+	id: string,
+	payload: IUpdateSubmissionPayload,
+) => {
+	const formData = new FormData();
+
+	formData.append("data", JSON.stringify(payload));
+
+	payload.screenshots.forEach((file) => {
+		formData.append("screenshots", file);
+	});
+
+	return apiClint(`/submissions${id}`, {
+		method: "PATCH",
+		body: formData,
 	});
 };
