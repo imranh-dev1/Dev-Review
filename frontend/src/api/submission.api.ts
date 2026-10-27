@@ -64,3 +64,9 @@ export const updateSubmission = (
 		body: formData,
 	});
 };
+
+export const deleteSubmission = (id: string) => {
+	return apiClint(`/submissions/${id}`, {
+		method: "DELETE",
+	});
+};

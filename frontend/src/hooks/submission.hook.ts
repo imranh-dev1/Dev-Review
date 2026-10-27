@@ -1,5 +1,6 @@
 import {
 	createSubmission,
+	deleteSubmission,
 	getAllReviewerSubmissions,
 	getAllSubmissions,
 	getMySubmission,
@@ -52,5 +53,11 @@ export const useUpdateSubmission = () => {
 			id: string;
 			payload: IUpdateSubmissionPayload;
 		}) => updateSubmission(id, payload),
+	});
+};
+
+export const useDeleteSubmission = () => {
+	return useMutation({
+		mutationFn: (id: string) => deleteSubmission(id),
 	});
 };

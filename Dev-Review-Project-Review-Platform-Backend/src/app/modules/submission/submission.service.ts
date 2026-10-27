@@ -11,6 +11,7 @@ import { cloudinary } from "../../lib/cloudinary";
 import { buildMeta, getPagination } from "../../utils/pagination";
 import type { RequestUser } from "../../middleware/checkAuth";
 import type { SubmissionStatus } from "../../types/models";
+import { Temporal } from "temporal-polyfill";
 
 const EDITABLE_STATUSES: SubmissionStatus[] = ["DRAFT", "CHANGES_REQUESTED"];
 
@@ -346,7 +347,6 @@ const updateSubmission = async (
 
 	const existingScreenshots = submission.screenshots ?? [];
 
-	// Only allow existing screenshot URLs that belong to this submission.
 	const retainedScreenshots =
 		screenshotPreUrls?.filter((url) => existingScreenshots.includes(url)) ?? [];
 
@@ -410,7 +410,6 @@ const updateSubmission = async (
 		update.technologies = [...new Set(otherPayload.technologies)];
 	}
 
-	// Update screenshots when the user submits a screenshot list or new files.
 	if (Array.isArray(screenshotPreUrls) || screenshotFiles.length > 0) {
 		update.screenshots = [...new Set(finalScreenshots)];
 	}
@@ -424,6 +423,36 @@ const updateSubmission = async (
 	return getSubmissionDetails(id, user);
 };
 
+const deleteSubmission = async (id: string, user: RequestUser) => {
+	const submission = await db.orm.public.ProjectSubmission.where({
+		id,
+	}).first();
+
+	if (!submission || submission.deletedAt) {
+		throw new AppError(httpStatus.NOT_FOUND, "Submission not found");
+	}
+
+	if (submission.ownerId !== user.userId) {
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"You do not have access to this submission",
+		);
+	}
+
+	if (submission.status === "IN_REVIEW") {
+		throw new AppError(
+			httpStatus.CONFLICT,
+			"Cannot delete a submission that is under review",
+		);
+	}
+
+	await db.orm.public.ProjectSubmission.where({ id }).update({
+		deletedAt: Temporal.Now.instant(),
+	} as never);
+
+	return { id, deleted: true };
+};
+
 export const SubmissionServices = {
 	createSubmission,
 	listMySubmissions,
@@ -431,4 +460,5 @@ export const SubmissionServices = {
 	listReviewerSubmissions,
 	getSubmissionDetails,
 	updateSubmission,
+	deleteSubmission,
 };

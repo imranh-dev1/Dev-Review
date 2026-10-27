@@ -57,4 +57,10 @@ router.patch(
 	SubmissionControllers.updateSubmission,
 );
 
+router.delete(
+	"/:id",
+	auth(UserRole.STUDENT, UserRole.ADMIN),
+	SubmissionControllers.deleteSubmission,
+);
+
 export const SubmissionRoutes = router;

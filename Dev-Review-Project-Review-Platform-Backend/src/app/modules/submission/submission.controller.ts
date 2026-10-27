@@ -135,6 +135,19 @@ const updateSubmission = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const deleteSubmission = catchAsync(async (req: Request, res: Response) => {
+	const user = req.user as RequestUser;
+	const id = req.params.id as string;
+	const result = await SubmissionServices.deleteSubmission(id, user);
+
+	sendResponse(res, {
+		success: true,
+		statusCode: httpStatus.OK,
+		message: "Submission deleted successfully.",
+		data: result,
+	});
+});
+
 export const SubmissionControllers = {
 	createSubmission,
 	listMySubmissions,
@@ -142,4 +155,5 @@ export const SubmissionControllers = {
 	listReviewerSubmissions,
 	getSubmissionDetails,
 	updateSubmission,
+	deleteSubmission,
 };

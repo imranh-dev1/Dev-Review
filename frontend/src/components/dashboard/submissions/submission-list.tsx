@@ -32,6 +32,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMySubmissions } from "@/hooks/submission.hook";
 import type { Submission } from "@/types";
 import UpdateSubmissionDialog from "@/components/dialog/update-submission-dilog";
+import DeleteSubmissionDialog from "@/components/dialog/delete-submission-dialog";
 
 interface SubmissionListProps {
 	title?: string;
@@ -307,13 +308,19 @@ export function SubmissionList({
 												</div>
 											</div>
 
-											<Badge
-												variant="outline"
-												className={`shrink-0 ${config?.className ?? ""}`}
-											>
-												<StatusIcon className="mr-1 size-3" />
-												{config?.label ?? submission.status}
-											</Badge>
+											<div className="flex items-center gap-3">
+												<Badge
+													variant="outline"
+													className={`shrink-0 ${config?.className ?? ""}`}
+												>
+													<StatusIcon className="mr-1 size-3" />
+													{config?.label ?? submission.status}
+												</Badge>
+												<DeleteSubmissionDialog
+													submissionId={submission.id}
+													submissionTitle={submission.title}
+												/>
+											</div>
 										</div>
 									</CardHeader>
 
@@ -368,14 +375,16 @@ export function SubmissionList({
 												)}
 											</div>
 
-											<UpdateSubmissionDialog id={submission.id} />
+											<div className="flex items-center gap-2">
+												<UpdateSubmissionDialog id={submission.id} />
 
-											<Button asChild variant="default" size="sm">
-												<Link href={`${detailBasePath}/${submission.id}`}>
-													View Details
-													<ArrowUpRight className="ml-1 size-4" />
-												</Link>
-											</Button>
+												<Button asChild variant="default" size="sm">
+													<Link href={`${detailBasePath}/${submission.id}`}>
+														View Details
+														<ArrowUpRight className="ml-1 size-4" />
+													</Link>
+												</Button>
+											</div>
 										</div>
 									</CardContent>
 								</Card>
