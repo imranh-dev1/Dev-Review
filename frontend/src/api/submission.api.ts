@@ -59,7 +59,7 @@ export const updateSubmission = (
 		formData.append("screenshots", file);
 	});
 
-	return apiClint(`/submissions${id}`, {
+	return apiClint(`/submissions/${id}`, {
 		method: "PATCH",
 		body: formData,
 	});

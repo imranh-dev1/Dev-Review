@@ -11,9 +11,10 @@ import {
 	X,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,18 +25,22 @@ import {
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+
 import {
 	useSubmissionDetails,
 	useUpdateSubmission,
 } from "@/hooks/submission.hook";
+
 import AuthLoading from "../auth/auth-loading";
-import { Submission } from "@/types";
-import { IUpdateSubmissionPayload } from "@/types/submission.types";
-import { toast } from "sonner";
+
+import type { Submission } from "@/types";
+import type { IUpdateSubmissionPayload } from "@/types/submission.types";
+import { useQueryClient } from "@tanstack/react-query";
 
 const MAX_SCREENSHOTS = 5;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_TECHNOLOGIES = 20;
+
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const submissionSchema = z.object({
@@ -44,37 +49,27 @@ const submissionSchema = z.object({
 		.trim()
 		.min(3, "Title must be at least 3 characters.")
 		.max(150, "Title cannot exceed 150 characters."),
+
 	summary: z
 		.string()
 		.trim()
 		.min(10, "Summary must be at least 10 characters.")
 		.max(300, "Summary cannot exceed 300 characters."),
+
 	description: z
 		.string()
 		.trim()
 		.min(1, "Description is required.")
 		.max(50000, "Description is too long."),
+
 	repositoryUrl: z.url("Enter a valid repository URL.").max(2048),
+
 	liveDemoUrl: z.union([
 		z.literal(""),
 		z.url("Enter a valid live demo URL.").max(2048),
 	]),
+
 	technologies: z.string().max(1000, "Technology list is too long."),
-	screenshots: z
-		.array(
-			z.custom<File>(
-				(file) => typeof File !== "undefined" && file instanceof File,
-			),
-		)
-		.max(MAX_SCREENSHOTS, "You can upload up to 5 screenshots.")
-		.refine(
-			(files) => files.every((file) => file.size <= MAX_FILE_SIZE),
-			"Each screenshot must be 5 MB or smaller.",
-		)
-		.refine(
-			(files) => files.every((file) => ALLOWED_TYPES.includes(file.type)),
-			"Only JPEG, PNG, and WebP images are allowed.",
-		),
 });
 
 type SubmissionFormValues = z.infer<typeof submissionSchema>;
@@ -91,10 +86,11 @@ export default function UpdateSubmissionForm({
 	const [newScreenshots, setNewScreenshots] = useState<File[]>([]);
 	const [removedScreenshots, setRemovedScreenshots] = useState<string[]>([]);
 	const [screenshotError, setScreenshotError] = useState("");
+	const queryClint = useQueryClient();
 
 	const { data, isLoading } = useSubmissionDetails(id);
 
-	const submission = data?.data as Submission;
+	const submission = data?.data as Submission | undefined;
 
 	const { mutateAsync: updateSubmission, isPending } = useUpdateSubmission();
 
@@ -108,14 +104,16 @@ export default function UpdateSubmissionForm({
 	} = useForm<SubmissionFormValues>({
 		resolver: zodResolver(submissionSchema),
 		defaultValues: {
-			title: submission?.title ?? "",
-			summary: submission?.summary ?? "",
-			description: submission?.description ?? "",
-			repositoryUrl: submission?.repositoryUrl ?? "",
-			liveDemoUrl: submission?.liveDemoUrl ?? "",
-			technologies: submission?.technologies?.join(", ") ?? "",
+			title: "",
+			summary: "",
+			description: "",
+			repositoryUrl: "",
+			liveDemoUrl: "",
+			technologies: "",
 		},
 	});
+
+	const summary = watch("summary");
 
 	useEffect(() => {
 		if (!submission) return;
@@ -128,13 +126,11 @@ export default function UpdateSubmissionForm({
 			liveDemoUrl: submission.liveDemoUrl ?? "",
 			technologies: submission.technologies?.join(", ") ?? "",
 		});
+
+		setNewScreenshots([]);
+		setRemovedScreenshots([]);
+		setScreenshotError("");
 	}, [submission, reset]);
-
-	if (isLoading) {
-		return <AuthLoading value="Loading submission..." />;
-	}
-
-	const summary = watch("summary");
 
 	const existingScreenshots = (submission?.screenshots ?? []).filter(
 		(url: string) => !removedScreenshots.includes(url),
@@ -142,14 +138,13 @@ export default function UpdateSubmissionForm({
 
 	const totalScreenshots = existingScreenshots.length + newScreenshots.length;
 
-	const handleScreenshotChange = (
-		event: React.ChangeEvent<HTMLInputElement>,
-	) => {
+	const handleScreenshotChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(event.target.files ?? []);
 
+		// Allow selecting the same file again.
 		event.target.value = "";
 
-		if (!files.length) return;
+		if (files.length === 0) return;
 
 		if (totalScreenshots + files.length > MAX_SCREENSHOTS) {
 			setScreenshotError(
@@ -179,19 +174,29 @@ export default function UpdateSubmissionForm({
 		setNewScreenshots((current) =>
 			current.filter((file) => file !== fileToRemove),
 		);
+
 		setScreenshotError("");
 	};
 
 	const removeExistingScreenshot = (url: string) => {
-		setRemovedScreenshots((current) => [...current, url]);
+		setRemovedScreenshots((current) =>
+			current.includes(url) ? current : [...current, url],
+		);
+
 		setScreenshotError("");
 	};
 
-	const restoreScreenshots = () => {
+	const restoreRemovedScreenshots = () => {
 		setRemovedScreenshots([]);
+		setScreenshotError("");
 	};
 
 	const onSubmit = async (values: SubmissionFormValues) => {
+		if (!submission) {
+			toast.error("Submission details are not available.");
+			return;
+		}
+
 		const technologies = [
 			...new Set(
 				values.technologies
@@ -209,7 +214,14 @@ export default function UpdateSubmissionForm({
 			return;
 		}
 
-		const payload = {
+		if (totalScreenshots > MAX_SCREENSHOTS) {
+			setScreenshotError(
+				`You can upload up to ${MAX_SCREENSHOTS} screenshots.`,
+			);
+			return;
+		}
+
+		const payload: IUpdateSubmissionPayload = {
 			title: values.title,
 			summary: values.summary,
 			description: values.description,
@@ -220,13 +232,30 @@ export default function UpdateSubmissionForm({
 			screenshots: newScreenshots,
 		};
 
-		updateSubmission(
-			{ payload: payload, id: submission.id },
+		await updateSubmission(
 			{
-				onSuccess: () => {
-					toast.success("Submission updated successfully.", {
-						description: "Your project changes have been saved.",
-					});
+				id: submission.id,
+				payload,
+			},
+			{
+				onSuccess: (_, variables) => {
+					queryClint.invalidateQueries({
+						queryKey: ["my-submissions"],
+					}),
+						queryClint.invalidateQueries({
+							queryKey: ["submission", variables.id],
+						}),
+						queryClint.invalidateQueries({
+							queryKey: ["admin-submissions"],
+						}),
+						queryClint.invalidateQueries({
+							queryKey: ["reviewer-submissions"],
+						}),
+						toast.success("Submission updated successfully.", {
+							description: "Your project changes have been saved.",
+						});
+
+					onCancel();
 				},
 				onError: (error) => {
 					toast.error("Failed to update submission.", {
@@ -240,15 +269,29 @@ export default function UpdateSubmissionForm({
 		);
 	};
 
+	if (isLoading) {
+		return <AuthLoading value="Loading submission..." />;
+	}
+
+	if (!submission) {
+		return (
+			<div className="py-8 text-center">
+				<p className="text-sm text-muted-foreground">Submission not found.</p>
+
+				<Button
+					type="button"
+					variant="outline"
+					className="mt-4"
+					onClick={onCancel}
+				>
+					Close
+				</Button>
+			</div>
+		);
+	}
+
 	return (
-		<form
-			onSubmit={handleSubmit(onSubmit, (errors) => {
-				console.log("Validation errors:", errors);
-				toast.error("Please fix the validation errors.");
-			})}
-			className="space-y-6"
-			noValidate
-		>
+		<form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
 			<div className="space-y-5">
 				{/* Project title */}
 				<div className="space-y-2">
@@ -340,7 +383,7 @@ export default function UpdateSubmissionForm({
 						/>
 
 						<InputGroupAddon align="inline-end">
-							<span className="text-xs text-muted-foreground">GitHub</span>
+							<InputGroupText>GitHub</InputGroupText>
 						</InputGroupAddon>
 					</InputGroup>
 
@@ -417,6 +460,7 @@ export default function UpdateSubmissionForm({
 				<div className="space-y-3">
 					<div>
 						<Label>Project screenshots</Label>
+
 						<p className="mt-1 text-sm text-muted-foreground">
 							Upload up to 5 images. JPEG, PNG, or WebP; maximum 5 MB each.
 						</p>
@@ -424,6 +468,7 @@ export default function UpdateSubmissionForm({
 
 					{totalScreenshots > 0 && (
 						<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+							{/* Existing screenshots */}
 							{existingScreenshots.map((url) => (
 								<div key={url} className="overflow-hidden rounded-xl border">
 									<div className="relative aspect-video">
@@ -457,19 +502,15 @@ export default function UpdateSubmissionForm({
 								</div>
 							))}
 
-							{newScreenshots.map((file) => {
-								const previewUrl = URL.createObjectURL(file);
-
-								return (
-									<ScreenshotPreview
-										key={`${file.name}-${file.size}-${file.lastModified}`}
-										file={file}
-										url={previewUrl}
-										onRemove={() => removeNewScreenshot(file)}
-										disabled={isPending}
-									/>
-								);
-							})}
+							{/* Newly selected screenshots */}
+							{newScreenshots.map((file) => (
+								<ScreenshotPreview
+									key={`${file.name}-${file.size}-${file.lastModified}`}
+									file={file}
+									onRemove={() => removeNewScreenshot(file)}
+									disabled={isPending}
+								/>
+							))}
 						</div>
 					)}
 
@@ -516,19 +557,20 @@ export default function UpdateSubmissionForm({
 								variant="ghost"
 								size="sm"
 								disabled={isPending}
-								onClick={() => setRemovedScreenshots([])}
+								onClick={restoreRemovedScreenshots}
 							>
 								Undo removed images
 							</Button>
 						)}
 					</div>
 
-					{!isPending && screenshotError && (
+					{screenshotError && (
 						<p className="text-sm text-destructive">{screenshotError}</p>
 					)}
 				</div>
 			</div>
 
+			{/* Actions */}
 			<div className="flex justify-end gap-2 border-t pt-4">
 				<Button
 					type="button"
@@ -568,26 +610,38 @@ export default function UpdateSubmissionForm({
 
 function ScreenshotPreview({
 	file,
-	url,
 	onRemove,
 	disabled,
 }: {
 	file: File;
-	url: string;
 	onRemove: () => void;
 	disabled: boolean;
 }) {
+	const [previewUrl, setPreviewUrl] = useState("");
+
+	useEffect(() => {
+		const url = URL.createObjectURL(file);
+
+		setPreviewUrl(url);
+
+		return () => {
+			URL.revokeObjectURL(url);
+		};
+	}, [file]);
+
 	return (
 		<div className="overflow-hidden rounded-xl border">
 			<div className="relative aspect-video">
-				<Image
-					src={url}
-					alt={file.name}
-					fill
-					unoptimized
-					sizes="(max-width: 640px) 50vw, 200px"
-					className="object-cover"
-				/>
+				{previewUrl && (
+					<Image
+						src={previewUrl}
+						alt={file.name}
+						fill
+						unoptimized
+						sizes="(max-width: 640px) 50vw, 200px"
+						className="object-cover"
+					/>
+				)}
 			</div>
 
 			<div className="flex items-center justify-between gap-2 p-2">

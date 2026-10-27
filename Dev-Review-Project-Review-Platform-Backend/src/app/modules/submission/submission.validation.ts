@@ -43,7 +43,12 @@ export const reviewerQuerySchema = z.object({
 	scope: z.enum(["pending", "all"]).optional(),
 });
 
-export const updateSubmissionSchema = createSubmissionSchema.partial();
+export const updateSubmissionSchema = createSubmissionSchema.partial().extend({
+	screenshotPreUrls: z
+		.array(z.url("Each screenshot must be a valid URL."))
+		.max(5, "You can keep up to 5 screenshots.")
+		.optional(),
+});
 
 export const SubmissionValidation = {
 	createSubmissionSchema,

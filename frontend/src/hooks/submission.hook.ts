@@ -6,11 +6,7 @@ import {
 	getSubmissionDetails,
 	updateSubmission,
 } from "@/api/submission.api";
-import {
-	ICreateSubmissionPayload,
-	IListQuery,
-	IUpdateSubmissionPayload,
-} from "@/types/submission.types";
+import { IListQuery, IUpdateSubmissionPayload } from "@/types/submission.types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useCreateSubmission() {

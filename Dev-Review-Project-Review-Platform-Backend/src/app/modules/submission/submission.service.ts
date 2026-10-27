@@ -297,6 +297,7 @@ const updateSubmission = async (
 	id: string,
 	user: RequestUser,
 	payload: IUpdateSubmissionPayload,
+	screenshotFiles: Express.Multer.File[],
 ) => {
 	const submission = await db.orm.public.ProjectSubmission.where({
 		id,
@@ -322,7 +323,12 @@ const updateSubmission = async (
 		);
 	}
 
-	const { repositoryUrl } = payload;
+	const {
+		repositoryUrl,
+		screenshotPreUrls,
+		screenshots: _unusedScreenshots,
+		...otherPayload
+	} = payload;
 
 	if (repositoryUrl && repositoryUrl !== submission.repositoryUrl) {
 		const duplicate = await db.orm.public.ProjectSubmission.first({
@@ -338,34 +344,75 @@ const updateSubmission = async (
 		}
 	}
 
+	const existingScreenshots = submission.screenshots ?? [];
+
+	// Only allow existing screenshot URLs that belong to this submission.
+	const retainedScreenshots =
+		screenshotPreUrls?.filter((url) => existingScreenshots.includes(url)) ?? [];
+
+	const uploadImage = (buffer: Buffer): Promise<UploadApiResponse> => {
+		return new Promise((resolve, reject) => {
+			cloudinary.uploader
+				.upload_stream({ folder: "devreview/submissions" }, (error, result) => {
+					if (error) {
+						return reject(error);
+					}
+
+					if (!result) {
+						return reject(new Error("Image upload failed."));
+					}
+
+					resolve(result);
+				})
+				.end(buffer);
+		});
+	};
+
+	const uploadedScreenshots = await Promise.all(
+		screenshotFiles.map(async (file) => {
+			const image = await uploadImage(file.buffer);
+			return image.secure_url;
+		}),
+	);
+
+	const finalScreenshots = [...retainedScreenshots, ...uploadedScreenshots];
+
+	if (finalScreenshots.length > 5) {
+		throw new AppError(
+			httpStatus.BAD_REQUEST,
+			"You can have a maximum of 5 screenshots.",
+		);
+	}
+
 	const update: Record<string, unknown> = {};
 
-	if (payload.title !== undefined) {
-		update.title = payload.title;
+	if (otherPayload.title !== undefined) {
+		update.title = otherPayload.title;
 	}
 
-	if (payload.summary !== undefined) {
-		update.summary = payload.summary;
+	if (otherPayload.summary !== undefined) {
+		update.summary = otherPayload.summary;
 	}
 
-	if (payload.description !== undefined) {
-		update.description = payload.description;
+	if (otherPayload.description !== undefined) {
+		update.description = otherPayload.description;
 	}
 
-	if (payload.repositoryUrl !== undefined) {
-		update.repositoryUrl = payload.repositoryUrl;
+	if (repositoryUrl !== undefined) {
+		update.repositoryUrl = repositoryUrl;
 	}
 
-	if (payload.liveDemoUrl !== undefined) {
-		update.liveDemoUrl = payload.liveDemoUrl || null;
+	if (otherPayload.liveDemoUrl !== undefined) {
+		update.liveDemoUrl = otherPayload.liveDemoUrl || null;
 	}
 
-	if (payload.technologies !== undefined) {
-		update.technologies = [...new Set(payload.technologies)];
+	if (otherPayload.technologies !== undefined) {
+		update.technologies = [...new Set(otherPayload.technologies)];
 	}
 
-	if (payload.screenshots !== undefined) {
-		update.screenshots = payload.screenshots;
+	// Update screenshots when the user submits a screenshot list or new files.
+	if (Array.isArray(screenshotPreUrls) || screenshotFiles.length > 0) {
+		update.screenshots = [...new Set(finalScreenshots)];
 	}
 
 	if (Object.keys(update).length === 0) {

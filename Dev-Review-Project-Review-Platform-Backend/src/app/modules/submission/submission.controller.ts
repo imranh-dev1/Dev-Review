@@ -97,23 +97,41 @@ const getSubmissionDetails = catchAsync(async (req: Request, res: Response) => {
 
 const updateSubmission = catchAsync(async (req: Request, res: Response) => {
 	const user = req.user as RequestUser;
-	const id = req.params?.id;
+	const id = req.params.id;
 
+	const uploadedFiles = req.files as
+		| Record<string, Express.Multer.File[]>
+		| undefined;
 
-	console.log("SId", id, req.body);
+	const screenshotFiles = uploadedFiles?.screenshots ?? [];
 
+	const requestData = JSON.parse(req.body.data);
 
-	// const submission = await SubmissionServices.updateSubmission(
-	// 	id as string,
-	// 	user,
-	// 	req.body,
-	// );
+	const { data: payload } = SubmissionValidation.updateSubmissionSchema.parse({
+		data: requestData,
+	});
+
+	const screenshotPreUrls = Array.isArray(requestData.screenshotPreUrls)
+		? requestData.screenshotPreUrls.filter(
+				(url: unknown): url is string => typeof url === "string",
+			)
+		: [];
+
+	const submission = await SubmissionServices.updateSubmission(
+		id as string,
+		user,
+		{
+			...payload,
+			screenshotPreUrls,
+		},
+		screenshotFiles,
+	);
 
 	sendResponse(res, {
 		success: true,
 		statusCode: httpStatus.OK,
 		message: "Submission updated successfully.",
-		data: null,
+		data: submission,
 	});
 });
 

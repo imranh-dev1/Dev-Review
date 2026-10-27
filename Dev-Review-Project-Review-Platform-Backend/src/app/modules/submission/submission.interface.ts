@@ -9,9 +9,18 @@ export interface ICreateSubmissionPayload {
 	technologies: string[];
 }
 
-export type IUpdateSubmissionPayload = Partial<ICreateSubmissionPayload> & {
-	screenshots?: string[];
-};
+export interface IUpdateSubmissionPayload {
+	title?: string;
+	summary?: string;
+	description?: string;
+	repositoryUrl?: string;
+	liveDemoUrl?: string | null;
+	technologies?: string[];
+
+	screenshotPreUrls?: string[];
+
+	screenshots?: Express.Multer.File[];
+}
 
 export interface IListQuery {
 	page?: number;
