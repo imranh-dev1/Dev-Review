@@ -12,6 +12,8 @@ import { buildMeta, getPagination } from "../../utils/pagination";
 import type { RequestUser } from "../../middleware/checkAuth";
 import type { SubmissionStatus } from "../../types/models";
 import { Temporal } from "temporal-polyfill";
+import { applyTransition } from "../../services/workflow";
+import { createNotificationInTx } from "../../services/notification.service";
 
 const EDITABLE_STATUSES: SubmissionStatus[] = ["DRAFT", "CHANGES_REQUESTED"];
 
@@ -453,6 +455,59 @@ const deleteSubmission = async (id: string, user: RequestUser) => {
 	return { id, deleted: true };
 };
 
+const submitSubmission = async (id: string, user: RequestUser) => {
+	const result = await db.transaction(async (tx) => {
+		const submission = await tx.orm.public.ProjectSubmission.where({
+			id,
+		}).first();
+
+		if (!submission || submission.deletedAt) {
+			throw new AppError(httpStatus.NOT_FOUND, "Submission not found");
+		}
+
+		if (submission.ownerId !== user.userId) {
+			throw new AppError(
+				httpStatus.FORBIDDEN,
+				"Only the owner can submit this submission",
+			);
+		}
+
+		const fromStatus = submission.status as SubmissionStatus;
+		let toStatus: SubmissionStatus;
+
+		if (fromStatus === "DRAFT") {
+			toStatus = "SUBMITTED";
+		} else if (fromStatus === "CHANGES_REQUESTED") {
+			toStatus = "RESUBMITTED";
+		} else {
+			throw new AppError(
+				httpStatus.CONFLICT,
+				`Only draft or changes-requested submissions can be submitted (current status: ${fromStatus})`,
+			);
+		}
+
+		await applyTransition(tx, {
+			submissionId: id,
+			fromStatus,
+			toStatus,
+			changedById: user.userId,
+			setSubmittedAt: true,
+		});
+
+		await createNotificationInTx(tx, {
+			recipientId: user.userId,
+			type: "SUBMISSION_RECEIVED",
+			title: "Submission received",
+			message: `Your submission "${submission.title}" has been received and is queued for review.`,
+			submissionId: id,
+		});
+
+		return { id, status: toStatus };
+	});
+
+	return result;
+};
+
 export const SubmissionServices = {
 	createSubmission,
 	listMySubmissions,
@@ -461,4 +516,5 @@ export const SubmissionServices = {
 	getSubmissionDetails,
 	updateSubmission,
 	deleteSubmission,
+	submitSubmission,
 };

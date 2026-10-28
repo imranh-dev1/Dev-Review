@@ -63,4 +63,10 @@ router.delete(
 	SubmissionControllers.deleteSubmission,
 );
 
+router.post(
+	"/:id/submit",
+	auth(UserRole.ADMIN, UserRole.STUDENT),
+	SubmissionControllers.submitSubmission,
+);
+
 export const SubmissionRoutes = router;
