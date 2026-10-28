@@ -6,7 +6,6 @@ import {
 	History,
 	LayoutDashboard,
 	LockKeyhole,
-	Settings,
 	ShieldCheck,
 	UserRound,
 } from "lucide-react";

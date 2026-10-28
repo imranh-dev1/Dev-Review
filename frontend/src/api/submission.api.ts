@@ -70,3 +70,9 @@ export const deleteSubmission = (id: string) => {
 		method: "DELETE",
 	});
 };
+
+export const submitSubmission = (id: string) => {
+	return apiClint(`/submissions/${id}/submit`, {
+		method: "POST",
+	});
+};

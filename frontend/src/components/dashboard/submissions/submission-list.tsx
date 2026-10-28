@@ -33,6 +33,7 @@ import { useGetMySubmissions } from "@/hooks/submission.hook";
 import type { Submission } from "@/types";
 import UpdateSubmissionDialog from "@/components/dialog/update-submission-dilog";
 import DeleteSubmissionDialog from "@/components/dialog/delete-submission-dialog";
+import PublishSubmissionDialog from "@/components/dialog/publish-submission-dialog";
 
 interface SubmissionListProps {
 	title?: string;
@@ -380,10 +381,17 @@ export function SubmissionList({
 
 												<Button asChild variant="default" size="sm">
 													<Link href={`${detailBasePath}/${submission.id}`}>
-														View Details
+														Details
 														<ArrowUpRight className="ml-1 size-4" />
 													</Link>
 												</Button>
+
+												{submission.status === "DRAFT" && (
+													<PublishSubmissionDialog
+														submissionId={submission.id}
+														submissionTitle={submission.title}
+													/>
+												)}
 											</div>
 										</div>
 									</CardContent>

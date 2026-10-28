@@ -21,7 +21,7 @@ export default function UpdateSubmissionDialog({ id }: { id: string }) {
 		<>
 			<Button variant="outline" size="sm" onClick={() => setOpen(true)}>
 				<Pencil className="mr-2 size-4" />
-				Edit Submission
+				Edit
 			</Button>
 
 			<Dialog open={open} onOpenChange={setOpen}>

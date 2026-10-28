@@ -5,6 +5,7 @@ import {
 	getAllSubmissions,
 	getMySubmission,
 	getSubmissionDetails,
+	submitSubmission,
 	updateSubmission,
 } from "@/api/submission.api";
 import { IListQuery, IUpdateSubmissionPayload } from "@/types/submission.types";
@@ -59,5 +60,11 @@ export const useUpdateSubmission = () => {
 export const useDeleteSubmission = () => {
 	return useMutation({
 		mutationFn: (id: string) => deleteSubmission(id),
+	});
+};
+
+export const useSubmitSubmission = () => {
+	return useMutation({
+		mutationFn: (id: string) => submitSubmission(id),
 	});
 };

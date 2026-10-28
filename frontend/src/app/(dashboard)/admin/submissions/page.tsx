@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/select";
 import { useListAllSubmissions } from "@/hooks/submission.hook";
 import type { Submission, SubmissionStatus } from "@/types";
-import AdminSubmissionsTable from "@/components/table/admin-submissions-table";
 import DataPagination from "@/components/shared/pagination";
+import SubmissionsTable from "@/components/table/submissions-table";
 
 const statusOptions = [
 	"DRAFT",
@@ -130,10 +130,7 @@ export default function AdminSubmissionsPage() {
 				</div>
 			) : (
 				<>
-					<AdminSubmissionsTable
-						submissions={submissions}
-						isPending={isPending}
-					/>
+					<SubmissionsTable submissions={submissions} isPending={isPending} />
 
 					<DataPagination
 						content="Projects"
