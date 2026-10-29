@@ -41,31 +41,33 @@ export default function StudentDashboardPage() {
 			<div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 				<StatCard
 					label="Submissions"
-					value={isPending ? "—" : (analytics?.submissions?.total ?? 0)}
+					value={analytics?.submissions?.total ?? 0}
 					icon={FileCode2}
+					isLoading={isPending}
 				/>
 				<StatCard
 					label="In review"
-					value={isPending ? "—" : inReview}
+					value={inReview}
 					icon={Clock3}
+					isLoading={isPending}
 				/>
 				<StatCard
 					label="Approved"
-					value={isPending ? "—" : approved}
+					value={approved}
 					icon={CheckCircle2}
+					isLoading={isPending}
 				/>
 				<StatCard
 					label="Average score"
 					value={
-						isPending
-							? "—"
-							: analytics?.reviewsReceived?.avgScore !== null &&
-									analytics?.reviewsReceived?.avgScore !== undefined
-								? `${analytics.reviewsReceived.avgScore}/10`
-								: "No reviews"
+						analytics?.reviewsReceived?.avgScore !== null &&
+						analytics?.reviewsReceived?.avgScore !== undefined
+							? `${analytics.reviewsReceived.avgScore}/10`
+							: "No reviews"
 					}
 					hint={`${analytics?.reviewsReceived?.count ?? 0} reviews received`}
 					icon={Star}
+					isLoading={isPending}
 				/>
 			</div>
 
@@ -77,6 +79,7 @@ export default function StudentDashboardPage() {
 					<CardContent>
 						<StatusBreakdown
 							data={byStatus}
+							isLoading={isPending}
 							emptyMessage="Submit your first project to see status insights."
 						/>
 					</CardContent>

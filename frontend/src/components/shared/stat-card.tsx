@@ -1,12 +1,15 @@
 import { cn } from "cn";
 import type { LucideIcon } from "lucide-react";
 
+import { Skeleton } from "@/components/ui/skeleton";
+
 export function StatCard({
 	label,
 	value,
 	hint,
 	icon: Icon,
 	trend,
+	isLoading = false,
 	className,
 }: {
 	label: string;
@@ -14,6 +17,7 @@ export function StatCard({
 	hint?: string;
 	icon?: LucideIcon;
 	trend?: { value: string; direction: "up" | "down" | "flat" };
+	isLoading?: boolean;
 	className?: string;
 }) {
 	return (
@@ -30,27 +34,38 @@ export function StatCard({
 				) : null}
 			</div>
 
-			<div className="flex items-baseline gap-2">
-				<span className="tnum text-2xl font-semibold tracking-tight text-foreground">
-					{value}
-				</span>
-				{trend ? (
-					<span
-						className={cn(
-							"tnum text-xs font-medium",
-							trend.direction === "up" && "text-success",
-							trend.direction === "down" && "text-destructive",
-							trend.direction === "flat" && "text-muted-foreground",
-						)}
-					>
-						{trend.value}
-					</span>
-				) : null}
-			</div>
+			{isLoading ? (
+				<div className="space-y-2">
+					<Skeleton className="h-7 w-20" />
+					{hint ? <Skeleton className="h-3 w-28" /> : null}
+				</div>
+			) : (
+				<>
+					<div className="flex items-baseline gap-2">
+						<span className="tnum text-2xl font-semibold tracking-tight text-foreground">
+							{value}
+						</span>
+						{trend ? (
+							<span
+								className={cn(
+									"tnum text-xs font-medium",
+									trend.direction === "up" && "text-success",
+									trend.direction === "down" && "text-destructive",
+									trend.direction === "flat" && "text-muted-foreground",
+								)}
+							>
+								{trend.value}
+							</span>
+						) : null}
+					</div>
 
-			{hint ? (
-				<p className="text-xs leading-relaxed text-muted-foreground">{hint}</p>
-			) : null}
+					{hint ? (
+						<p className="text-xs leading-relaxed text-muted-foreground">
+							{hint}
+						</p>
+					) : null}
+				</>
+			)}
 		</div>
 	);
 }

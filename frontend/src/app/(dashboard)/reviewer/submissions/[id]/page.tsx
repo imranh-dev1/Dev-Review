@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
-import AuthLoading from "@/components/auth/auth-loading";
 import ReviewForm from "@/components/dashboard/review/review-form";
 import SubmissionDetails from "@/components/dashboard/submissions/submission-details";
 import { PageHeader } from "@/components/shared/page-header";
+import { DetailSkeleton, ErrorState } from "@/components/shared/state";
 import { Button } from "@/components/ui/button";
 import { useGetAssignments, useStartReview } from "@/hooks/assignment.hook";
 import { useSubmissionDetails } from "@/hooks/submission.hook";
@@ -16,7 +16,7 @@ import { useSubmissionDetails } from "@/hooks/submission.hook";
 export default function ReviewerSubmissionDetailsPage() {
 	const { id } = useParams<{ id: string }>();
 
-	const { data, isLoading } = useSubmissionDetails(id);
+	const { data, isLoading, isError, refetch } = useSubmissionDetails(id);
 	const { data: assignmentsData } = useGetAssignments({
 		submissionId: id,
 		limit: 100,
@@ -28,8 +28,34 @@ export default function ReviewerSubmissionDetailsPage() {
 		(item: { status: string }) => item.status !== "CANCELLED",
 	);
 
-	if (isLoading || !submission) {
-		return <AuthLoading value="Loading submission..." />;
+	if (isLoading) {
+		return <DetailSkeleton />;
+	}
+
+	if (isError || !submission) {
+		return (
+			<div className="space-y-6">
+				<PageHeader
+					eyebrow="Review workspace"
+					title="Submission details"
+					description="Review the project details, then submit scores and feedback."
+					actions={
+						<Button asChild variant="outline">
+							<Link href="/reviewer/assignments">
+								<ArrowLeft className="mr-2 size-4" />
+								Back to assignments
+							</Link>
+						</Button>
+					}
+				/>
+
+				<ErrorState
+					title="Unable to load this submission"
+					message="The submission could not be found, or you may no longer have access to it."
+					onRetry={() => refetch()}
+				/>
+			</div>
+		);
 	}
 
 	const canStart =

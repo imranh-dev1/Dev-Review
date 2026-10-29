@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
+import { FormSkeleton } from "@/components/shared/state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,7 +49,7 @@ export function UpdateProfileForm() {
 
 	const queryClient = useQueryClient();
 
-	const { data } = useGetMe();
+	const { data, isPending: isUserPending } = useGetMe();
 	const { mutate: updateProfile, isPending } = useProfileUpdate();
 
 	const user = data?.data;
@@ -167,6 +167,14 @@ export function UpdateProfileForm() {
 			},
 		});
 	};
+
+	if (isUserPending) {
+		return (
+			<div className="mx-auto w-full max-w-4xl space-y-7 pb-8">
+				<FormSkeleton fields={3} />
+			</div>
+		);
+	}
 
 	return (
 		<div className="mx-auto w-full max-w-4xl space-y-7 pb-8">

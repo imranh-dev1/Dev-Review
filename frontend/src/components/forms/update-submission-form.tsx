@@ -16,6 +16,7 @@ import { type ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { FormSkeleton } from "@/components/shared/state";
 import { Button } from "@/components/ui/button";
 import {
 	InputGroup,
@@ -32,7 +33,6 @@ import {
 
 import type { Submission } from "@/types";
 import type { IUpdateSubmissionPayload } from "@/types/submission.types";
-import AuthLoading from "../auth/auth-loading";
 
 const MAX_SCREENSHOTS = 5;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -267,7 +267,7 @@ export default function UpdateSubmissionForm({
 	};
 
 	if (isLoading) {
-		return <AuthLoading value="Loading submission..." />;
+		return <FormSkeleton fields={6} />;
 	}
 
 	if (!submission) {

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import DataPagination from "@/components/shared/pagination";
+import { ListSkeleton } from "@/components/shared/state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -65,9 +66,7 @@ export default function AssignmentsList({
 	return (
 		<div className="space-y-4">
 			{isPending ? (
-				<p className="border border-dashed p-10 text-center text-sm text-muted-foreground">
-					Loading assignments...
-				</p>
+				<ListSkeleton items={4} />
 			) : isError ? (
 				<p className="border border-dashed p-10 text-center text-sm text-destructive">
 					Failed to load assignments.

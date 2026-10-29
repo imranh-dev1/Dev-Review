@@ -11,6 +11,7 @@ import {
 	UserRound,
 } from "lucide-react";
 import Link from "next/link";
+import { ErrorState, ProfileSkeleton } from "@/components/shared/state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,8 +43,8 @@ function InfoItem({
 	value: string;
 }) {
 	return (
-		<div className="flex items-start gap-3 rounded-xl border bg-background p-4">
-			<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+		<div className="flex items-start gap-3 rounded-none border bg-background p-4">
+			<div className="flex size-10 shrink-0 items-center justify-center rounded-none bg-muted">
 				<Icon className="size-5 text-muted-foreground" />
 			</div>
 
@@ -56,9 +57,23 @@ function InfoItem({
 }
 
 export default function Profile() {
-	const { data } = useGetMe();
+	const { data, isPending, isError, refetch } = useGetMe();
 
 	const user = data?.data;
+
+	if (isPending) {
+		return <ProfileSkeleton />;
+	}
+
+	if (isError || !user) {
+		return (
+			<ErrorState
+				title="Unable to load your profile"
+				message="We could not load your account details. Please try again."
+				onRetry={() => refetch()}
+			/>
+		);
+	}
 
 	return (
 		<div className="mx-auto w-full max-w-6xl space-y-6">
@@ -187,7 +202,7 @@ export default function Profile() {
 							<div className="space-y-1">
 								<p className="text-sm text-muted-foreground">Joined on</p>
 								<p className="text-sm font-medium">
-									{formatDate(user?.createdAt)}
+									{formatDate(user.createdAt)}
 								</p>
 							</div>
 						</div>
@@ -203,7 +218,7 @@ export default function Profile() {
 								</p>
 								<p className="text-sm font-medium">
 									{user.emailVerifiedAt
-										? formatDate(user?.emailVerifiedAt)
+										? formatDate(user.emailVerifiedAt)
 										: "Not verified"}
 								</p>
 							</div>
@@ -219,7 +234,7 @@ export default function Profile() {
 									Last profile update
 								</p>
 								<p className="text-sm font-medium">
-									{formatDate(user?.updatedAt)}
+									{formatDate(user.updatedAt)}
 								</p>
 							</div>
 						</div>

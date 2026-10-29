@@ -14,6 +14,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminAnalytics } from "@/hooks/analytics.hook";
 import type { AuditLog } from "@/types";
 
@@ -49,31 +50,33 @@ export default function AdminDashboardPage() {
 			<div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 				<StatCard
 					label="Total users"
-					value={isPending ? "—" : (analytics?.users?.total ?? 0)}
+					value={analytics?.users?.total ?? 0}
 					icon={Users}
+					isLoading={isPending}
 				/>
 				<StatCard
 					label="Submissions"
-					value={isPending ? "—" : (analytics?.submissions?.total ?? 0)}
+					value={analytics?.submissions?.total ?? 0}
 					icon={FolderKanban}
+					isLoading={isPending}
 				/>
 				<StatCard
 					label="Reviews"
-					value={isPending ? "—" : (analytics?.reviews?.total ?? 0)}
+					value={analytics?.reviews?.total ?? 0}
 					icon={ClipboardCheck}
+					isLoading={isPending}
 				/>
 				<StatCard
 					label="Approval rate"
 					value={
-						isPending
-							? "—"
-							: analytics?.approvalRate !== null &&
-									analytics?.approvalRate !== undefined
-								? `${analytics.approvalRate}%`
-								: "No data"
+						analytics?.approvalRate !== null &&
+						analytics?.approvalRate !== undefined
+							? `${analytics.approvalRate}%`
+							: "No data"
 					}
 					hint={`${analytics?.assignments?.active ?? 0} active assignments`}
 					icon={Activity}
+					isLoading={isPending}
 				/>
 			</div>
 
@@ -83,7 +86,10 @@ export default function AdminDashboardPage() {
 						<CardTitle className="text-base">Submissions by status</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<StatusBreakdown data={analytics?.submissions?.byStatus ?? []} />
+						<StatusBreakdown
+							data={analytics?.submissions?.byStatus ?? []}
+							isLoading={isPending}
+						/>
 					</CardContent>
 				</Card>
 
@@ -92,7 +98,10 @@ export default function AdminDashboardPage() {
 						<CardTitle className="text-base">Users by role</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<StatusBreakdown data={analytics?.users?.byRole ?? []} />
+						<StatusBreakdown
+							data={analytics?.users?.byRole ?? []}
+							isLoading={isPending}
+						/>
 					</CardContent>
 				</Card>
 			</div>
@@ -105,7 +114,22 @@ export default function AdminDashboardPage() {
 					</Button>
 				</CardHeader>
 				<CardContent>
-					{recentActivity.length === 0 ? (
+					{isPending ? (
+						<div className="divide-y">
+							{["first", "second", "third", "fourth"].map((rowKey) => (
+								<div
+									key={rowKey}
+									className="flex flex-wrap items-center justify-between gap-2 py-2.5"
+								>
+									<div className="min-w-0 space-y-1.5">
+										<Skeleton className="h-4 w-40" />
+										<Skeleton className="h-3 w-56 max-w-full" />
+									</div>
+									<Skeleton className="h-3 w-32" />
+								</div>
+							))}
+						</div>
+					) : recentActivity.length === 0 ? (
 						<p className="text-sm text-muted-foreground">
 							No recorded activity yet.
 						</p>

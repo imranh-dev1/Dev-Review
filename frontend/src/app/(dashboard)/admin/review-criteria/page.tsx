@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/shared/page-header";
+import { ListSkeleton } from "@/components/shared/state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -111,9 +112,7 @@ export default function AdminReviewCriteriaPage() {
 			</Card>
 
 			{isPending ? (
-				<p className="border border-dashed p-10 text-center text-sm text-muted-foreground">
-					Loading criteria...
-				</p>
+				<ListSkeleton items={4} />
 			) : isError ? (
 				<p className="border border-dashed p-10 text-center text-sm text-destructive">
 					Failed to load criteria.

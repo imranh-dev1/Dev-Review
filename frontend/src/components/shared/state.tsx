@@ -100,6 +100,140 @@ export function EmptyState({
 	);
 }
 
+export function ListSkeleton({
+	items = 3,
+	className,
+}: {
+	items?: number;
+	className?: string;
+}) {
+	return (
+		<div className={cn("grid gap-3", className)}>
+			{Array.from({ length: items }, (_, index) => `item-${index}`).map(
+				(itemKey) => (
+					<div key={itemKey} className="border border-border bg-card p-4">
+						<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+							<div className="flex-1 space-y-2">
+								<div className="flex flex-wrap items-center gap-2">
+									<Skeleton className="h-4 w-44 max-w-full" />
+									<Skeleton className="h-5 w-20" />
+								</div>
+								<Skeleton className="h-3 w-3/4 max-w-full" />
+								<Skeleton className="h-3 w-1/2 max-w-full" />
+							</div>
+							<div className="flex gap-2">
+								<Skeleton className="h-8 w-20" />
+								<Skeleton className="h-8 w-16" />
+							</div>
+						</div>
+					</div>
+				),
+			)}
+		</div>
+	);
+}
+
+export function DetailSkeleton({ className }: { className?: string }) {
+	return (
+		<div className={cn("space-y-6", className)}>
+			<div className="space-y-2">
+				<Skeleton className="h-3 w-24" />
+				<Skeleton className="h-8 w-80 max-w-full" />
+				<Skeleton className="h-4 w-60 max-w-full" />
+			</div>
+
+			<div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+				<div className="space-y-6">
+					{["overview", "details"].map((cardKey) => (
+						<div
+							key={cardKey}
+							className="space-y-4 border border-border bg-card p-5"
+						>
+							<Skeleton className="h-4 w-32" />
+							<Skeleton className="h-3 w-full" />
+							<Skeleton className="h-3 w-5/6" />
+							<Skeleton className="h-3 w-2/3" />
+						</div>
+					))}
+				</div>
+
+				<div className="space-y-6">
+					{["meta", "status", "owner"].map((cardKey) => (
+						<div
+							key={cardKey}
+							className="space-y-3 border border-border bg-card p-5"
+						>
+							<Skeleton className="h-4 w-28" />
+							<Skeleton className="h-3 w-full" />
+							<Skeleton className="h-3 w-3/4" />
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+}
+
+export function ProfileSkeleton() {
+	return (
+		<div className="mx-auto w-full max-w-6xl space-y-6">
+			<div className="space-y-2">
+				<Skeleton className="h-3 w-16" />
+				<Skeleton className="h-8 w-44" />
+				<Skeleton className="h-4 w-80 max-w-full" />
+			</div>
+
+			<div className="overflow-hidden border border-border bg-card">
+				<Skeleton className="h-40 w-full" />
+				<div className="relative -mt-12 flex flex-col gap-4 px-6 pb-6 sm:flex-row sm:items-end">
+					<Skeleton className="size-24 border-4 border-background sm:size-28" />
+					<div className="space-y-2 sm:pb-1">
+						<Skeleton className="h-6 w-48" />
+						<Skeleton className="h-4 w-60 max-w-full" />
+						<Skeleton className="h-5 w-40" />
+					</div>
+				</div>
+			</div>
+
+			<div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+				<div className="space-y-4 border border-border bg-card p-5">
+					<Skeleton className="h-4 w-40" />
+					<div className="grid gap-4 sm:grid-cols-2">
+						{["name", "email", "role", "status"].map((fieldKey) => (
+							<Skeleton key={fieldKey} className="h-20 w-full" />
+						))}
+					</div>
+				</div>
+				<div className="space-y-4 border border-border bg-card p-5">
+					<Skeleton className="h-4 w-36" />
+					<Skeleton className="h-12 w-full" />
+					<Skeleton className="h-12 w-full" />
+					<Skeleton className="h-12 w-full" />
+				</div>
+			</div>
+		</div>
+	);
+}
+
+export function FormSkeleton({ fields = 4 }: { fields?: number }) {
+	return (
+		<div className="space-y-5 border border-border bg-card p-6">
+			{Array.from({ length: fields }, (_, index) => `field-${index}`).map(
+				(fieldKey) => (
+					<div key={fieldKey} className="space-y-2">
+						<Skeleton className="h-3 w-24" />
+						<Skeleton className="h-9 w-full" />
+					</div>
+				),
+			)}
+			<div className="flex gap-2">
+				<Skeleton className="h-9 w-28" />
+				<Skeleton className="h-9 w-24" />
+			</div>
+		</div>
+	);
+}
+
 export function TableSkeleton({
 	rows = 6,
 	columns = 5,

@@ -12,8 +12,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useGetUserDetails } from "@/hooks";
-import { Spinner } from "../ui/spinner";
 
 interface UserDetailsDialogProps {
 	userId: string;
@@ -41,8 +41,25 @@ export default function UserDetailsDialog({ userId }: UserDetailsDialogProps) {
 				</DialogHeader>
 
 				{isPending && (
-					<div className="flex justify-center py-10">
-						<Spinner className="text-primary" />
+					<div className="space-y-5">
+						<div className="flex items-center gap-3">
+							<Skeleton className="size-14 rounded-full" />
+							<div className="space-y-2">
+								<Skeleton className="h-4 w-32" />
+								<Skeleton className="h-3 w-48 max-w-full" />
+							</div>
+						</div>
+
+						<div className="grid grid-cols-2 gap-3">
+							{["role", "status", "submissions", "reviews"].map((fieldKey) => (
+								<Skeleton key={fieldKey} className="h-20 w-full" />
+							))}
+						</div>
+
+						<div className="space-y-2">
+							<Skeleton className="h-4 w-full" />
+							<Skeleton className="h-4 w-full" />
+						</div>
 					</div>
 				)}
 

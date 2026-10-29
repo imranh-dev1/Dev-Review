@@ -19,14 +19,6 @@ export default function AdminAnalyticsPage() {
 	const { data, isLoading, isError } = useAdminAnalytics();
 	const analytics = data?.data;
 
-	if (isLoading) {
-		return (
-			<p className="border border-dashed p-10 text-center text-sm text-muted-foreground">
-				Loading analytics...
-			</p>
-		);
-	}
-
 	if (isError) {
 		return (
 			<p className="border border-dashed p-10 text-center text-sm text-destructive">
@@ -49,11 +41,13 @@ export default function AdminAnalyticsPage() {
 					value={analytics?.users?.total ?? 0}
 					icon={Users}
 					hint={`${analytics?.users?.byStatus?.find((item: { status: string }) => item.status === "ACTIVE")?.count ?? 0} active`}
+					isLoading={isLoading}
 				/>
 				<StatCard
 					label="Submissions"
 					value={analytics?.submissions?.total ?? 0}
 					icon={FolderKanban}
+					isLoading={isLoading}
 				/>
 				<StatCard
 					label="Reviews"
@@ -65,6 +59,7 @@ export default function AdminAnalyticsPage() {
 							? `Avg ${analytics.reviews.averageScore}/10`
 							: "No reviews yet"
 					}
+					isLoading={isLoading}
 				/>
 				<StatCard
 					label="Approval rate"
@@ -75,16 +70,19 @@ export default function AdminAnalyticsPage() {
 							: "No data"
 					}
 					icon={Star}
+					isLoading={isLoading}
 				/>
 				<StatCard
 					label="Active assignments"
 					value={analytics?.assignments?.active ?? 0}
 					icon={Activity}
+					isLoading={isLoading}
 				/>
 				<StatCard
 					label="Notifications"
 					value={analytics?.notifications?.total ?? 0}
 					icon={Bell}
+					isLoading={isLoading}
 				/>
 			</div>
 
@@ -94,7 +92,10 @@ export default function AdminAnalyticsPage() {
 						<CardTitle className="text-base">Users by role</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<StatusBreakdown data={analytics?.users?.byRole ?? []} />
+						<StatusBreakdown
+							data={analytics?.users?.byRole ?? []}
+							isLoading={isLoading}
+						/>
 					</CardContent>
 				</Card>
 
@@ -103,7 +104,10 @@ export default function AdminAnalyticsPage() {
 						<CardTitle className="text-base">Users by status</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<StatusBreakdown data={analytics?.users?.byStatus ?? []} />
+						<StatusBreakdown
+							data={analytics?.users?.byStatus ?? []}
+							isLoading={isLoading}
+						/>
 					</CardContent>
 				</Card>
 
@@ -112,7 +116,10 @@ export default function AdminAnalyticsPage() {
 						<CardTitle className="text-base">Submissions by status</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<StatusBreakdown data={analytics?.submissions?.byStatus ?? []} />
+						<StatusBreakdown
+							data={analytics?.submissions?.byStatus ?? []}
+							isLoading={isLoading}
+						/>
 					</CardContent>
 				</Card>
 			</div>

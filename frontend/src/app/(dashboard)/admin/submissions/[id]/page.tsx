@@ -4,10 +4,9 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import AuthLoading from "@/components/auth/auth-loading";
 import SubmissionDetails from "@/components/dashboard/submissions/submission-details";
 import { PageHeader } from "@/components/shared/page-header";
-import { ErrorState } from "@/components/shared/state";
+import { DetailSkeleton, ErrorState } from "@/components/shared/state";
 import { Button } from "@/components/ui/button";
 import { useSubmissionDetails } from "@/hooks/submission.hook";
 
@@ -19,7 +18,7 @@ export default function AdminSubmissionDetailsPage() {
 	const submission = data?.data;
 
 	if (isLoading) {
-		return <AuthLoading value="Loading submission..." />;
+		return <DetailSkeleton />;
 	}
 
 	if (isError || !submission) {

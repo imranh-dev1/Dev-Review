@@ -1,9 +1,10 @@
 "use client";
 
 import { cn } from "cn";
-import { ArrowUpRight, LogIn, Menu } from "lucide-react";
+import { ArrowUpRight, LayoutDashboard, LogIn, Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
 	NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { useGetMe } from "@/hooks";
+import { getPublicActions } from "@/lib/public-links";
 import Logo from "../../../public/logo.png";
 import { NavUserDropdown } from "../dropdown/nav-user-dropdown";
 
@@ -27,25 +29,6 @@ export type NavigationSection = {
 	title: string;
 	href: string;
 };
-
-const navigationData: NavigationSection[] = [
-	{
-		title: "Home",
-		href: "/",
-	},
-	{
-		title: "How it works",
-		href: "/#how-it-works",
-	},
-	{
-		title: "Submit project",
-		href: "/signup",
-	},
-	{
-		title: "Review queue",
-		href: "/login",
-	},
-];
 
 const CtaButton = ({ className }: { className?: string }) => (
 	<Button
@@ -71,8 +54,30 @@ export function Navbar() {
 	const [scrolled, setScrolled] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
 	const { data, isLoading } = useGetMe();
+	const pathname = usePathname();
 
 	const user = data?.data;
+
+	const actions = getPublicActions(user?.role);
+
+	const navigationData: NavigationSection[] = [
+		{
+			title: "Home",
+			href: "/",
+		},
+		{
+			title: "How it works",
+			href: "/#how-it-works",
+		},
+		{
+			title: actions.submit.label,
+			href: actions.submit.href,
+		},
+		{
+			title: actions.queue.label,
+			href: actions.queue.href,
+		},
+	];
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 12);
@@ -110,16 +115,28 @@ export function Navbar() {
 					<div className="hidden lg:block">
 						<NavigationMenu>
 							<NavigationMenuList className="gap-1">
-								{navigationData.map((navItem) => (
-									<NavigationMenuItem key={navItem.title}>
-										<NavigationMenuLink
-											href={navItem.href}
-											className="px-4 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-										>
-											{navItem.title}
-										</NavigationMenuLink>
-									</NavigationMenuItem>
-								))}
+								{navigationData.map((navItem) => {
+									const isActive =
+										navItem.href === "/"
+											? pathname === "/"
+											: pathname.startsWith(navItem.href);
+
+									return (
+										<NavigationMenuItem key={navItem.title}>
+											<NavigationMenuLink
+												href={navItem.href}
+												className={cn(
+													"px-4 py-1.5 text-sm transition-colors hover:text-foreground",
+													isActive
+														? "text-foreground"
+														: "text-muted-foreground",
+												)}
+											>
+												{navItem.title}
+											</NavigationMenuLink>
+										</NavigationMenuItem>
+									);
+								})}
 							</NavigationMenuList>
 						</NavigationMenu>
 					</div>
@@ -163,16 +180,31 @@ export function Navbar() {
 											</Link>
 										</DropdownMenuItem>
 									))}
-									<DropdownMenuItem asChild>
-										<Link href="/login" onClick={() => setIsOpen(false)}>
-											Sign in
-										</Link>
-									</DropdownMenuItem>
-									<DropdownMenuItem asChild>
-										<Link href="/signup" onClick={() => setIsOpen(false)}>
-											Get started
-										</Link>
-									</DropdownMenuItem>
+									{user ? (
+										<DropdownMenuItem asChild>
+											<Link
+												href={actions.dashboard}
+												className="flex items-center gap-2"
+												onClick={() => setIsOpen(false)}
+											>
+												<LayoutDashboard className="size-4" />
+												Dashboard
+											</Link>
+										</DropdownMenuItem>
+									) : (
+										<>
+											<DropdownMenuItem asChild>
+												<Link href="/login" onClick={() => setIsOpen(false)}>
+													Sign in
+												</Link>
+											</DropdownMenuItem>
+											<DropdownMenuItem asChild>
+												<Link href="/signup" onClick={() => setIsOpen(false)}>
+													Get started
+												</Link>
+											</DropdownMenuItem>
+										</>
+									)}
 								</DropdownMenuContent>
 							</DropdownMenu>
 						</div>

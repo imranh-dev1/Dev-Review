@@ -4,9 +4,11 @@ import { Bell, CheckCheck, Inbox } from "lucide-react";
 import { useState } from "react";
 
 import DataPagination from "@/components/shared/pagination";
+import { ListSkeleton } from "@/components/shared/state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	useGetNotifications,
 	useMarkAllNotificationsRead,
@@ -43,7 +45,8 @@ export default function NotificationList() {
 		limit,
 		...(onlyUnread ? { isRead: false } : {}),
 	});
-	const { data: unreadData } = useUnreadNotificationCount();
+	const { data: unreadData, isPending: unreadPending } =
+		useUnreadNotificationCount();
 	const markRead = useMarkNotificationRead();
 	const markAll = useMarkAllNotificationsRead();
 
@@ -56,9 +59,13 @@ export default function NotificationList() {
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-2 text-sm text-muted-foreground">
 					<Bell className="size-4" />
-					<span>
-						{unreadCount} unread notification{unreadCount === 1 ? "" : "s"}
-					</span>
+					{unreadPending ? (
+						<Skeleton className="h-3 w-36" />
+					) : (
+						<span>
+							{unreadCount} unread notification{unreadCount === 1 ? "" : "s"}
+						</span>
+					)}
 				</div>
 
 				<div className="flex flex-wrap gap-2">
@@ -86,9 +93,7 @@ export default function NotificationList() {
 			</div>
 
 			{isPending ? (
-				<p className="border border-dashed p-10 text-center text-sm text-muted-foreground">
-					Loading notifications...
-				</p>
+				<ListSkeleton items={5} />
 			) : isError ? (
 				<p className="border border-dashed p-10 text-center text-sm text-destructive">
 					Failed to load notifications.

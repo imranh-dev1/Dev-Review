@@ -14,6 +14,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAssignReviewer } from "@/hooks/assignment.hook";
 import { useListAllSubmissions } from "@/hooks/submission.hook";
 import { useGetAllUsers } from "@/hooks/user.hook";
@@ -23,11 +24,12 @@ export default function AssignReviewerForm() {
 	const [submissionId, setSubmissionId] = useState("");
 	const [reviewerId, setReviewerId] = useState("");
 
-	const { data: submissionsData } = useListAllSubmissions({
-		page: 1,
-		limit: 100,
-	});
-	const { data: reviewersData } = useGetAllUsers({
+	const { data: submissionsData, isPending: submissionsPending } =
+		useListAllSubmissions({
+			page: 1,
+			limit: 100,
+		});
+	const { data: reviewersData, isPending: reviewersPending } = useGetAllUsers({
 		role: "REVIEWER",
 		status: "ACTIVE",
 		limit: 100,
@@ -71,46 +73,54 @@ export default function AssignReviewerForm() {
 			<CardContent className="flex flex-col gap-4 lg:flex-row lg:items-end">
 				<div className="flex-1 space-y-1.5">
 					<Label>Submission</Label>
-					<Select value={submissionId} onValueChange={setSubmissionId}>
-						<SelectTrigger>
-							<SelectValue placeholder="Select a submission" />
-						</SelectTrigger>
-						<SelectContent>
-							{submissions.length === 0 ? (
-								<SelectItem value="none" disabled>
-									No submissions available
-								</SelectItem>
-							) : (
-								submissions.map((submission) => (
-									<SelectItem key={submission.id} value={submission.id}>
-										{submission.title}
+					{submissionsPending ? (
+						<Skeleton className="h-9 w-full" />
+					) : (
+						<Select value={submissionId} onValueChange={setSubmissionId}>
+							<SelectTrigger>
+								<SelectValue placeholder="Select a submission" />
+							</SelectTrigger>
+							<SelectContent>
+								{submissions.length === 0 ? (
+									<SelectItem value="none" disabled>
+										No submissions available
 									</SelectItem>
-								))
-							)}
-						</SelectContent>
-					</Select>
+								) : (
+									submissions.map((submission) => (
+										<SelectItem key={submission.id} value={submission.id}>
+											{submission.title}
+										</SelectItem>
+									))
+								)}
+							</SelectContent>
+						</Select>
+					)}
 				</div>
 
 				<div className="flex-1 space-y-1.5">
 					<Label>Reviewer</Label>
-					<Select value={reviewerId} onValueChange={setReviewerId}>
-						<SelectTrigger>
-							<SelectValue placeholder="Select a reviewer" />
-						</SelectTrigger>
-						<SelectContent>
-							{reviewers.length === 0 ? (
-								<SelectItem value="none" disabled>
-									No active reviewers found
-								</SelectItem>
-							) : (
-								reviewers.map((reviewer) => (
-									<SelectItem key={reviewer.id} value={reviewer.id}>
-										{reviewer.name} ({reviewer.email})
+					{reviewersPending ? (
+						<Skeleton className="h-9 w-full" />
+					) : (
+						<Select value={reviewerId} onValueChange={setReviewerId}>
+							<SelectTrigger>
+								<SelectValue placeholder="Select a reviewer" />
+							</SelectTrigger>
+							<SelectContent>
+								{reviewers.length === 0 ? (
+									<SelectItem value="none" disabled>
+										No active reviewers found
 									</SelectItem>
-								))
-							)}
-						</SelectContent>
-					</Select>
+								) : (
+									reviewers.map((reviewer) => (
+										<SelectItem key={reviewer.id} value={reviewer.id}>
+											{reviewer.name} ({reviewer.email})
+										</SelectItem>
+									))
+								)}
+							</SelectContent>
+						</Select>
+					)}
 				</div>
 
 				<Button onClick={handleAssign} disabled={assign.isPending}>

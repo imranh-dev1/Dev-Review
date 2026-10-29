@@ -33,42 +33,40 @@ export default function ReviewerDashboardPage() {
 			<div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 				<StatCard
 					label="Pending"
-					value={isPending ? "—" : (analytics?.assignments?.pending ?? 0)}
+					value={analytics?.assignments?.pending ?? 0}
 					icon={Timer}
 					hint="Assignments awaiting action"
+					isLoading={isPending}
 				/>
 				<StatCard
 					label="Reviews completed"
-					value={isPending ? "—" : (analytics?.reviews?.total ?? 0)}
+					value={analytics?.reviews?.total ?? 0}
 					icon={ClipboardCheck}
+					isLoading={isPending}
 				/>
 				<StatCard
 					label="Average score given"
 					value={
-						isPending
-							? "—"
-							: analytics?.reviews?.averageScoreGiven !== null &&
-									analytics?.reviews?.averageScoreGiven !== undefined
-								? `${analytics.reviews.averageScoreGiven}/10`
-								: "No reviews"
+						analytics?.reviews?.averageScoreGiven !== null &&
+						analytics?.reviews?.averageScoreGiven !== undefined
+							? `${analytics.reviews.averageScoreGiven}/10`
+							: "No reviews"
 					}
 					icon={Star}
+					isLoading={isPending}
 				/>
 				<StatCard
 					label="Active assignments"
-					value={
-						isPending
-							? "—"
-							: (analytics?.assignments?.byStatus ?? [])
-									.filter((item: { status: string }) =>
-										["ASSIGNED", "ACCEPTED"].includes(item.status),
-									)
-									.reduce(
-										(sum: number, item: { count: number }) => sum + item.count,
-										0,
-									)
-					}
+					value={(analytics?.assignments?.byStatus ?? [])
+						.filter((item: { status: string }) =>
+							["ASSIGNED", "ACCEPTED"].includes(item.status),
+						)
+						.reduce(
+							(sum: number, item: { count: number }) => sum + item.count,
+							0,
+						)}
 					icon={FolderKanban}
+					isLoading={isPending}
 				/>
 			</div>
 
@@ -80,6 +78,7 @@ export default function ReviewerDashboardPage() {
 					<CardContent>
 						<StatusBreakdown
 							data={analytics?.assignments?.byStatus ?? []}
+							isLoading={isPending}
 							emptyMessage="No assignments yet."
 						/>
 					</CardContent>
