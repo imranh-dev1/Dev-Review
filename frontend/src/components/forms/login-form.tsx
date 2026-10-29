@@ -2,7 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import {
+	ClipboardCheck,
+	Eye,
+	EyeOff,
+	GraduationCap,
+	Loader2,
+	ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -21,10 +28,11 @@ import {
 	FieldError,
 	FieldGroup,
 	FieldLabel,
+	FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useGetMe, useLogin } from "@/hooks";
-import AuthLoading from "../auth/auth-loading";
+import { useLogin } from "@/hooks";
+import type { UserRole } from "@/types";
 
 const schema = z.object({
 	email: z.string().trim().email("Enter a valid email address"),
@@ -33,17 +41,52 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
+const DEMO_PASSWORD = "Demo@1234";
+
+const dashboardRoutes: Record<UserRole, string> = {
+	STUDENT: "/student",
+	REVIEWER: "/reviewer",
+	ADMIN: "/admin",
+};
+
+const demoAccounts: {
+	role: UserRole;
+	label: string;
+	email: string;
+	icon: typeof GraduationCap;
+}[] = [
+	{
+		role: "STUDENT",
+		label: "Student",
+		email: "student@devreview.dev",
+		icon: GraduationCap,
+	},
+	{
+		role: "REVIEWER",
+		label: "Reviewer",
+		email: "reviewer@devreview.dev",
+		icon: ClipboardCheck,
+	},
+	{
+		role: "ADMIN",
+		label: "Admin",
+		email: "admin@devreview.dev",
+		icon: ShieldCheck,
+	},
+];
+
 export function LoginForm() {
 	const router = useRouter();
 	const [showPassword, setShowPassword] = useState(false);
+	const [demoRole, setDemoRole] = useState<UserRole | null>(null);
 	const queryClient = useQueryClient();
 	const { mutate: login, isPending: isLoading } = useLogin();
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			email: "imranme.global@gmail.com",
-			password: "Pa$$w0rd!",
+			email: "",
+			password: "",
 		},
 	});
 
@@ -54,6 +97,8 @@ export function LoginForm() {
 		};
 		login(payload, {
 			onSuccess: async () => {
+				await queryClient.invalidateQueries({ queryKey: ["user"] });
+
 				toast.success("Signed in", {
 					description: `Welcome back, ${payload.email}.`,
 				});
@@ -71,6 +116,36 @@ export function LoginForm() {
 				});
 			},
 		});
+	}
+
+	function onDemoLogin(account: (typeof demoAccounts)[number]) {
+		setDemoRole(account.role);
+		form.setValue("email", account.email);
+		form.setValue("password", DEMO_PASSWORD);
+
+		login(
+			{ email: account.email, password: DEMO_PASSWORD },
+			{
+				onSuccess: async () => {
+					await queryClient.invalidateQueries({ queryKey: ["user"] });
+
+					toast.success(`Signed in as ${account.label}`, {
+						description: `Explore the ${account.label.toLowerCase()} dashboard with sample data.`,
+					});
+
+					router.replace(dashboardRoutes[account.role]);
+				},
+				onError: (error) => {
+					toast.error("Demo sign in failed", {
+						description:
+							error instanceof Error
+								? error.message
+								: "Unable to sign in with the demo account. Please try again.",
+					});
+				},
+				onSettled: () => setDemoRole(null),
+			},
+		);
 	}
 
 	return (
@@ -159,7 +234,7 @@ export function LoginForm() {
 
 						{/* Submit */}
 						<Button type="submit" className="w-full" disabled={isLoading}>
-							{isLoading ? (
+							{isLoading && !demoRole ? (
 								<>
 									<Loader2 className="mr-2 size-4 animate-spin" />
 									Signing in...
@@ -168,6 +243,39 @@ export function LoginForm() {
 								"Sign in"
 							)}
 						</Button>
+
+						<FieldSeparator>or try a demo account</FieldSeparator>
+
+						<div className="grid grid-cols-3 gap-2">
+							{demoAccounts.map((account) => {
+								const Icon = account.icon;
+								const isDemoLoading = isLoading && demoRole === account.role;
+
+								return (
+									<Button
+										key={account.role}
+										type="button"
+										variant="outline"
+										size="sm"
+										className="h-auto flex-col gap-1.5 py-2.5"
+										title={`Sign in as ${account.label} (${account.email})`}
+										onClick={() => onDemoLogin(account)}
+										disabled={isLoading}
+									>
+										{isDemoLoading ? (
+											<Loader2 className="size-4 animate-spin" />
+										) : (
+											<Icon className="size-4" />
+										)}
+										<span>{account.label}</span>
+									</Button>
+								);
+							})}
+						</div>
+
+						<p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+							One-click access with preloaded sample data for each role.
+						</p>
 					</FieldGroup>
 				</form>
 			</CardContent>

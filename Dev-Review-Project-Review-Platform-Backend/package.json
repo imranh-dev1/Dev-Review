@@ -14,6 +14,7 @@
     "db:init": "prisma db init",
     "db:update": "prisma db update",
     "db:verify": "prisma db verify",
+    "db:seed": "bun run src/prisma/seed.ts",
     "deploy": "bun run build && bun run composer:deploy",
     "dev": "tsx watch --env-file=.env src/server.ts",
     "dev:composer": "bun run build && bun run composer:dev",
