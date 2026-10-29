@@ -1,14 +1,20 @@
 "use client";
 
-import AuthLoading from "@/components/auth/auth-loading";
-import SubmissionDetails from "@/components/dashboard/submissions/submission-details";
-import { useSubmissionDetails } from "@/hooks/submission.hook";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 
-export default function SubmissionDetailsPage() {
+import AuthLoading from "@/components/auth/auth-loading";
+import SubmissionDetails from "@/components/dashboard/submissions/submission-details";
+import { PageHeader } from "@/components/shared/page-header";
+import { ErrorState } from "@/components/shared/state";
+import { Button } from "@/components/ui/button";
+import { useSubmissionDetails } from "@/hooks/submission.hook";
+
+export default function AdminSubmissionDetailsPage() {
 	const { id } = useParams<{ id: string }>();
 
-	const { data, isLoading } = useSubmissionDetails(id);
+	const { data, isLoading, isError, refetch } = useSubmissionDetails(id);
 
 	const submission = data?.data;
 
@@ -16,5 +22,49 @@ export default function SubmissionDetailsPage() {
 		return <AuthLoading value="Loading submission..." />;
 	}
 
-	return <SubmissionDetails submission={submission} />;
+	if (isError || !submission) {
+		return (
+			<div className="space-y-6">
+				<PageHeader
+					eyebrow="Management"
+					title="Submission details"
+					description="Inspect the project, its review history, and reviewer feedback."
+					actions={
+						<Button asChild variant="outline">
+							<Link href="/admin/submissions">
+								<ArrowLeft className="mr-2 size-4" />
+								Back to submissions
+							</Link>
+						</Button>
+					}
+				/>
+
+				<ErrorState
+					title="Unable to load this submission"
+					message="The submission could not be found or may have been deleted."
+					onRetry={() => refetch()}
+				/>
+			</div>
+		);
+	}
+
+	return (
+		<div className="space-y-6">
+			<PageHeader
+				eyebrow="Management"
+				title={submission.title}
+				description={`Owned by ${submission.owner?.name ?? "an unknown user"}.`}
+				actions={
+					<Button asChild variant="outline">
+						<Link href="/admin/submissions">
+							<ArrowLeft className="mr-2 size-4" />
+							Back to submissions
+						</Link>
+					</Button>
+				}
+			/>
+
+			<SubmissionDetails submission={submission} />
+		</div>
+	);
 }

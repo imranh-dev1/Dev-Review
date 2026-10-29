@@ -5,6 +5,7 @@ import { ArrowUpRight, LogIn, Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -124,13 +125,14 @@ export function Navbar() {
 					</div>
 
 					<div className="flex items-center gap-1.5">
+						<ThemeToggle />
 						{isLoading ? (
 							<div className="size-9 animate-pulse rounded-full bg-muted" />
 						) : user ? (
 							<NavUserDropdown user={user} />
 						) : (
 							<>
-								<Link href="/login" className="hidden sm:flex border">
+								<Link href="/login" className="hidden sm:inline-flex">
 									<Button variant="ghost" size="sm" className="gap-1.5">
 										<LogIn className="size-3.5" />
 										Sign in

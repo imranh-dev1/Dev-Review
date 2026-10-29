@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function UpdateMyProfilePage() {
 	return (
-		<main className="flex min-h-[calc(100vh-10rem)] items-center justify-center">
+		<div className="mx-auto w-full">
 			<UpdateProfileForm />
-		</main>
+		</div>
 	);
 }

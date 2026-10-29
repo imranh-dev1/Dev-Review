@@ -1,12 +1,6 @@
 "use client";
 
-import {
-	CalendarDays,
-	ExternalLink,
-	GitFork,
-	MoreHorizontal,
-	UserRound,
-} from "lucide-react";
+import { CalendarDays, ExternalLink, GitFork, UserRound } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";

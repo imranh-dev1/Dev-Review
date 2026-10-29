@@ -32,11 +32,7 @@ function VerifyEmailFallback() {
 
 export default function VerifyEmailPage() {
 	return (
-		<div className="relative flex min-h-[calc(100svh-10rem)] flex-col items-center justify-center px-4 py-12 sm:px-6">
-			<div
-				aria-hidden
-				className="pointer-events-none absolute inset-0 -z-10 bg-grid bg-grid-fade opacity-60"
-			/>
+		<div className="flex flex-1 flex-col items-center justify-center px-4 py-10 sm:px-8 sm:py-12">
 			<div className="w-full max-w-sm">
 				<div className="mb-6 flex flex-col items-center gap-2 text-center">
 					<Link href="/" className="mb-2 flex items-center gap-2">

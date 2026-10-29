@@ -14,7 +14,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-
+import DeleteSubmissionDialog from "@/components/dialog/delete-submission-dialog";
+import PublishSubmissionDialog from "@/components/dialog/publish-submission-dialog";
+import UpdateSubmissionDialog from "@/components/dialog/update-submission-dilog";
 import DataPagination from "@/components/shared/pagination";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -31,9 +33,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMySubmissions } from "@/hooks/submission.hook";
 import type { Submission } from "@/types";
-import UpdateSubmissionDialog from "@/components/dialog/update-submission-dilog";
-import DeleteSubmissionDialog from "@/components/dialog/delete-submission-dialog";
-import PublishSubmissionDialog from "@/components/dialog/publish-submission-dialog";
 
 interface SubmissionListProps {
 	title?: string;
@@ -147,7 +146,7 @@ export function SubmissionList({
 	};
 
 	return (
-		<div className="mx-auto w-full max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8">
+		<div className="space-y-8">
 			{/* Page Header */}
 			<header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div>

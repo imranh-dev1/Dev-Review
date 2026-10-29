@@ -1,10 +1,9 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Trash2, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
-import { Button } from "@/components/ui/button";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -16,8 +15,8 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { useDeleteSubmission } from "@/hooks/submission.hook";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface DeleteSubmissionDialogProps {
 	submissionId: string;

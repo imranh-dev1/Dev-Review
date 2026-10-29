@@ -1,3 +1,4 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
 	createSubmission,
 	deleteSubmission,
@@ -8,8 +9,10 @@ import {
 	submitSubmission,
 	updateSubmission,
 } from "@/api/submission.api";
-import { IListQuery, IUpdateSubmissionPayload } from "@/types/submission.types";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import type {
+	IListQuery,
+	IUpdateSubmissionPayload,
+} from "@/types/submission.types";
 
 export function useCreateSubmission() {
 	return useMutation({

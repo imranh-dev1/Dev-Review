@@ -118,7 +118,7 @@ export function ChangePasswordForm() {
 	];
 
 	return (
-		<Card className="w-3xl mx-auto">
+		<Card className="w-full max-w-2xl">
 			<CardHeader>
 				<div className="mb-2 flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
 					<LockKeyhole className="size-5" />

@@ -28,7 +28,12 @@ const sidebarRoutes: Partial<Record<UserRole, SidebarRoutes>> = {
 
 export function DashboardSidebar({ role }: { role: UserRole }) {
 	const routes: SidebarRoutes = sidebarRoutes[role] || [];
-	const pathnme = usePathname();
+	const pathname = usePathname();
+
+	const activeUrl = routes
+		.flatMap((group) => group.items.map((item) => item.url))
+		.filter((url) => pathname === url || pathname.startsWith(`${url}/`))
+		.sort((a, b) => b.length - a.length)[0];
 
 	return (
 		<Sidebar>
@@ -61,7 +66,7 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
 									return (
 										<SidebarMenuItem key={item.url}>
 											<SidebarMenuButton
-												isActive={pathnme === item.url}
+												isActive={activeUrl === item.url}
 												asChild
 											>
 												<Link href={item.url}>

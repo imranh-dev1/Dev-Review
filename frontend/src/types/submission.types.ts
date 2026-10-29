@@ -1,4 +1,4 @@
-import { SubmissionStatus } from ".";
+import type { SubmissionStatus } from ".";
 
 export interface ICreateSubmissionPayload {
 	title: string;

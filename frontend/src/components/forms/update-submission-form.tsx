@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import {
 	ArrowUpRight,
 	Code2,
@@ -11,11 +12,10 @@ import {
 	X,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { toast } from "sonner";
-
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	InputGroup,
@@ -25,17 +25,14 @@ import {
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
 import {
 	useSubmissionDetails,
 	useUpdateSubmission,
 } from "@/hooks/submission.hook";
 
-import AuthLoading from "../auth/auth-loading";
-
 import type { Submission } from "@/types";
 import type { IUpdateSubmissionPayload } from "@/types/submission.types";
-import { useQueryClient } from "@tanstack/react-query";
+import AuthLoading from "../auth/auth-loading";
 
 const MAX_SCREENSHOTS = 5;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -86,7 +83,7 @@ export default function UpdateSubmissionForm({
 	const [newScreenshots, setNewScreenshots] = useState<File[]>([]);
 	const [removedScreenshots, setRemovedScreenshots] = useState<string[]>([]);
 	const [screenshotError, setScreenshotError] = useState("");
-	const queryClint = useQueryClient();
+	const queryClient = useQueryClient();
 
 	const { data, isLoading } = useSubmissionDetails(id);
 
@@ -239,21 +236,21 @@ export default function UpdateSubmissionForm({
 			},
 			{
 				onSuccess: (_, variables) => {
-					queryClint.invalidateQueries({
+					queryClient.invalidateQueries({
 						queryKey: ["my-submissions"],
-					}),
-						queryClint.invalidateQueries({
-							queryKey: ["submission", variables.id],
-						}),
-						queryClint.invalidateQueries({
-							queryKey: ["admin-submissions"],
-						}),
-						queryClint.invalidateQueries({
-							queryKey: ["reviewer-submissions"],
-						}),
-						toast.success("Submission updated successfully.", {
-							description: "Your project changes have been saved.",
-						});
+					});
+					queryClient.invalidateQueries({
+						queryKey: ["submission", variables.id],
+					});
+					queryClient.invalidateQueries({
+						queryKey: ["admin-submissions"],
+					});
+					queryClient.invalidateQueries({
+						queryKey: ["reviewer-submissions"],
+					});
+					toast.success("Submission updated successfully.", {
+						description: "Your project changes have been saved.",
+					});
 
 					onCancel();
 				},

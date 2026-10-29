@@ -4,8 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Send, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
-import { Button } from "@/components/ui/button";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -17,6 +15,7 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { useSubmitSubmission } from "@/hooks/submission.hook";
 
 interface PublishSubmissionDialogProps {

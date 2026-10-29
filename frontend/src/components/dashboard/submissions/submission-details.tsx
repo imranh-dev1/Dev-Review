@@ -7,18 +7,16 @@ import {
 	FileText,
 	GitBranch,
 	Image as ImageIcon,
-	Layers3,
 	UserRound,
 } from "lucide-react";
 
 import Image from "next/image";
-
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { SubmissionDetail } from "@/types";
-import Link from "next/link";
+import type { SubmissionDetail } from "@/types";
 
 interface SubmissionDetailsProps {
 	submission: SubmissionDetail;
@@ -139,7 +137,7 @@ export default function SubmissionDetails({
 
 								{technologies.length > 0 ? (
 									<div className="flex flex-wrap gap-2">
-										{technologies.map((technology, index) => (
+										{technologies.map((technology) => (
 											<Badge key={technology} variant="secondary">
 												{technology}
 											</Badge>

@@ -109,19 +109,24 @@ export function TableSkeleton({
 }) {
 	return (
 		<div className="flex flex-col gap-px overflow-hidden border border-border">
-			{Array.from({ length: rows }).map((_, rowIndex) => (
-				<div
-					key={rowIndex}
-					className="flex items-center gap-4 border-b border-border px-3 py-3 last:border-b-0"
-				>
-					{Array.from({ length: columns }).map((__, columnIndex) => (
-						<Skeleton
-							key={columnIndex}
-							className={cn("h-3", columnIndex === 0 ? "w-1/3" : "w-1/6")}
-						/>
-					))}
-				</div>
-			))}
+			{Array.from({ length: rows }, (_, rowIndex) => `row-${rowIndex}`).map(
+				(rowKey) => (
+					<div
+						key={rowKey}
+						className="flex items-center gap-4 border-b border-border px-3 py-3 last:border-b-0"
+					>
+						{Array.from(
+							{ length: columns },
+							(_, columnIndex) => `col-${columnIndex}`,
+						).map((columnKey, columnIndex) => (
+							<Skeleton
+								key={columnKey}
+								className={cn("h-3", columnIndex === 0 ? "w-1/3" : "w-1/6")}
+							/>
+						))}
+					</div>
+				),
+			)}
 		</div>
 	);
 }

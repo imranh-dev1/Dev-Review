@@ -1,5 +1,5 @@
 import apiClint from "@/lib/apiClint";
-import {
+import type {
 	ICreateSubmissionPayload,
 	IListQuery,
 	IUpdateSubmissionPayload,

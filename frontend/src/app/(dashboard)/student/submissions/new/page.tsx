@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function NewSubmissionPage() {
 	return (
-		<main className="mx-auto w-full max-w-4xl space-y-6 px-4 py-8 sm:px-6 lg:py-10">
+		<div className="mx-auto w-full max-w-4xl space-y-6">
 			<div className="space-y-4">
 				<div>
 					<h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -22,6 +22,6 @@ export default function NewSubmissionPage() {
 			</div>
 
 			<NewSubmissionForm />
-		</main>
+		</div>
 	);
 }

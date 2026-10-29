@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import {
 	ArrowUpRight,
 	Code2,
@@ -11,11 +12,12 @@ import {
 	Trash2,
 	X,
 } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -32,11 +34,8 @@ import {
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useCreateSubmission } from "@/hooks/submission.hook";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useGetMe } from "@/hooks";
-import { useQueryClient } from "@tanstack/react-query";
+import { useCreateSubmission } from "@/hooks/submission.hook";
 
 const MAX_SCREENSHOTS = 5;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -121,8 +120,6 @@ export function NewSubmissionForm() {
 
 	const screenshots = watch("screenshots");
 	const summary = watch("summary");
-	const repositoryUrl = watch("repositoryUrl");
-	const liveDemoUrl = watch("liveDemoUrl");
 
 	useEffect(() => {
 		const items = screenshots.map((file) => ({

@@ -49,7 +49,7 @@ export function UpdateProfileForm() {
 
 	const queryClient = useQueryClient();
 
-	const { data, isLoading } = useGetMe();
+	const { data } = useGetMe();
 	const { mutate: updateProfile, isPending } = useProfileUpdate();
 
 	const user = data?.data;

@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function LoginPage() {
 	return (
-		<div className="relative flex min-h-[calc(100svh-10rem)] flex-col items-center justify-center px-4 py-12 sm:px-6">
+		<div className="flex flex-1 flex-col items-center justify-center px-4 py-10 sm:px-8 sm:py-12">
 			<div className="w-full max-w-sm">
 				<div className="mb-6 flex flex-col items-center gap-2 text-center">
 					<h1 className="text-xl font-semibold tracking-tight">
