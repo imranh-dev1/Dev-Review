@@ -4,6 +4,10 @@
 	"target": "postgres",
 	"profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
 	"roots": {
+		"audit_logs": {
+			"model": "AuditLog",
+			"namespace": "public"
+		},
 		"notifications": {
 			"model": "Notification",
 			"namespace": "public"
@@ -14,6 +18,10 @@
 		},
 		"review_assignments": {
 			"model": "ReviewAssignment",
+			"namespace": "public"
+		},
+		"review_criteria": {
+			"model": "ReviewCriterion",
 			"namespace": "public"
 		},
 		"reviews": {
@@ -255,6 +263,122 @@
 					}
 				},
 				"models": {
+					"AuditLog": {
+						"fields": {
+							"action": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								},
+								"valueSet": {
+									"entityKind": "enum",
+									"entityName": "AuditAction",
+									"namespaceId": "public",
+									"plane": "domain"
+								}
+							},
+							"actorId": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/uuid@1",
+									"kind": "scalar"
+								}
+							},
+							"createdAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/timestamptz-temporal@1",
+									"kind": "scalar"
+								}
+							},
+							"entityId": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/uuid@1",
+									"kind": "scalar"
+								}
+							},
+							"entityType": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								},
+								"valueSet": {
+									"entityKind": "enum",
+									"entityName": "AuditEntityType",
+									"namespaceId": "public",
+									"plane": "domain"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/uuid@1",
+									"kind": "scalar"
+								}
+							},
+							"ipAddress": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"metadata": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {
+							"actor": {
+								"cardinality": "N:1",
+								"nullable": true,
+								"on": {
+									"localFields": ["actorId"],
+									"targetFields": ["id"]
+								},
+								"to": {
+									"model": "User",
+									"namespace": "public"
+								}
+							}
+						},
+						"storage": {
+							"fields": {
+								"action": {
+									"column": "action"
+								},
+								"actorId": {
+									"column": "actor_id"
+								},
+								"createdAt": {
+									"column": "created_at"
+								},
+								"entityId": {
+									"column": "entity_id"
+								},
+								"entityType": {
+									"column": "entity_type"
+								},
+								"id": {
+									"column": "id"
+								},
+								"ipAddress": {
+									"column": "ip_address"
+								},
+								"metadata": {
+									"column": "metadata"
+								}
+							},
+							"namespaceId": "public",
+							"table": "audit_logs"
+						}
+					},
 					"Notification": {
 						"fields": {
 							"createdAt": {
@@ -895,6 +1019,107 @@
 							"table": "review_assignments"
 						}
 					},
+					"ReviewCriterion": {
+						"fields": {
+							"createdAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/timestamptz-temporal@1",
+									"kind": "scalar"
+								}
+							},
+							"description": {
+								"nullable": true,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"id": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/uuid@1",
+									"kind": "scalar"
+								}
+							},
+							"isActive": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/bool@1",
+									"kind": "scalar"
+								}
+							},
+							"key": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"label": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/text@1",
+									"kind": "scalar"
+								}
+							},
+							"sortOrder": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/int4@1",
+									"kind": "scalar"
+								}
+							},
+							"updatedAt": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/timestamptz-temporal@1",
+									"kind": "scalar"
+								}
+							},
+							"weight": {
+								"nullable": false,
+								"type": {
+									"codecId": "pg/int4@1",
+									"kind": "scalar"
+								}
+							}
+						},
+						"relations": {},
+						"storage": {
+							"fields": {
+								"createdAt": {
+									"column": "created_at"
+								},
+								"description": {
+									"column": "description"
+								},
+								"id": {
+									"column": "id"
+								},
+								"isActive": {
+									"column": "is_active"
+								},
+								"key": {
+									"column": "key"
+								},
+								"label": {
+									"column": "label"
+								},
+								"sortOrder": {
+									"column": "sort_order"
+								},
+								"updatedAt": {
+									"column": "updated_at"
+								},
+								"weight": {
+									"column": "weight"
+								}
+							},
+							"namespaceId": "public",
+							"table": "review_criteria"
+						}
+					},
 					"SubmissionStatusHistory": {
 						"fields": {
 							"changedById": {
@@ -1110,6 +1335,17 @@
 									"namespace": "public"
 								}
 							},
+							"auditLogs": {
+								"cardinality": "1:N",
+								"on": {
+									"localFields": ["id"],
+									"targetFields": ["actorId"]
+								},
+								"to": {
+									"model": "AuditLog",
+									"namespace": "public"
+								}
+							},
 							"notifications": {
 								"cardinality": "1:N",
 								"on": {
@@ -1201,6 +1437,123 @@
 			"public": {
 				"entries": {
 					"table": {
+						"audit_logs": {
+							"checks": [
+								{
+									"expression": "\"action\" IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'ASSIGN_REVIEWER', 'START_REVIEW', 'SUBMIT_REVIEW', 'STATUS_CHANGE', 'USER_STATUS_CHANGE', 'ROLE_CHANGE')",
+									"name": "audit_logs_action_check_fd2d4833",
+									"prefix": "audit_logs_action_check"
+								},
+								{
+									"expression": "\"entity_type\" IN ('USER', 'SUBMISSION', 'REVIEW', 'ASSIGNMENT', 'NOTIFICATION', 'SYSTEM')",
+									"name": "audit_logs_entity_type_check_41a4936d",
+									"prefix": "audit_logs_entity_type_check"
+								}
+							],
+							"columns": {
+								"action": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false,
+									"valueSet": {
+										"entityKind": "valueSet",
+										"entityName": "AuditAction",
+										"namespaceId": "public",
+										"plane": "storage"
+									}
+								},
+								"actor_id": {
+									"codecId": "pg/uuid@1",
+									"dataType": "pg/uuid",
+									"nullable": true
+								},
+								"created_at": {
+									"codecId": "pg/timestamptz-temporal@1",
+									"dataType": "pg/timestamptz",
+									"default": {
+										"expression": "now()",
+										"kind": "function"
+									},
+									"nullable": false
+								},
+								"entity_id": {
+									"codecId": "pg/uuid@1",
+									"dataType": "pg/uuid",
+									"nullable": true
+								},
+								"entity_type": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false,
+									"valueSet": {
+										"entityKind": "valueSet",
+										"entityName": "AuditEntityType",
+										"namespaceId": "public",
+										"plane": "storage"
+									}
+								},
+								"id": {
+									"codecId": "pg/uuid@1",
+									"dataType": "pg/uuid",
+									"nullable": false
+								},
+								"ip_address": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": true
+								},
+								"metadata": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": true
+								}
+							},
+							"foreignKeys": [
+								{
+									"onDelete": "setNull",
+									"source": {
+										"columns": ["actor_id"],
+										"namespaceId": "public",
+										"tableName": "audit_logs"
+									},
+									"target": {
+										"columns": ["id"],
+										"namespaceId": "public",
+										"tableName": "users"
+									}
+								}
+							],
+							"indexes": [
+								{
+									"columns": ["actor_id", "created_at"],
+									"name": "audit_logs_actor_id_created_at_idx_73c9864c",
+									"prefix": "audit_logs_actor_id_created_at_idx",
+									"unique": false
+								},
+								{
+									"columns": ["actor_id"],
+									"name": "audit_logs_actor_id_idx_69a2164d",
+									"prefix": "audit_logs_actor_id_idx",
+									"unique": false
+								},
+								{
+									"columns": ["created_at"],
+									"name": "audit_logs_created_at_idx_225d8c0f",
+									"prefix": "audit_logs_created_at_idx",
+									"unique": false
+								},
+								{
+									"columns": ["entity_type", "entity_id"],
+									"name": "audit_logs_entity_type_entity_id_idx_4cde03a1",
+									"prefix": "audit_logs_entity_type_entity_id_idx",
+									"unique": false
+								}
+							],
+							"primaryKey": {
+								"columns": ["id"]
+							},
+							"uniques": []
+						},
 						"notifications": {
 							"checks": [
 								{
@@ -1605,6 +1958,88 @@
 							"uniques": [
 								{
 									"columns": ["submission_id", "reviewer_id"]
+								}
+							]
+						},
+						"review_criteria": {
+							"columns": {
+								"created_at": {
+									"codecId": "pg/timestamptz-temporal@1",
+									"dataType": "pg/timestamptz",
+									"default": {
+										"expression": "now()",
+										"kind": "function"
+									},
+									"nullable": false
+								},
+								"description": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": true
+								},
+								"id": {
+									"codecId": "pg/uuid@1",
+									"dataType": "pg/uuid",
+									"nullable": false
+								},
+								"is_active": {
+									"codecId": "pg/bool@1",
+									"dataType": "pg/bool",
+									"default": {
+										"kind": "literal",
+										"value": true
+									},
+									"nullable": false
+								},
+								"key": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								},
+								"label": {
+									"codecId": "pg/text@1",
+									"dataType": "pg/text",
+									"nullable": false
+								},
+								"sort_order": {
+									"codecId": "pg/int4@1",
+									"dataType": "pg/int4",
+									"default": {
+										"kind": "literal",
+										"value": 0
+									},
+									"nullable": false
+								},
+								"updated_at": {
+									"codecId": "pg/timestamptz-temporal@1",
+									"dataType": "pg/timestamptz",
+									"nullable": false
+								},
+								"weight": {
+									"codecId": "pg/int4@1",
+									"dataType": "pg/int4",
+									"default": {
+										"kind": "literal",
+										"value": 1
+									},
+									"nullable": false
+								}
+							},
+							"foreignKeys": [],
+							"indexes": [
+								{
+									"columns": ["is_active", "sort_order"],
+									"name": "review_criteria_is_active_sort_order_idx_588043b5",
+									"prefix": "review_criteria_is_active_sort_order_idx",
+									"unique": false
+								}
+							],
+							"primaryKey": {
+								"columns": ["id"]
+							},
+							"uniques": [
+								{
+									"columns": ["key"]
 								}
 							]
 						},
@@ -2087,12 +2522,23 @@
 				"kind": "postgres-schema"
 			}
 		},
-		"storageHash": "732d5b1425a44200578e7bfc9fcd3e17a2d825e1f0496fbd2fd04ef52ed03d5e"
+		"storageHash": "342d826e16d8d6e662b8080845f88b6c70551abcc7df706e533bc1696cf57282"
 	},
 	"execution": {
-		"executionHash": "ad8beafcf0b5118edde04821235c4c446b5d4cb5908a5a81db056cb3140bb191",
+		"executionHash": "d323f20d14f4021b970589dc844d16867134244e9facf8c3be8750f2d5c1eb2d",
 		"mutations": {
 			"defaults": [
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "audit_logs",
+						"field": "id",
+						"namespace": "public"
+					}
+				},
 				{
 					"onCreate": {
 						"id": "uuidv4",
@@ -2138,6 +2584,32 @@
 					"ref": {
 						"entry": "review_assignments",
 						"field": "id",
+						"namespace": "public"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "uuidv4",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "review_criteria",
+						"field": "id",
+						"namespace": "public"
+					}
+				},
+				{
+					"onCreate": {
+						"id": "instantNow",
+						"kind": "generator"
+					},
+					"onUpdate": {
+						"id": "instantNow",
+						"kind": "generator"
+					},
+					"ref": {
+						"entry": "review_criteria",
+						"field": "updated_at",
 						"namespace": "public"
 					}
 				},

@@ -1,19 +1,23 @@
+import type { UploadApiResponse } from "cloudinary";
+import httpStatus from "http-status";
+import { Temporal } from "temporal-polyfill";
 import { db } from "../../../prisma/db";
+import { cloudinary } from "../../lib/cloudinary";
+import type { RequestUser } from "../../middleware/checkAuth";
+import {
+	createAuditLog,
+	createAuditLogInTx,
+} from "../../services/audit.service";
+import { createNotificationInTx } from "../../services/notification.service";
+import { applyTransition } from "../../services/workflow";
+import type { SubmissionStatus } from "../../types/models";
 import { AppError } from "../../utils/AppError";
+import { buildMeta, getPagination } from "../../utils/pagination";
 import type {
 	ICreateSubmissionPayload,
 	IListQuery,
 	IUpdateSubmissionPayload,
 } from "./submission.interface";
-import httpStatus from "http-status";
-import type { UploadApiResponse } from "cloudinary";
-import { cloudinary } from "../../lib/cloudinary";
-import { buildMeta, getPagination } from "../../utils/pagination";
-import type { RequestUser } from "../../middleware/checkAuth";
-import type { SubmissionStatus } from "../../types/models";
-import { Temporal } from "temporal-polyfill";
-import { applyTransition } from "../../services/workflow";
-import { createNotificationInTx } from "../../services/notification.service";
 
 const EDITABLE_STATUSES: SubmissionStatus[] = ["DRAFT", "CHANGES_REQUESTED"];
 
@@ -69,6 +73,14 @@ const createSubmission = async (
 		technologies: [...new Set(payload.technologies)],
 		screenshots: screenshots,
 		status: "DRAFT",
+	});
+
+	await createAuditLog({
+		actorId: ownerId,
+		action: "CREATE",
+		entityType: "SUBMISSION",
+		entityId: submission.id,
+		metadata: { title: submission.title },
 	});
 
 	return submission;
@@ -224,7 +236,7 @@ const listReviewerSubmissions = async (
 
 	if (query.search?.trim()) {
 		submissions = submissions.where((submission) =>
-			submission.title.ilike(`% ${query.search!.trim()}% `),
+			submission.title.ilike(`%${query.search?.trim()}%`),
 		);
 	}
 	const { count } = await submissions.aggregate((a) => ({
@@ -422,6 +434,14 @@ const updateSubmission = async (
 
 	await db.orm.public.ProjectSubmission.where({ id }).update(update as never);
 
+	await createAuditLog({
+		actorId: user.userId,
+		action: "UPDATE",
+		entityType: "SUBMISSION",
+		entityId: id,
+		metadata: { fields: Object.keys(update) },
+	});
+
 	return getSubmissionDetails(id, user);
 };
 
@@ -451,6 +471,13 @@ const deleteSubmission = async (id: string, user: RequestUser) => {
 	await db.orm.public.ProjectSubmission.where({ id }).update({
 		deletedAt: Temporal.Now.instant(),
 	} as never);
+
+	await createAuditLog({
+		actorId: user.userId,
+		action: "DELETE",
+		entityType: "SUBMISSION",
+		entityId: id,
+	});
 
 	return { id, deleted: true };
 };
@@ -500,6 +527,14 @@ const submitSubmission = async (id: string, user: RequestUser) => {
 			title: "Submission received",
 			message: `Your submission "${submission.title}" has been received and is queued for review.`,
 			submissionId: id,
+		});
+
+		await createAuditLogInTx(tx, {
+			actorId: user.userId,
+			action: "STATUS_CHANGE",
+			entityType: "SUBMISSION",
+			entityId: id,
+			metadata: { fromStatus, toStatus },
 		});
 
 		return { id, status: toStatus };

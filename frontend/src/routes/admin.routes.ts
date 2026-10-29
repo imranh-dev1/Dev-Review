@@ -6,7 +6,9 @@ import {
 	FileText,
 	FolderKanban,
 	LayoutDashboard,
+	ListChecks,
 	LockKeyhole,
+	ScrollText,
 	UserCog,
 	UserRound,
 	Users,
@@ -62,6 +64,11 @@ export const adminRoutes: SidebarGroup[] = [
 				url: "/admin/assignments",
 				icon: UserCog,
 			},
+			{
+				title: "Review Criteria",
+				url: "/admin/review-criteria",
+				icon: ListChecks,
+			},
 		],
 	},
 	{
@@ -71,6 +78,11 @@ export const adminRoutes: SidebarGroup[] = [
 				title: "Notifications",
 				url: "/admin/notifications",
 				icon: Bell,
+			},
+			{
+				title: "Activity Log",
+				url: "/admin/audit-logs",
+				icon: ScrollText,
 			},
 			{
 				title: "My Profile",

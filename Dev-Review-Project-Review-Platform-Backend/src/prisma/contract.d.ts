@@ -21,9 +21,9 @@ import type {
 } from "@prisma/orm-postgres/contract/types";
 
 export type StorageHash =
-	StorageHashBase<"732d5b1425a44200578e7bfc9fcd3e17a2d825e1f0496fbd2fd04ef52ed03d5e">;
+	StorageHashBase<"342d826e16d8d6e662b8080845f88b6c70551abcc7df706e533bc1696cf57282">;
 export type ExecutionHash =
-	ExecutionHashBase<"ad8beafcf0b5118edde04821235c4c446b5d4cb5908a5a81db056cb3140bb191">;
+	ExecutionHashBase<"d323f20d14f4021b970589dc844d16867134244e9facf8c3be8750f2d5c1eb2d">;
 export type ProfileHash =
 	ProfileHashBase<"3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2">;
 
@@ -525,6 +525,33 @@ type DefaultLiteralValue<
 
 export type FieldOutputTypes = {
 	readonly public: {
+		readonly AuditLog: {
+			readonly action:
+				| "CREATE"
+				| "UPDATE"
+				| "DELETE"
+				| "LOGIN"
+				| "LOGOUT"
+				| "ASSIGN_REVIEWER"
+				| "START_REVIEW"
+				| "SUBMIT_REVIEW"
+				| "STATUS_CHANGE"
+				| "USER_STATUS_CHANGE"
+				| "ROLE_CHANGE";
+			readonly actorId: CodecTypes["pg/uuid@1"]["output"] | null;
+			readonly createdAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
+			readonly entityId: CodecTypes["pg/uuid@1"]["output"] | null;
+			readonly entityType:
+				| "USER"
+				| "SUBMISSION"
+				| "REVIEW"
+				| "ASSIGNMENT"
+				| "NOTIFICATION"
+				| "SYSTEM";
+			readonly id: CodecTypes["pg/uuid@1"]["output"];
+			readonly ipAddress: CodecTypes["pg/text@1"]["output"] | null;
+			readonly metadata: CodecTypes["pg/text@1"]["output"] | null;
+		};
 		readonly Notification: {
 			readonly createdAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
 			readonly id: CodecTypes["pg/uuid@1"]["output"];
@@ -597,6 +624,17 @@ export type FieldOutputTypes = {
 			readonly status: "ASSIGNED" | "ACCEPTED" | "COMPLETED" | "CANCELLED";
 			readonly submissionId: CodecTypes["pg/uuid@1"]["output"];
 		};
+		readonly ReviewCriterion: {
+			readonly createdAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
+			readonly description: CodecTypes["pg/text@1"]["output"] | null;
+			readonly id: CodecTypes["pg/uuid@1"]["output"];
+			readonly isActive: CodecTypes["pg/bool@1"]["output"];
+			readonly key: CodecTypes["pg/text@1"]["output"];
+			readonly label: CodecTypes["pg/text@1"]["output"];
+			readonly sortOrder: CodecTypes["pg/int4@1"]["output"];
+			readonly updatedAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
+			readonly weight: CodecTypes["pg/int4@1"]["output"];
+		};
 		readonly SubmissionStatusHistory: {
 			readonly changedById: CodecTypes["pg/uuid@1"]["output"] | null;
 			readonly createdAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
@@ -639,6 +677,33 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
 	readonly public: {
+		readonly AuditLog: {
+			readonly action:
+				| "CREATE"
+				| "UPDATE"
+				| "DELETE"
+				| "LOGIN"
+				| "LOGOUT"
+				| "ASSIGN_REVIEWER"
+				| "START_REVIEW"
+				| "SUBMIT_REVIEW"
+				| "STATUS_CHANGE"
+				| "USER_STATUS_CHANGE"
+				| "ROLE_CHANGE";
+			readonly actorId: CodecTypes["pg/uuid@1"]["input"] | null;
+			readonly createdAt: CodecTypes["pg/timestamptz-temporal@1"]["input"];
+			readonly entityId: CodecTypes["pg/uuid@1"]["input"] | null;
+			readonly entityType:
+				| "USER"
+				| "SUBMISSION"
+				| "REVIEW"
+				| "ASSIGNMENT"
+				| "NOTIFICATION"
+				| "SYSTEM";
+			readonly id: CodecTypes["pg/uuid@1"]["input"];
+			readonly ipAddress: CodecTypes["pg/text@1"]["input"] | null;
+			readonly metadata: CodecTypes["pg/text@1"]["input"] | null;
+		};
 		readonly Notification: {
 			readonly createdAt: CodecTypes["pg/timestamptz-temporal@1"]["input"];
 			readonly id: CodecTypes["pg/uuid@1"]["input"];
@@ -711,6 +776,17 @@ export type FieldInputTypes = {
 			readonly status: "ASSIGNED" | "ACCEPTED" | "COMPLETED" | "CANCELLED";
 			readonly submissionId: CodecTypes["pg/uuid@1"]["input"];
 		};
+		readonly ReviewCriterion: {
+			readonly createdAt: CodecTypes["pg/timestamptz-temporal@1"]["input"];
+			readonly description: CodecTypes["pg/text@1"]["input"] | null;
+			readonly id: CodecTypes["pg/uuid@1"]["input"];
+			readonly isActive: CodecTypes["pg/bool@1"]["input"];
+			readonly key: CodecTypes["pg/text@1"]["input"];
+			readonly label: CodecTypes["pg/text@1"]["input"];
+			readonly sortOrder: CodecTypes["pg/int4@1"]["input"];
+			readonly updatedAt: CodecTypes["pg/timestamptz-temporal@1"]["input"];
+			readonly weight: CodecTypes["pg/int4@1"]["input"];
+		};
 		readonly SubmissionStatusHistory: {
 			readonly changedById: CodecTypes["pg/uuid@1"]["input"] | null;
 			readonly createdAt: CodecTypes["pg/timestamptz-temporal@1"]["input"];
@@ -753,6 +829,33 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
 	readonly public: {
+		readonly audit_logs: {
+			readonly action:
+				| "CREATE"
+				| "UPDATE"
+				| "DELETE"
+				| "LOGIN"
+				| "LOGOUT"
+				| "ASSIGN_REVIEWER"
+				| "START_REVIEW"
+				| "SUBMIT_REVIEW"
+				| "STATUS_CHANGE"
+				| "USER_STATUS_CHANGE"
+				| "ROLE_CHANGE";
+			readonly actor_id: CodecTypes["pg/uuid@1"]["output"] | null;
+			readonly created_at: CodecTypes["pg/timestamptz-temporal@1"]["output"];
+			readonly entity_id: CodecTypes["pg/uuid@1"]["output"] | null;
+			readonly entity_type:
+				| "USER"
+				| "SUBMISSION"
+				| "REVIEW"
+				| "ASSIGNMENT"
+				| "NOTIFICATION"
+				| "SYSTEM";
+			readonly id: CodecTypes["pg/uuid@1"]["output"];
+			readonly ip_address: CodecTypes["pg/text@1"]["output"] | null;
+			readonly metadata: CodecTypes["pg/text@1"]["output"] | null;
+		};
 		readonly notifications: {
 			readonly created_at: CodecTypes["pg/timestamptz-temporal@1"]["output"];
 			readonly id: CodecTypes["pg/uuid@1"]["output"];
@@ -810,6 +913,17 @@ export type StorageColumnTypes = {
 			readonly reviewer_id: CodecTypes["pg/uuid@1"]["output"];
 			readonly status: "ASSIGNED" | "ACCEPTED" | "COMPLETED" | "CANCELLED";
 			readonly submission_id: CodecTypes["pg/uuid@1"]["output"];
+		};
+		readonly review_criteria: {
+			readonly created_at: CodecTypes["pg/timestamptz-temporal@1"]["output"];
+			readonly description: CodecTypes["pg/text@1"]["output"] | null;
+			readonly id: CodecTypes["pg/uuid@1"]["output"];
+			readonly is_active: CodecTypes["pg/bool@1"]["output"];
+			readonly key: CodecTypes["pg/text@1"]["output"];
+			readonly label: CodecTypes["pg/text@1"]["output"];
+			readonly sort_order: CodecTypes["pg/int4@1"]["output"];
+			readonly updated_at: CodecTypes["pg/timestamptz-temporal@1"]["output"];
+			readonly weight: CodecTypes["pg/int4@1"]["output"];
 		};
 		readonly reviews: {
 			readonly accessibility: CodecTypes["pg/int4@1"]["output"];
@@ -869,6 +983,33 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
 	readonly public: {
+		readonly audit_logs: {
+			readonly action:
+				| "CREATE"
+				| "UPDATE"
+				| "DELETE"
+				| "LOGIN"
+				| "LOGOUT"
+				| "ASSIGN_REVIEWER"
+				| "START_REVIEW"
+				| "SUBMIT_REVIEW"
+				| "STATUS_CHANGE"
+				| "USER_STATUS_CHANGE"
+				| "ROLE_CHANGE";
+			readonly actor_id: CodecTypes["pg/uuid@1"]["input"] | null;
+			readonly created_at: CodecTypes["pg/timestamptz-temporal@1"]["input"];
+			readonly entity_id: CodecTypes["pg/uuid@1"]["input"] | null;
+			readonly entity_type:
+				| "USER"
+				| "SUBMISSION"
+				| "REVIEW"
+				| "ASSIGNMENT"
+				| "NOTIFICATION"
+				| "SYSTEM";
+			readonly id: CodecTypes["pg/uuid@1"]["input"];
+			readonly ip_address: CodecTypes["pg/text@1"]["input"] | null;
+			readonly metadata: CodecTypes["pg/text@1"]["input"] | null;
+		};
 		readonly notifications: {
 			readonly created_at: CodecTypes["pg/timestamptz-temporal@1"]["input"];
 			readonly id: CodecTypes["pg/uuid@1"]["input"];
@@ -924,6 +1065,17 @@ export type StorageColumnInputTypes = {
 			readonly reviewer_id: CodecTypes["pg/uuid@1"]["input"];
 			readonly status: "ASSIGNED" | "ACCEPTED" | "COMPLETED" | "CANCELLED";
 			readonly submission_id: CodecTypes["pg/uuid@1"]["input"];
+		};
+		readonly review_criteria: {
+			readonly created_at: CodecTypes["pg/timestamptz-temporal@1"]["input"];
+			readonly description: CodecTypes["pg/text@1"]["input"] | null;
+			readonly id: CodecTypes["pg/uuid@1"]["input"];
+			readonly is_active: CodecTypes["pg/bool@1"]["input"];
+			readonly key: CodecTypes["pg/text@1"]["input"];
+			readonly label: CodecTypes["pg/text@1"]["input"];
+			readonly sort_order: CodecTypes["pg/int4@1"]["input"];
+			readonly updated_at: CodecTypes["pg/timestamptz-temporal@1"]["input"];
+			readonly weight: CodecTypes["pg/int4@1"]["input"];
 		};
 		readonly reviews: {
 			readonly accessibility: CodecTypes["pg/int4@1"]["input"];
@@ -983,6 +1135,35 @@ export type StorageColumnInputTypes = {
 };
 
 export namespace Models {
+	export type public_AuditLog = {
+		action:
+			| "CREATE"
+			| "UPDATE"
+			| "DELETE"
+			| "LOGIN"
+			| "LOGOUT"
+			| "ASSIGN_REVIEWER"
+			| "START_REVIEW"
+			| "SUBMIT_REVIEW"
+			| "STATUS_CHANGE"
+			| "USER_STATUS_CHANGE"
+			| "ROLE_CHANGE";
+		actorId: CodecTypes["pg/uuid@1"]["output"] | null;
+		createdAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
+		entityId: CodecTypes["pg/uuid@1"]["output"] | null;
+		entityType:
+			| "USER"
+			| "SUBMISSION"
+			| "REVIEW"
+			| "ASSIGNMENT"
+			| "NOTIFICATION"
+			| "SYSTEM";
+		id: CodecTypes["pg/uuid@1"]["output"];
+		ipAddress: CodecTypes["pg/text@1"]["output"] | null;
+		metadata: CodecTypes["pg/text@1"]["output"] | null;
+		actor: public_User | null;
+		readonly [RelationKeys]?: "actor";
+	};
 	export type public_Notification = {
 		createdAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
 		id: CodecTypes["pg/uuid@1"]["output"];
@@ -1069,6 +1250,18 @@ export namespace Models {
 		submission: public_ProjectSubmission;
 		readonly [RelationKeys]?: "reviewer" | "submission";
 	};
+	export type public_ReviewCriterion = {
+		createdAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
+		description: CodecTypes["pg/text@1"]["output"] | null;
+		id: CodecTypes["pg/uuid@1"]["output"];
+		isActive: CodecTypes["pg/bool@1"]["output"];
+		key: CodecTypes["pg/text@1"]["output"];
+		label: CodecTypes["pg/text@1"]["output"];
+		sortOrder: CodecTypes["pg/int4@1"]["output"];
+		updatedAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
+		weight: CodecTypes["pg/int4@1"]["output"];
+		readonly [RelationKeys]?: never;
+	};
 	export type public_SubmissionStatusHistory = {
 		changedById: CodecTypes["pg/uuid@1"]["output"] | null;
 		createdAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
@@ -1108,12 +1301,14 @@ export namespace Models {
 		status: "ACTIVE" | "SUSPENDED" | "DEACTIVATED";
 		updatedAt: CodecTypes["pg/timestamptz-temporal@1"]["output"];
 		assignments: public_ReviewAssignment[];
+		auditLogs: public_AuditLog[];
 		notifications: public_Notification[];
 		reviews: public_Review[];
 		statusHistory: public_SubmissionStatusHistory[];
 		submissions: public_ProjectSubmission[];
 		readonly [RelationKeys]?:
 			| "assignments"
+			| "auditLogs"
 			| "notifications"
 			| "reviews"
 			| "statusHistory"
@@ -1123,10 +1318,12 @@ export namespace Models {
 
 export declare const models: {
 	public: {
+		AuditLog: Models.public_AuditLog;
 		Notification: Models.public_Notification;
 		ProjectSubmission: Models.public_ProjectSubmission;
 		Review: Models.public_Review;
 		ReviewAssignment: Models.public_ReviewAssignment;
+		ReviewCriterion: Models.public_ReviewCriterion;
 		SubmissionStatusHistory: Models.public_SubmissionStatusHistory;
 		User: Models.public_User;
 	};
@@ -1150,6 +1347,104 @@ type ContractBase = Omit<
 				readonly kind: "postgres-schema";
 				readonly entries: {
 					readonly table: {
+						readonly audit_logs: {
+							columns: {
+								readonly action: {
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly actor_id: {
+									readonly dataType: "pg/uuid";
+									readonly codecId: "pg/uuid@1";
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly created_at: {
+									readonly dataType: "pg/timestamptz";
+									readonly codecId: "pg/timestamptz-temporal@1";
+									readonly nullable: false;
+									readonly default: {
+										readonly kind: "function";
+										readonly expression: "now()";
+									};
+									readonly many: false;
+								};
+								readonly entity_id: {
+									readonly dataType: "pg/uuid";
+									readonly codecId: "pg/uuid@1";
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly entity_type: {
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly id: {
+									readonly dataType: "pg/uuid";
+									readonly codecId: "pg/uuid@1";
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly ip_address: {
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly metadata: {
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
+									readonly nullable: true;
+									readonly many: false;
+								};
+							};
+							primaryKey: { readonly columns: readonly ["id"] };
+							uniques: readonly [];
+							indexes: readonly [
+								{
+									readonly name: "audit_logs_actor_id_created_at_idx_73c9864c";
+									readonly prefix: "audit_logs_actor_id_created_at_idx";
+									readonly columns: readonly ["actor_id", "created_at"];
+									readonly unique: false;
+								},
+								{
+									readonly name: "audit_logs_actor_id_idx_69a2164d";
+									readonly prefix: "audit_logs_actor_id_idx";
+									readonly columns: readonly ["actor_id"];
+									readonly unique: false;
+								},
+								{
+									readonly name: "audit_logs_created_at_idx_225d8c0f";
+									readonly prefix: "audit_logs_created_at_idx";
+									readonly columns: readonly ["created_at"];
+									readonly unique: false;
+								},
+								{
+									readonly name: "audit_logs_entity_type_entity_id_idx_4cde03a1";
+									readonly prefix: "audit_logs_entity_type_entity_id_idx";
+									readonly columns: readonly ["entity_type", "entity_id"];
+									readonly unique: false;
+								},
+							];
+							foreignKeys: readonly [
+								{
+									readonly source: {
+										readonly namespaceId: "public" & NamespaceId;
+										readonly tableName: "audit_logs";
+										readonly columns: readonly ["actor_id"];
+									};
+									readonly target: {
+										readonly namespaceId: "public" & NamespaceId;
+										readonly tableName: "users";
+										readonly columns: readonly ["id"];
+									};
+								},
+							];
+						};
 						readonly notifications: {
 							columns: {
 								readonly created_at: {
@@ -1528,6 +1823,91 @@ type ContractBase = Omit<
 									};
 								},
 							];
+						};
+						readonly review_criteria: {
+							columns: {
+								readonly created_at: {
+									readonly dataType: "pg/timestamptz";
+									readonly codecId: "pg/timestamptz-temporal@1";
+									readonly nullable: false;
+									readonly default: {
+										readonly kind: "function";
+										readonly expression: "now()";
+									};
+									readonly many: false;
+								};
+								readonly description: {
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
+									readonly nullable: true;
+									readonly many: false;
+								};
+								readonly id: {
+									readonly dataType: "pg/uuid";
+									readonly codecId: "pg/uuid@1";
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly is_active: {
+									readonly dataType: "pg/bool";
+									readonly codecId: "pg/bool@1";
+									readonly nullable: false;
+									readonly default: {
+										readonly kind: "literal";
+										readonly value: DefaultLiteralValue<"pg/bool@1", true>;
+									};
+									readonly many: false;
+								};
+								readonly key: {
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly label: {
+									readonly dataType: "pg/text";
+									readonly codecId: "pg/text@1";
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly sort_order: {
+									readonly dataType: "pg/int4";
+									readonly codecId: "pg/int4@1";
+									readonly nullable: false;
+									readonly default: {
+										readonly kind: "literal";
+										readonly value: DefaultLiteralValue<"pg/int4@1", 0>;
+									};
+									readonly many: false;
+								};
+								readonly updated_at: {
+									readonly dataType: "pg/timestamptz";
+									readonly codecId: "pg/timestamptz-temporal@1";
+									readonly nullable: false;
+									readonly many: false;
+								};
+								readonly weight: {
+									readonly dataType: "pg/int4";
+									readonly codecId: "pg/int4@1";
+									readonly nullable: false;
+									readonly default: {
+										readonly kind: "literal";
+										readonly value: DefaultLiteralValue<"pg/int4@1", 1>;
+									};
+									readonly many: false;
+								};
+							};
+							primaryKey: { readonly columns: readonly ["id"] };
+							uniques: readonly [{ readonly columns: readonly ["key"] }];
+							indexes: readonly [
+								{
+									readonly name: "review_criteria_is_active_sort_order_idx_588043b5";
+									readonly prefix: "review_criteria_is_active_sort_order_idx";
+									readonly columns: readonly ["is_active", "sort_order"];
+									readonly unique: false;
+								},
+							];
+							foreignKeys: readonly [];
 						};
 						readonly reviews: {
 							columns: {
@@ -1981,6 +2361,10 @@ type ContractBase = Omit<
 	readonly target: "postgres";
 	readonly targetFamily: "sql";
 	readonly roots: {
+		readonly audit_logs: {
+			readonly namespace: "public" & NamespaceId;
+			readonly model: "AuditLog";
+		};
 		readonly notifications: {
 			readonly namespace: "public" & NamespaceId;
 			readonly model: "Notification";
@@ -1992,6 +2376,10 @@ type ContractBase = Omit<
 		readonly review_assignments: {
 			readonly namespace: "public" & NamespaceId;
 			readonly model: "ReviewAssignment";
+		};
+		readonly review_criteria: {
+			readonly namespace: "public" & NamespaceId;
+			readonly model: "ReviewCriterion";
 		};
 		readonly reviews: {
 			readonly namespace: "public" & NamespaceId;
@@ -2010,6 +2398,94 @@ type ContractBase = Omit<
 		readonly namespaces: {
 			readonly public: {
 				readonly models: {
+					readonly AuditLog: {
+						readonly fields: {
+							readonly action: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/text@1";
+								};
+							};
+							readonly actorId: {
+								readonly nullable: true;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/uuid@1";
+								};
+							};
+							readonly createdAt: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/timestamptz-temporal@1";
+								};
+							};
+							readonly entityId: {
+								readonly nullable: true;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/uuid@1";
+								};
+							};
+							readonly entityType: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/text@1";
+								};
+							};
+							readonly id: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/uuid@1";
+								};
+							};
+							readonly ipAddress: {
+								readonly nullable: true;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/text@1";
+								};
+							};
+							readonly metadata: {
+								readonly nullable: true;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/text@1";
+								};
+							};
+						};
+						readonly relations: {
+							readonly actor: {
+								readonly to: {
+									readonly namespace: "public" & NamespaceId;
+									readonly model: "User";
+								};
+								readonly cardinality: "N:1";
+								readonly nullable: true;
+								readonly on: {
+									readonly localFields: readonly ["actorId"];
+									readonly targetFields: readonly ["id"];
+								};
+							};
+						};
+						readonly storage: {
+							readonly table: "audit_logs";
+							readonly namespaceId: "public";
+							readonly fields: {
+								readonly action: { readonly column: "action" };
+								readonly actorId: { readonly column: "actor_id" };
+								readonly createdAt: { readonly column: "created_at" };
+								readonly entityId: { readonly column: "entity_id" };
+								readonly entityType: { readonly column: "entity_type" };
+								readonly id: { readonly column: "id" };
+								readonly ipAddress: { readonly column: "ip_address" };
+								readonly metadata: { readonly column: "metadata" };
+							};
+						};
+					};
 					readonly Notification: {
 						readonly fields: {
 							readonly createdAt: {
@@ -2536,6 +3012,89 @@ type ContractBase = Omit<
 							};
 						};
 					};
+					readonly ReviewCriterion: {
+						readonly fields: {
+							readonly createdAt: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/timestamptz-temporal@1";
+								};
+							};
+							readonly description: {
+								readonly nullable: true;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/text@1";
+								};
+							};
+							readonly id: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/uuid@1";
+								};
+							};
+							readonly isActive: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/bool@1";
+								};
+							};
+							readonly key: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/text@1";
+								};
+							};
+							readonly label: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/text@1";
+								};
+							};
+							readonly sortOrder: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/int4@1";
+								};
+							};
+							readonly updatedAt: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/timestamptz-temporal@1";
+								};
+							};
+							readonly weight: {
+								readonly nullable: false;
+								readonly type: {
+									readonly kind: "scalar";
+									readonly codecId: "pg/int4@1";
+								};
+							};
+						};
+						readonly relations: Record<string, never>;
+						readonly storage: {
+							readonly table: "review_criteria";
+							readonly namespaceId: "public";
+							readonly fields: {
+								readonly createdAt: { readonly column: "created_at" };
+								readonly description: { readonly column: "description" };
+								readonly id: { readonly column: "id" };
+								readonly isActive: { readonly column: "is_active" };
+								readonly key: { readonly column: "key" };
+								readonly label: { readonly column: "label" };
+								readonly sortOrder: { readonly column: "sort_order" };
+								readonly updatedAt: { readonly column: "updated_at" };
+								readonly weight: { readonly column: "weight" };
+							};
+						};
+					};
 					readonly SubmissionStatusHistory: {
 						readonly fields: {
 							readonly changedById: {
@@ -2711,6 +3270,17 @@ type ContractBase = Omit<
 								readonly on: {
 									readonly localFields: readonly ["id"];
 									readonly targetFields: readonly ["reviewerId"];
+								};
+							};
+							readonly auditLogs: {
+								readonly to: {
+									readonly namespace: "public" & NamespaceId;
+									readonly model: "AuditLog";
+								};
+								readonly cardinality: "1:N";
+								readonly on: {
+									readonly localFields: readonly ["id"];
+									readonly targetFields: readonly ["actorId"];
 								};
 							};
 							readonly notifications: {
@@ -2945,6 +3515,17 @@ type ContractBase = Omit<
 						readonly kind: "generator";
 					};
 					readonly ref: {
+						readonly entry: "audit_logs";
+						readonly field: "id";
+						readonly namespace: "public";
+					};
+				},
+				{
+					readonly onCreate: {
+						readonly id: "uuidv4";
+						readonly kind: "generator";
+					};
+					readonly ref: {
 						readonly entry: "notifications";
 						readonly field: "id";
 						readonly namespace: "public";
@@ -2984,6 +3565,32 @@ type ContractBase = Omit<
 					readonly ref: {
 						readonly entry: "review_assignments";
 						readonly field: "id";
+						readonly namespace: "public";
+					};
+				},
+				{
+					readonly onCreate: {
+						readonly id: "uuidv4";
+						readonly kind: "generator";
+					};
+					readonly ref: {
+						readonly entry: "review_criteria";
+						readonly field: "id";
+						readonly namespace: "public";
+					};
+				},
+				{
+					readonly onCreate: {
+						readonly id: "instantNow";
+						readonly kind: "generator";
+					};
+					readonly onUpdate: {
+						readonly id: "instantNow";
+						readonly kind: "generator";
+					};
+					readonly ref: {
+						readonly entry: "review_criteria";
+						readonly field: "updated_at";
 						readonly namespace: "public";
 					};
 				},

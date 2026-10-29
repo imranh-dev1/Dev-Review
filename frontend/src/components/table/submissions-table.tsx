@@ -11,6 +11,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Table,
 	TableBody,
@@ -19,12 +20,12 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
 import type { Submission } from "@/types";
 
 interface AdminSubmissionsTableProps {
 	submissions: Submission[];
 	isPending?: boolean;
+	detailBasePath?: string;
 }
 
 const statusStyles: Record<string, string> = {
@@ -107,6 +108,7 @@ function TableLoading() {
 export default function SubmissionsTable({
 	submissions,
 	isPending = false,
+	detailBasePath = "/admin/submissions",
 }: AdminSubmissionsTableProps) {
 	if (isPending) {
 		return <TableLoading />;
@@ -176,7 +178,7 @@ export default function SubmissionsTable({
 
 										<div className="min-w-0 max-w-[300px] space-y-1">
 											<Link
-												href={`/admin/submissions/${submission.id}`}
+												href={`${detailBasePath}/${submission.id}`}
 												className="line-clamp-1 text-sm font-semibold text-foreground transition-colors hover:text-primary"
 											>
 												{submission.title}
@@ -275,7 +277,7 @@ export default function SubmissionsTable({
 										asChild
 										className="h-8 gap-1.5"
 									>
-										<Link href={`/admin/submissions/${submission.id}`}>
+										<Link href={`${detailBasePath}/${submission.id}`}>
 											View
 											<ExternalLink className="size-3.5" />
 										</Link>

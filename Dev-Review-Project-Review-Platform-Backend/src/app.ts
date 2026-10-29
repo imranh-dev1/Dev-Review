@@ -12,6 +12,10 @@ import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { AuthRoutes } from "./app/modules/auth/auth.route";
 import { UserRoutes } from "./app/modules/user/user.route";
 import { SubmissionRoutes } from "./app/modules/submission/submission.route";
+import { ReviewRoutes } from "./app/modules/review/review.route";
+import { NotificationRoutes } from "./app/modules/notification/notification.route";
+import { AnalyticsRoutes } from "./app/modules/analytics/analytics.route";
+import { AuditRoutes } from "./app/modules/audit/audit.route";
 
 const app: Application = express();
 
@@ -43,6 +47,10 @@ app.get("/api/v1/health", (req: Request, res: Response) => {
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/user", UserRoutes);
 app.use("/api/v1/submissions", SubmissionRoutes);
+app.use("/api/v1/notifications", NotificationRoutes);
+app.use("/api/v1/analytics", AnalyticsRoutes);
+app.use("/api/v1/admin/audit-logs", AuditRoutes);
+app.use("/api/v1", ReviewRoutes);
 
 app.use(globalErrorHandler);
 app.use(notFound);

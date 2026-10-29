@@ -2,6 +2,8 @@
 
 import { Search, X } from "lucide-react";
 import { useState } from "react";
+import DataPagination from "@/components/shared/pagination";
+import SubmissionsTable from "@/components/table/submissions-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +14,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useListAllSubmissions } from "@/hooks/submission.hook";
+import { useListAllReviewerSubmissions } from "@/hooks/submission.hook";
 import type { Submission, SubmissionStatus } from "@/types";
-import DataPagination from "@/components/shared/pagination";
-import SubmissionsTable from "@/components/table/submissions-table";
 
 const statusOptions = [
 	"DRAFT",
@@ -39,7 +39,7 @@ export default function ReviewerSubmissionsPage() {
 		isPending,
 		isError,
 		refetch,
-	} = useListAllSubmissions({
+	} = useListAllReviewerSubmissions({
 		page,
 		limit,
 		...(search.trim() ? { search: search.trim() } : {}),
@@ -130,7 +130,11 @@ export default function ReviewerSubmissionsPage() {
 				</div>
 			) : (
 				<>
-					<SubmissionsTable submissions={submissions} isPending={isPending} />
+					<SubmissionsTable
+						submissions={submissions}
+						isPending={isPending}
+						detailBasePath="/reviewer/submissions"
+					/>
 
 					<DataPagination
 						content="Projects"

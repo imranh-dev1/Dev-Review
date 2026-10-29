@@ -1,17 +1,17 @@
+import { or } from "@prisma/orm-postgres/orm-client";
+import bcrypt from "bcryptjs";
 import type { UploadApiResponse } from "cloudinary";
 import httpStatus from "http-status";
-
 import { db } from "../../../prisma/db";
-import { cloudinary } from "../../lib/cloudinary";
-import { AppError } from "../../utils/AppError";
-import type { IChangePasswordPayload } from "../auth/auth.interface";
-import type { RequestUser } from "../../middleware/checkAuth";
-import bcrypt from "bcryptjs";
 import config from "../../config";
-import type { UserListQuery } from "./user.interface";
-import { buildMeta, getPagination } from "../../utils/pagination";
-import { or } from "@prisma/orm-postgres/orm-client";
+import { cloudinary } from "../../lib/cloudinary";
+import type { RequestUser } from "../../middleware/checkAuth";
+import { createAuditLog } from "../../services/audit.service";
 import { UserRole, type UserStatus } from "../../types/models";
+import { AppError } from "../../utils/AppError";
+import { buildMeta, getPagination } from "../../utils/pagination";
+import type { IChangePasswordPayload } from "../auth/auth.interface";
+import type { UserListQuery } from "./user.interface";
 
 type UpdateProfilePayload = {
 	name?: string;
@@ -76,6 +76,14 @@ const updateProfile = async (
 		id: userId,
 	}).update(updateData);
 
+	await createAuditLog({
+		actorId: userId,
+		action: "UPDATE",
+		entityType: "USER",
+		entityId: userId,
+		metadata: { fields: Object.keys(updateData) },
+	});
+
 	return updatedUser;
 };
 
@@ -85,7 +93,7 @@ const changePassword = async (
 ) => {
 	const userExist = await db.orm.public.User.where({ id: user.userId }).first();
 
-	if (!userExist || !userExist.passwordHash) {
+	if (!userExist?.passwordHash) {
 		throw new AppError(
 			httpStatus.NOT_FOUND,
 			"User not found or password login is not enabled",
@@ -215,6 +223,14 @@ const updateUserStatus = async (
 
 	await db.orm.public.User.where({ id }).update({ status });
 
+	await createAuditLog({
+		actorId: actor.userId,
+		action: "USER_STATUS_CHANGE",
+		entityType: "USER",
+		entityId: user.id,
+		metadata: { fromStatus: user.status, toStatus: status },
+	});
+
 	return { id: user.id, status };
 };
 
@@ -255,7 +271,15 @@ const updateUserRole = async (
 
 	await db.orm.public.User.where({ id }).update({ role });
 
-	return null;
+	await createAuditLog({
+		actorId: actor.userId,
+		action: "ROLE_CHANGE",
+		entityType: "USER",
+		entityId: user.id,
+		metadata: { fromRole: user.role, toRole: role },
+	});
+
+	return { id: user.id, name: user.name, role };
 };
 
 const deleteUser = async (id: string, actor: RequestUser) => {
@@ -274,9 +298,43 @@ const deleteUser = async (id: string, actor: RequestUser) => {
 		);
 	}
 
+	const [submissionCount, reviewCount] = await Promise.all([
+		db.orm.public.ProjectSubmission.where({ ownerId: id }).aggregate((a) => ({
+			count: a.count(),
+		})),
+		db.orm.public.Review.where({ reviewerId: id }).aggregate((a) => ({
+			count: a.count(),
+		})),
+	]);
+
+	const hasActivity = submissionCount.count > 0 || reviewCount.count > 0;
+
+	if (hasActivity) {
+		await db.orm.public.User.where({ id }).update({
+			status: "DEACTIVATED",
+		});
+
+		await createAuditLog({
+			actorId: actor.userId,
+			action: "USER_STATUS_CHANGE",
+			entityType: "USER",
+			entityId: id,
+			metadata: { fromStatus: user.status, toStatus: "DEACTIVATED" },
+		});
+
+		return { id, deleted: false, deactivated: true };
+	}
+
 	await db.orm.public.User.where({ id }).delete();
 
-	return null;
+	await createAuditLog({
+		actorId: actor.userId,
+		action: "DELETE",
+		entityType: "USER",
+		entityId: id,
+	});
+
+	return { id, deleted: true, deactivated: false };
 };
 
 export const UserServices = {

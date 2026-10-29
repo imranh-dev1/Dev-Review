@@ -1,7 +1,18 @@
-export default function NotificationsPage() {
+"use client";
+
+import NotificationList from "@/components/notifications/notification-list";
+import { PageHeader } from "@/components/shared/page-header";
+
+export default function ReviewerNotificationsPage() {
 	return (
-		<div>
-			<h1>Notifications Page</h1>
+		<div className="space-y-6">
+			<PageHeader
+				eyebrow="Account"
+				title="Notifications"
+				description="Assignments, review updates, and platform announcements."
+			/>
+
+			<NotificationList />
 		</div>
 	);
 }

@@ -13,6 +13,28 @@ export type SubmissionStatus =
 
 export type ReviewDecision = "APPROVED" | "REJECTED" | "CHANGES_REQUESTED";
 
+export type AuditAction =
+	| "CREATE"
+	| "UPDATE"
+	| "DELETE"
+	| "STATUS_CHANGE"
+	| "ROLE_CHANGE"
+	| "USER_STATUS_CHANGE"
+	| "ASSIGN_REVIEWER"
+	| "START_REVIEW"
+	| "SUBMIT_REVIEW"
+	| "LOGIN"
+	| "LOGOUT"
+	| "OTHER";
+
+export type AuditEntityType =
+	| "USER"
+	| "SUBMISSION"
+	| "REVIEW"
+	| "ASSIGNMENT"
+	| "NOTIFICATION"
+	| "SYSTEM";
+
 export type AssignmentStatus =
 	| "ASSIGNED"
 	| "ACCEPTED"
@@ -78,6 +100,13 @@ export interface Review {
 	submissionId: string;
 	reviewerId: string;
 	reviewer?: PublicUser;
+	submission?: {
+		id: string;
+		title: string;
+		status: SubmissionStatus;
+		ownerId?: string;
+		owner?: PublicUser;
+	};
 	decision: ReviewDecision;
 	feedback: string;
 	codeQuality: number;
@@ -130,6 +159,30 @@ export interface AppNotification {
 	createdAt: string;
 }
 
+export interface ReviewCriterion {
+	id: string;
+	key: string;
+	label: string;
+	description: string | null;
+	weight: number;
+	isActive: boolean;
+	sortOrder: number;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface AuditLog {
+	id: string;
+	actorId: string | null;
+	actor?: PublicUser & { role?: UserRole };
+	action: AuditAction;
+	entityType: AuditEntityType;
+	entityId: string | null;
+	metadata: string | null;
+	ipAddress: string | null;
+	createdAt: string;
+}
+
 export interface PlatformAnalytics {
 	users: {
 		total: number;
@@ -143,6 +196,8 @@ export interface PlatformAnalytics {
 	reviews: { total: number; averageScore: number | null };
 	assignments: { active: number };
 	notifications: { total: number };
+	approvalRate: number | null;
+	recentActivity: AuditLog[];
 }
 
 export interface MyAnalytics {

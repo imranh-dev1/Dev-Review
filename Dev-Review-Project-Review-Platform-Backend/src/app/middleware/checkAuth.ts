@@ -61,7 +61,10 @@ export const auth = (...requiredRoles: UserRole[]) => {
 		}).first();
 
 		if (!user) {
-			throw new AppError(401, "User not found. Please log in again.");
+			throw new AppError(
+				httpStatus.UNAUTHORIZED,
+				"User not found. Please log in again.",
+			);
 		}
 
 		if (user.status === UserStatus.DEACTIVATED) {

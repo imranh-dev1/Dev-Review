@@ -60,6 +60,34 @@ export const NotificationType = {
 export type NotificationType =
 	(typeof NotificationType)[keyof typeof NotificationType];
 
+export const AuditAction = {
+	CREATE: "CREATE",
+	UPDATE: "UPDATE",
+	DELETE: "DELETE",
+	LOGIN: "LOGIN",
+	LOGOUT: "LOGOUT",
+	ASSIGN_REVIEWER: "ASSIGN_REVIEWER",
+	START_REVIEW: "START_REVIEW",
+	SUBMIT_REVIEW: "SUBMIT_REVIEW",
+	STATUS_CHANGE: "STATUS_CHANGE",
+	USER_STATUS_CHANGE: "USER_STATUS_CHANGE",
+	ROLE_CHANGE: "ROLE_CHANGE",
+} as const;
+
+export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];
+
+export const AuditEntityType = {
+	USER: "USER",
+	SUBMISSION: "SUBMISSION",
+	REVIEW: "REVIEW",
+	ASSIGNMENT: "ASSIGNMENT",
+	NOTIFICATION: "NOTIFICATION",
+	SYSTEM: "SYSTEM",
+} as const;
+
+export type AuditEntityType =
+	(typeof AuditEntityType)[keyof typeof AuditEntityType];
+
 export interface AuthUser {
 	id: string;
 	name: string;

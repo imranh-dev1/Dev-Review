@@ -1,0 +1,359 @@
+[
+  {
+    "id": "table.audit_logs",
+    "label": "Create table \"audit_logs\"",
+    "summary": "Creates table \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"audit_logs\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"audit_logs\"",
+        "sql": "CREATE TABLE \"public\".\"audit_logs\" (\n  \"action\" text NOT NULL,\n  \"actor_id\" uuid,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"entity_id\" uuid,\n  \"entity_type\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"ip_address\" text,\n  \"metadata\" text,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"audit_logs_action_check_fd2d4833\" CHECK (\"action\" IN ('CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'ASSIGN_REVIEWER', 'START_REVIEW', 'SUBMIT_REVIEW', 'STATUS_CHANGE', 'USER_STATUS_CHANGE', 'ROLE_CHANGE')),\n  CONSTRAINT \"audit_logs_entity_type_check_41a4936d\" CHECK (\"entity_type\" IN ('USER', 'SUBMISSION', 'REVIEW', 'ASSIGNMENT', 'NOTIFICATION', 'SYSTEM'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"audit_logs\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.review_criteria",
+    "label": "Create table \"review_criteria\"",
+    "summary": "Creates table \"review_criteria\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "review_criteria"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"review_criteria\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_criteria\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"review_criteria\"",
+        "sql": "CREATE TABLE \"public\".\"review_criteria\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" uuid NOT NULL,\n  \"is_active\" bool DEFAULT true NOT NULL,\n  \"key\" text NOT NULL,\n  \"label\" text NOT NULL,\n  \"sort_order\" int4 DEFAULT 0 NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  \"weight\" int4 DEFAULT 1 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"review_criteria\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_criteria\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.review_criteria.review_criteria_key_key",
+    "label": "Add unique constraint on \"review_criteria\" (key)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "review_criteria_key_key",
+        "table": "review_criteria"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"review_criteria_key_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "review_criteria_key_key",
+          "public",
+          "\"public\".\"review_criteria\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"review_criteria_key_key\"",
+        "sql": "ALTER TABLE \"public\".\"review_criteria\" ADD CONSTRAINT \"review_criteria_key_key\" UNIQUE (\"key\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"review_criteria_key_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "review_criteria_key_key",
+          "public",
+          "\"public\".\"review_criteria\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.audit_logs.audit_logs_actor_id_created_at_idx_73c9864c",
+    "label": "Create index \"audit_logs_actor_id_created_at_idx_73c9864c\" on \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "audit_logs_actor_id_created_at_idx_73c9864c",
+        "table": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"audit_logs_actor_id_created_at_idx_73c9864c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_actor_id_created_at_idx_73c9864c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"audit_logs_actor_id_created_at_idx_73c9864c\"",
+        "sql": "CREATE INDEX \"audit_logs_actor_id_created_at_idx_73c9864c\" ON \"public\".\"audit_logs\" (\"actor_id\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"audit_logs_actor_id_created_at_idx_73c9864c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_actor_id_created_at_idx_73c9864c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.audit_logs.audit_logs_actor_id_idx_69a2164d",
+    "label": "Create index \"audit_logs_actor_id_idx_69a2164d\" on \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "audit_logs_actor_id_idx_69a2164d",
+        "table": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"audit_logs_actor_id_idx_69a2164d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_actor_id_idx_69a2164d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"audit_logs_actor_id_idx_69a2164d\"",
+        "sql": "CREATE INDEX \"audit_logs_actor_id_idx_69a2164d\" ON \"public\".\"audit_logs\" (\"actor_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"audit_logs_actor_id_idx_69a2164d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_actor_id_idx_69a2164d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.audit_logs.audit_logs_created_at_idx_225d8c0f",
+    "label": "Create index \"audit_logs_created_at_idx_225d8c0f\" on \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "audit_logs_created_at_idx_225d8c0f",
+        "table": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"audit_logs_created_at_idx_225d8c0f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_created_at_idx_225d8c0f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"audit_logs_created_at_idx_225d8c0f\"",
+        "sql": "CREATE INDEX \"audit_logs_created_at_idx_225d8c0f\" ON \"public\".\"audit_logs\" (\"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"audit_logs_created_at_idx_225d8c0f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_created_at_idx_225d8c0f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.audit_logs.audit_logs_entity_type_entity_id_idx_4cde03a1",
+    "label": "Create index \"audit_logs_entity_type_entity_id_idx_4cde03a1\" on \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "audit_logs_entity_type_entity_id_idx_4cde03a1",
+        "table": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"audit_logs_entity_type_entity_id_idx_4cde03a1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_entity_type_entity_id_idx_4cde03a1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"audit_logs_entity_type_entity_id_idx_4cde03a1\"",
+        "sql": "CREATE INDEX \"audit_logs_entity_type_entity_id_idx_4cde03a1\" ON \"public\".\"audit_logs\" (\"entity_type\", \"entity_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"audit_logs_entity_type_entity_id_idx_4cde03a1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_entity_type_entity_id_idx_4cde03a1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.review_criteria.review_criteria_is_active_sort_order_idx_588043b5",
+    "label": "Create index \"review_criteria_is_active_sort_order_idx_588043b5\" on \"review_criteria\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "review_criteria_is_active_sort_order_idx_588043b5",
+        "table": "review_criteria"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"review_criteria_is_active_sort_order_idx_588043b5\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_criteria_is_active_sort_order_idx_588043b5\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"review_criteria_is_active_sort_order_idx_588043b5\"",
+        "sql": "CREATE INDEX \"review_criteria_is_active_sort_order_idx_588043b5\" ON \"public\".\"review_criteria\" (\"is_active\", \"sort_order\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"review_criteria_is_active_sort_order_idx_588043b5\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"review_criteria_is_active_sort_order_idx_588043b5\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.audit_logs.audit_logs_actor_id_fkey",
+    "label": "Add foreign key \"audit_logs_actor_id_fkey\" on \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "audit_logs_actor_id_fkey",
+        "table": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"audit_logs_actor_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "audit_logs_actor_id_fkey",
+          "public",
+          "\"public\".\"audit_logs\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"audit_logs_actor_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"audit_logs\"\nADD CONSTRAINT \"audit_logs_actor_id_fkey\"\nFOREIGN KEY (\"actor_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"audit_logs_actor_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "audit_logs_actor_id_fkey",
+          "public",
+          "\"public\".\"audit_logs\""
+        ]
+      }
+    ]
+  }
+]
